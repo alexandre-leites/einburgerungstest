@@ -38,14 +38,34 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
+        /* Language Switcher Styling */
+        .lang-switcher {
+            display: flex;
+            gap: 5px;
+        }
+
         .lang-btn {
             background: rgba(255,255,255,0.2);
-            border: 1px solid white;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.8);
+            padding: 5px 8px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: var(--primary);
+            border-color: white;
+            opacity: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         /* Main Content */
@@ -209,7 +229,11 @@
 
 <header>
     <div id="app-title">🇩🇪 Einbürgerungstest</div>
-    <button class="lang-btn" id="lang-toggle" onclick="toggleLanguage()">DE</button>
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="btn-de" onclick="setLanguage('de')">DE</button>
+        <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="btn-pt" onclick="setLanguage('pt')">PT</button>
+    </div>
 </header>
 
 <main>
@@ -305,7 +329,7 @@
 
 <script>
     // --- DATA & CONFIG ---
-    let questionsData = []; // Será preenchido via Fetch
+    let questionsData = []; 
     const JSON_FILE = 'questions.json';
     
     // --- STATE ---
@@ -321,17 +345,14 @@
 
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', async () => {
-        // Set dropdown value
         document.getElementById('state-selector').value = userState;
         
-        // Fetch Questions
         try {
             const response = await fetch(JSON_FILE);
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
             
             questionsData = await response.json();
             
-            // Success: Hide loading, show home
             document.getElementById('loading-overlay').style.display = 'none';
             document.getElementById('home-view').classList.add('active');
             
@@ -361,14 +382,15 @@
         localStorage.setItem('userState', userState);
     }
 
-    function toggleLanguage() {
-        const langs = ['de', 'en', 'pt'];
-        let idx = langs.indexOf(currentLanguage);
-        currentLanguage = langs[(idx + 1) % langs.length];
+    // NOVA FUNÇÃO DE IDIOMA
+    function setLanguage(lang) {
+        currentLanguage = lang;
         
-        const btn = document.getElementById('lang-toggle');
-        btn.innerText = currentLanguage.toUpperCase();
-        
+        // Update Buttons UI
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${lang}`).classList.add('active');
+
+        // Re-render question if active
         if(document.getElementById('quiz-view').classList.contains('active')) {
             renderCurrentQuestion();
         }

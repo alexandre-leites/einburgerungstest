@@ -12,6 +12,7 @@
             --bg: #f4f4f4;
             --card: #ffffff;
             --text: #333;
+            --sub-text: #666;
             --success: #28a745;
             --error: #dc3545;
         }
@@ -38,7 +39,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Language Switcher Styling */
         .lang-switcher {
             display: flex;
             gap: 5px;
@@ -56,16 +56,12 @@
             transition: all 0.2s;
         }
 
-        .lang-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
+        .lang-btn:hover { background: rgba(255,255,255,0.3); }
         .lang-btn.active {
             background: white;
             color: var(--primary);
             border-color: white;
             opacity: 1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         /* Main Content */
@@ -79,23 +75,24 @@
             box-sizing: border-box;
         }
 
-        /* Views */
         .view { display: none; }
         .view.active { display: block; }
 
-        /* Loading Overlay */
+        /* Loading */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             z-index: 1000;
+            text-align: center;
+            padding: 20px;
         }
 
-        /* Home Menu */
+        /* Menu */
         .menu-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -104,7 +101,7 @@
 
         .menu-btn {
             padding: 1.5rem;
-            font-size: 1.2rem;
+            font-size: 1rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -118,9 +115,10 @@
         }
 
         .menu-btn:active { transform: scale(0.98); }
-        .menu-btn span { font-size: 2rem; }
+        .menu-btn span.icon { font-size: 2rem; margin-left: 10px; }
+        .menu-btn strong { display: block; font-size: 1.1rem; margin-bottom: 4px; }
+        .menu-btn small { color: var(--sub-text); }
 
-        /* Settings */
         .settings-box {
             background: white;
             padding: 1rem;
@@ -128,12 +126,7 @@
             margin-bottom: 1rem;
         }
         
-        select {
-            width: 100%;
-            padding: 10px;
-            font-size: 1rem;
-            margin-top: 5px;
-        }
+        select { width: 100%; padding: 10px; font-size: 1rem; margin-top: 5px; }
 
         /* Question Card */
         .card {
@@ -148,6 +141,19 @@
             font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Dual language styling */
+        .sub-text {
+            display: block;
+            font-weight: normal;
+            font-size: 1rem;
+            color: #0055aa; /* Azulado para diferenciar */
+            margin-top: 6px;
+            font-style: italic;
+            border-top: 1px solid #eee;
+            padding-top: 4px;
         }
 
         .question-image {
@@ -158,11 +164,7 @@
             border: 1px solid #ddd;
         }
 
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
 
         .option-btn {
             padding: 15px;
@@ -173,14 +175,14 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.2s;
+            line-height: 1.3;
         }
 
-        /* States for options */
         .option-btn.selected { border-color: var(--primary); background-color: #e6f0ff; }
         .option-btn.correct { border-color: var(--success); background-color: #d4edda; color: #155724; }
         .option-btn.wrong { border-color: var(--error); background-color: #f8d7da; color: #721c24; }
         
-        /* Footer Controls */
+        /* Footer */
         footer {
             background: white;
             padding: 1rem;
@@ -201,20 +203,8 @@
         .nav-btn:disabled { background: #ccc; }
         .nav-btn.secondary { background: #6c757d; }
 
-        /* Timer & Stats */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            font-weight: bold;
-            color: #666;
-        }
-
-        .result-score {
-            text-align: center;
-            font-size: 3rem;
-            margin: 2rem 0;
-        }
+        /* Result */
+        .result-score { text-align: center; font-size: 3rem; margin: 2rem 0; }
         .pass { color: var(--success); }
         .fail { color: var(--error); }
 
@@ -223,12 +213,15 @@
 <body>
 
 <div id="loading-overlay">
-    <h2>Carregando questões...</h2>
-    <p>Certifique-se de estar rodando em um servidor local (http://localhost...)</p>
+    <h2 id="txt-loading">Carregando / Loading...</h2>
+    <p style="font-size:0.9rem; color:#666; margin-top:10px;">
+        Certifique-se de usar um servidor local (localhost) para carregar o JSON.<br>
+        Make sure to use a local server to load the JSON.
+    </p>
 </div>
 
 <header>
-    <div id="app-title">🇩🇪 Einbürgerungstest</div>
+    <div id="app-title">🇩🇪 Einbürgerung</div>
     <div class="lang-switcher">
         <button class="lang-btn active" id="btn-de" onclick="setLanguage('de')">DE</button>
         <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
@@ -239,7 +232,7 @@
 <main>
     <div id="home-view" class="view">
         <div class="settings-box">
-            <label>Bundesland (Estado):</label>
+            <label id="lbl-state">Bundesland (Estado):</label>
             <select id="state-selector" onchange="saveStatePreference()">
                 <option value="Berlin">Berlin</option>
                 <option value="Baden-Württemberg">Baden-Württemberg</option>
@@ -263,37 +256,37 @@
         <div class="menu-grid">
             <button class="menu-btn" onclick="startMode('memorization')">
                 <div>
-                    <strong>🧠 Memorização</strong><br>
-                    <small>Apenas respostas corretas</small>
+                    <strong id="menu-mem-title">🧠 Memorieren</strong>
+                    <small id="menu-mem-desc">Nur richtige Antworten</small>
                 </div>
-                <span>👁️</span>
+                <span class="icon">👁️</span>
             </button>
             <button class="menu-btn" onclick="startMode('training')">
                 <div>
-                    <strong>🏋️ Treino</strong><br>
-                    <small>Feedback imediato</small>
+                    <strong id="menu-train-title">🏋️ Training</strong>
+                    <small id="menu-train-desc">Sofortiges Feedback</small>
                 </div>
-                <span>✅</span>
+                <span class="icon">✅</span>
             </button>
             <button class="menu-btn" onclick="startMode('test')">
                 <div>
-                    <strong>📝 Simulado (Teste)</strong><br>
-                    <small>33 Questões - 60 Minutos</small>
+                    <strong id="menu-test-title">📝 Test Simulation</strong>
+                    <small id="menu-test-desc">33 Fragen - 60 Min</small>
                 </div>
-                <span>⏱️</span>
+                <span class="icon">⏱️</span>
             </button>
             <button class="menu-btn" onclick="startMode('review')">
                 <div>
-                    <strong>🔄 Revisão de Erros</strong><br>
-                    <small>Pratique o que você errou</small>
+                    <strong id="menu-review-title">🔄 Fehlerüberprüfung</strong>
+                    <small id="menu-review-desc">Übe deine Fehler</small>
                 </div>
-                <span>📉</span>
+                <span class="icon">📉</span>
             </button>
             <button class="menu-btn" onclick="resetStats()" style="background:#fff0f0; color:red;">
                 <div>
-                    <strong>🗑️ Resetar Estatísticas</strong>
+                    <strong id="menu-reset-title">🗑️ Statistik zurücksetzen</strong>
                 </div>
-                <span>⚠️</span>
+                <span class="icon">⚠️</span>
             </button>
         </div>
     </div>
@@ -312,29 +305,82 @@
     </div>
 
     <div id="result-view" class="view">
-        <h2>Ergebnis / Resultado</h2>
+        <h2 id="res-title">Ergebnis</h2>
         <div id="final-score" class="result-score"></div>
         <p id="final-message" style="text-align: center; font-size: 1.2rem;"></p>
+        <br>
         <button class="menu-btn" onclick="goHome()" style="background: var(--primary); color: white; justify-content: center;">
-            🏠 Home / Início
+            <span id="btn-home-res">🏠 Home</span>
         </button>
     </div>
 </main>
 
 <footer>
-    <button class="nav-btn secondary" id="btn-home" onclick="goHome()">🏠</button>
+    <button class="nav-btn secondary" id="btn-home-footer" onclick="goHome()">🏠</button>
     <div style="flex:1"></div>
-    <button class="nav-btn" id="btn-next" onclick="nextQuestion()">Próxima ➡️</button>
+    <button class="nav-btn" id="btn-next" onclick="nextQuestion()">Next ➡️</button>
 </footer>
 
 <script>
+    // --- DICTIONARY FOR UI ---
+    const uiTranslations = {
+        de: {
+            state: "Bundesland:",
+            memTitle: "🧠 Memorieren", memDesc: "Nur richtige Antworten",
+            trainTitle: "🏋️ Training", trainDesc: "Sofortiges Feedback",
+            testTitle: "📝 Test Simulation", testDesc: "33 Fragen - 60 Min",
+            revTitle: "🔄 Fehlerüberprüfung", revDesc: "Übe deine Fehler",
+            resetTitle: "🗑️ Statistik zurücksetzen",
+            next: "Weiter ➡️", finish: "Beenden 🏁", home: "Startseite",
+            resTitle: "Ergebnis",
+            pass: "Herzlichen Glückwunsch! Du hast bestanden.",
+            fail: "Leider nicht bestanden.",
+            alertReset: "Bist du sicher? Alle Statistiken werden gelöscht.",
+            alertNoData: "Keine Daten geladen.",
+            alertNoErrors: "Keine Fehler gespeichert! Super!",
+            alertSessionEnd: "Sitzung beendet."
+        },
+        en: {
+            state: "Federal State:",
+            memTitle: "🧠 Memorization", memDesc: "Correct answers only",
+            trainTitle: "🏋️ Training", trainDesc: "Immediate feedback",
+            testTitle: "📝 Test Simulation", testDesc: "33 Questions - 60 Min",
+            revTitle: "🔄 Review Errors", revDesc: "Practice your mistakes",
+            resetTitle: "🗑️ Reset Statistics",
+            next: "Next ➡️", finish: "Finish 🏁", home: "Home",
+            resTitle: "Result",
+            pass: "Congratulations! You passed.",
+            fail: "Unfortunately, you did not pass.",
+            alertReset: "Are you sure? All stats will be deleted.",
+            alertNoData: "Data not loaded.",
+            alertNoErrors: "No errors recorded yet! Great job!",
+            alertSessionEnd: "Session finished."
+        },
+        pt: {
+            state: "Estado (Bundesland):",
+            memTitle: "🧠 Memorização", memDesc: "Apenas respostas corretas",
+            trainTitle: "🏋️ Treino", trainDesc: "Feedback imediato",
+            testTitle: "📝 Simulado (Teste)", testDesc: "33 Questões - 60 Min",
+            revTitle: "🔄 Revisão de Erros", revDesc: "Pratique o que errou",
+            resetTitle: "🗑️ Resetar Estatísticas",
+            next: "Próxima ➡️", finish: "Finalizar 🏁", home: "Início",
+            resTitle: "Resultado",
+            pass: "Parabéns! Você passou.",
+            fail: "Infelizmente você não passou.",
+            alertReset: "Tem certeza? Todo histórico será apagado.",
+            alertNoData: "Dados não carregados.",
+            alertNoErrors: "Nenhum erro registrado ainda! Ótimo.",
+            alertSessionEnd: "Sessão finalizada."
+        }
+    };
+
     // --- DATA & CONFIG ---
     let questionsData = []; 
     const JSON_FILE = 'questions.json';
     
     // --- STATE ---
     let currentMode = ''; 
-    let currentLanguage = 'de'; // de, en, pt
+    let currentLanguage = 'de'; // 'de' (default/hidden), 'en', 'pt'
     let currentQuestions = [];
     let currentIndex = 0;
     let userAnswers = {}; 
@@ -347,6 +393,9 @@
     document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('state-selector').value = userState;
         
+        // Initial UI Update (Default DE)
+        updateUI();
+
         try {
             const response = await fetch(JSON_FILE);
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
@@ -357,18 +406,63 @@
             document.getElementById('home-view').classList.add('active');
             
         } catch (error) {
-            console.error("Erro ao carregar JSON:", error);
-            const loadingMsg = document.querySelector('#loading-overlay h2');
-            loadingMsg.innerText = "Erro ao carregar 'questions.json'";
+            console.error("Error loading JSON:", error);
+            const loadingMsg = document.getElementById('txt-loading');
+            loadingMsg.innerText = "Error: questions.json not found";
             loadingMsg.style.color = "red";
-            document.querySelector('#loading-overlay p').innerHTML = 
-                `Erro técnico: ${error.message}<br><br>` +
-                `<b>Dica de Dev:</b> Navegadores bloqueiam fetch local (file://).<br>` +
-                `Rode um servidor local (ex: <code>python3 -m http.server</code>) ou use o plugin Live Server.`;
         }
     });
 
-    // --- NAVIGATION & MODES ---
+    // --- LANGUAGE & UI ---
+    function setLanguage(lang) {
+        currentLanguage = lang;
+        
+        // Update Buttons UI
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${lang}`).classList.add('active');
+
+        // Update UI Texts (Menu, buttons)
+        updateUI();
+
+        // Re-render question if quiz is active
+        if(document.getElementById('quiz-view').classList.contains('active')) {
+            renderCurrentQuestion();
+        }
+    }
+
+    function updateUI() {
+        const t = uiTranslations[currentLanguage];
+        
+        // Menu
+        document.getElementById('lbl-state').innerText = t.state;
+        document.getElementById('menu-mem-title').innerText = t.memTitle;
+        document.getElementById('menu-mem-desc').innerText = t.memDesc;
+        document.getElementById('menu-train-title').innerText = t.trainTitle;
+        document.getElementById('menu-train-desc').innerText = t.trainDesc;
+        document.getElementById('menu-test-title').innerText = t.testTitle;
+        document.getElementById('menu-test-desc').innerText = t.testDesc;
+        document.getElementById('menu-review-title').innerText = t.revTitle;
+        document.getElementById('menu-review-desc').innerText = t.revDesc;
+        document.getElementById('menu-reset-title').innerText = t.resetTitle;
+
+        // Result & Footer
+        document.getElementById('res-title').innerText = t.resTitle;
+        document.getElementById('btn-home-res').innerText = "🏠 " + t.home;
+        
+        // If in quiz mode, update next button text
+        const nextBtn = document.getElementById('btn-next');
+        if (currentQuestions.length > 0 && currentIndex === currentQuestions.length - 1) {
+            nextBtn.innerText = t.finish;
+        } else {
+            nextBtn.innerText = t.next;
+        }
+    }
+
+    function getUIText(key) {
+        return uiTranslations[currentLanguage][key];
+    }
+
+    // --- NAVIGATION ---
     function goHome() {
         clearInterval(testTimer);
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -382,30 +476,19 @@
         localStorage.setItem('userState', userState);
     }
 
-    // NOVA FUNÇÃO DE IDIOMA
-    function setLanguage(lang) {
-        currentLanguage = lang;
-        
-        // Update Buttons UI
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`btn-${lang}`).classList.add('active');
-
-        // Re-render question if active
-        if(document.getElementById('quiz-view').classList.contains('active')) {
-            renderCurrentQuestion();
-        }
-    }
-
+    // --- MODES START ---
     function startMode(mode) {
         if(questionsData.length === 0) {
-            alert("Dados não carregados.");
+            alert(getUIText('alertNoData'));
             return;
         }
 
         currentMode = mode;
         userAnswers = {};
         currentIndex = 0;
-        document.getElementById('btn-next').innerText = 'Próxima ➡️';
+        
+        // Reset button text
+        document.getElementById('btn-next').innerText = getUIText('next');
         
         if (mode === 'memorization' || mode === 'training') {
             currentQuestions = questionsData.filter(q => q.category === 'GERMANY' || q.category === userState);
@@ -417,7 +500,7 @@
             let errorIds = Object.keys(stats).filter(id => stats[id].w > 0);
             
             if (errorIds.length === 0) {
-                alert("Nenhum erro registrado para revisar!");
+                alert(getUIText('alertNoErrors'));
                 return;
             }
             
@@ -447,7 +530,7 @@
         currentQuestions = [...general.slice(0, 30), ...state.slice(0, 3)];
     }
 
-    // --- QUIZ LOGIC ---
+    // --- QUIZ RENDERING ---
 
     function renderCurrentQuestion() {
         const q = currentQuestions[currentIndex];
@@ -455,6 +538,7 @@
         
         document.getElementById('progress-text').innerText = `Q: ${currentIndex + 1}/${currentQuestions.length}`;
         
+        // Image Logic
         const imgEl = document.getElementById('q-image');
         if (q.question.image) {
             imgEl.src = q.question.image;
@@ -464,27 +548,44 @@
             imgEl.style.display = 'none';
         }
 
+        // --- QUESTION TEXT LOGIC (APPEND) ---
         const textEl = document.getElementById('q-text');
-        textEl.innerText = getLocalizedText(q.question, lang);
+        let qHtml = `<div>${q.question.text}</div>`; // Always DE base
+        
+        if (lang === 'pt' && q.question.text_pt) {
+            qHtml += `<span class="sub-text">${q.question.text_pt}</span>`;
+        } else if (lang === 'en' && q.question.text_en) {
+            qHtml += `<span class="sub-text">${q.question.text_en}</span>`;
+        }
+        textEl.innerHTML = qHtml;
 
+        // --- OPTIONS LOGIC (APPEND) ---
         const optsContainer = document.getElementById('options-container');
         optsContainer.innerHTML = '';
 
-        q.options.forEach((opt, idx) => {
+        q.options.forEach((optDE, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             
-            let optText = opt;
-            if (lang === 'pt' && q.options_pt) optText = q.options_pt[idx];
-            if (lang === 'en' && q.options_en) optText = q.options_en[idx];
+            // Build Button Content
+            let btnHtml = `<div>${optDE}</div>`;
             
-            btn.innerText = optText;
+            if (lang === 'pt' && q.options_pt) {
+                btnHtml += `<div class="sub-text">${q.options_pt[idx]}</div>`;
+            } else if (lang === 'en' && q.options_en) {
+                btnHtml += `<div class="sub-text">${q.options_en[idx]}</div>`;
+            }
+            
+            btn.innerHTML = btnHtml;
 
+            // Mode Logic
             if (currentMode === 'memorization') {
                 if (idx === q.answerIndex) {
                     btn.classList.add('correct');
                 } else {
-                    btn.innerText = "------------------";
+                    // Hide text in memorization for wrong answers? 
+                    // User asked for "-------". 
+                    btn.innerHTML = `<div>------------------</div>`;
                     btn.disabled = true;
                     btn.style.opacity = "0.5";
                 }
@@ -508,18 +609,15 @@
         });
 
         const nextBtn = document.getElementById('btn-next');
+        const t = uiTranslations[currentLanguage];
         if (currentIndex === currentQuestions.length - 1) {
-            nextBtn.innerText = (currentMode === 'test') ? 'Finalizar Teste 🏁' : 'Finalizar';
+            nextBtn.innerText = t.finish;
         } else {
-            nextBtn.innerText = 'Próxima ➡️';
+            nextBtn.innerText = t.next;
         }
     }
 
-    function getLocalizedText(obj, lang) {
-        if (lang === 'pt' && obj.text_pt) return obj.text_pt;
-        if (lang === 'en' && obj.text_en) return obj.text_en;
-        return obj.text;
-    }
+    // --- HANDLERS ---
 
     function handleTrainingClick(btn, q, selectedIdx) {
         if (userAnswers[q._id] !== undefined) return;
@@ -557,7 +655,7 @@
         if (currentMode === 'test') {
             finishTest();
         } else {
-            alert("Sessão finalizada!");
+            alert(getUIText('alertSessionEnd'));
             goHome();
         }
     }
@@ -597,14 +695,15 @@
 
         const scoreEl = document.getElementById('final-score');
         const msgEl = document.getElementById('final-message');
+        const t = uiTranslations[currentLanguage];
 
         scoreEl.innerText = `${correctCount} / 33`;
         if (correctCount >= 17) {
             scoreEl.className = 'result-score pass';
-            msgEl.innerText = "Parabéns! Você passou no teste. (>= 17)";
+            msgEl.innerText = `${t.pass} (>= 17)`;
         } else {
             scoreEl.className = 'result-score fail';
-            msgEl.innerText = "Infelizmente você não passou. Tente novamente.";
+            msgEl.innerText = t.fail;
         }
     }
 
@@ -625,9 +724,9 @@
     }
 
     function resetStats() {
-        if(confirm("Tem certeza que deseja apagar estatísticas?")) {
+        if(confirm(getUIText('alertReset'))) {
             localStorage.removeItem(STATS_KEY);
-            alert("Estatísticas apagadas.");
+            alert("Reset done.");
         }
     }
 

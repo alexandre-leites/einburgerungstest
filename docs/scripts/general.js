@@ -60,11 +60,13 @@
       fail: "Nicht bestanden",
       correct: "Richtig",
       wrong: "Falsch",
+      skipped: "Übersprungen",
       accuracy: "Genauigkeit",
       noStatsYet: "Noch keine Statistiken. Beantworte ein paar Fragen im Training oder im Test.",
       sortBy: "Sortieren nach",
       mostWrong: "Meiste Fehler",
       mostCorrect: "Meiste Treffer",
+      mostSkipped: "Meist übersprungen",
       bestAccuracy: "Beste Quote",
       worstAccuracy: "Schlechteste Quote",
       attempts: "Versuche",
@@ -129,11 +131,13 @@
       fail: "Fail",
       correct: "Correct",
       wrong: "Wrong",
+      skipped: "Skipped",
       accuracy: "Accuracy",
       noStatsYet: "No stats yet. Answer a few questions in Training or Test.",
       sortBy: "Sort by",
       mostWrong: "Most wrong",
       mostCorrect: "Most correct",
+      mostSkipped: "Most skipped",
       bestAccuracy: "Best accuracy",
       worstAccuracy: "Worst accuracy",
       attempts: "Attempts",
@@ -198,11 +202,13 @@
       fail: "Reprovado",
       correct: "Acertos",
       wrong: "Erros",
+      skipped: "Puladas",
       accuracy: "Precisão",
       noStatsYet: "Sem estatísticas ainda. Responda algumas questões no Treino ou no Teste.",
       sortBy: "Ordenar por",
       mostWrong: "Mais erradas",
       mostCorrect: "Mais acertadas",
+      mostSkipped: "Mais puladas",
       bestAccuracy: "Melhor precisão",
       worstAccuracy: "Pior precisão",
       attempts: "Tentativas",
@@ -341,12 +347,24 @@
 
   function statsBump(questionId, isCorrect) {
     const all = statsReadAll();
-    const current = all[questionId] ?? { correct: 0, wrong: 0, lastAnsweredAt: null };
+    const current = all[questionId] ?? { correct: 0, wrong: 0, skipped: 0, lastAnsweredAt: null, lastSkippedAt: null };
     const updated = {
       ...current,
       correct: current.correct + (isCorrect ? 1 : 0),
       wrong: current.wrong + (isCorrect ? 0 : 1),
       lastAnsweredAt: new Date().toISOString(),
+    };
+    all[questionId] = updated;
+    writeJSON(key("statsById"), all);
+  }
+
+  function statsBumpSkip(questionId) {
+    const all = statsReadAll();
+    const current = all[questionId] ?? { correct: 0, wrong: 0, skipped: 0, lastAnsweredAt: null, lastSkippedAt: null };
+    const updated = {
+      ...current,
+      skipped: (current.skipped ?? 0) + 1,
+      lastSkippedAt: new Date().toISOString(),
     };
     all[questionId] = updated;
     writeJSON(key("statsById"), all);
@@ -370,13 +388,44 @@
     return normalizeWord(wordRaw).toLowerCase();
   }
 
+  function isMobileNav() {
+    return window.matchMedia("(max-width: 980px)").matches;
+  }
+
+  function syncSidebarForViewport() {
+    if (isMobileNav()) {
+      // entering mobile: remove desktop collapsed state and ensure overlay matches is-open
+      els.sidebar.classList.remove("is-collapsed");
+      const isOpen = els.sidebar.classList.contains("is-open");
+      els.overlay.hidden = !isOpen;
+      return;
+    }
+    // entering desktop: close mobile overlay state and keep sidebar expanded by default
+    els.sidebar.classList.remove("is-open");
+    els.overlay.hidden = true;
+  }
+
   function openSidebar() {
+    if (!isMobileNav()) return;
     els.sidebar.classList.add("is-open");
     els.overlay.hidden = false;
   }
 
   function closeSidebar() {
+    if (!isMobileNav()) return;
     els.sidebar.classList.remove("is-open");
+    els.overlay.hidden = true;
+  }
+
+  function toggleSidebar() {
+    if (isMobileNav()) {
+      const isOpen = els.sidebar.classList.contains("is-open");
+      if (isOpen) closeSidebar();
+      else openSidebar();
+      return;
+    }
+    // desktop: collapse/expand sidebar (no overlay)
+    els.sidebar.classList.toggle("is-collapsed");
     els.overlay.hidden = true;
   }
 
@@ -816,6 +865,7 @@
     setActiveNav("home");
     setTopbar(t("home"), "");
     setTimerVisible(false);
+    setFooterVisible(false);
     setProgress(0, 0);
 
     els.main.innerHTML = "";
@@ -864,6 +914,11 @@
     els.homeBtn.disabled = !!homeDisabled;
   }
 
+  function setFooterVisible(visible) {
+    if (!els.pageFooter) return;
+    els.pageFooter.hidden = !visible;
+  }
+
   function renderMemorization() {
     setActiveNav("mode/memorization");
     ensureSessionForMode("memorization");
@@ -874,6 +929,7 @@
 
     setTopbar(t("memorization"), `${q._id} • ${q.category}`);
     setTimerVisible(false);
+    setFooterVisible(true);
     setProgress(session.index + 1, session.orderIds.length);
 
     const showTranslation = state.lang !== "de";
@@ -910,6 +966,7 @@
 
     setTopbar(t("training"), `${q._id} • ${q.category}`);
     setTimerVisible(false);
+    setFooterVisible(true);
     setProgress(session.answeredCount ?? 0, "∞");
 
     const showTranslation = state.lang !== "de";
@@ -960,6 +1017,7 @@
 
     setTopbar(t("test"), `${state.selectedState} • ${q._id}`);
     setTimerVisible(true);
+    setFooterVisible(true);
 
     stopTestTicker();
     updateTestTimerUI(session);
@@ -988,6 +1046,8 @@
         const updated = loadSession("test");
         if (!updated || updated.finished) return;
         updated.answers[qid] = idx;
+        if (!updated.skipped) updated.skipped = {};
+        updated.skipped[qid] = false;
         saveSession("test", updated);
         renderTest();
       },
@@ -1042,7 +1102,10 @@
       s.questionIds.forEach((qid) => {
         const q = getQuestionById(qid);
         const chosen = s.answers?.[qid];
-        if (typeof chosen !== "number") return;
+        if (typeof chosen !== "number") {
+          statsBumpSkip(qid);
+          return;
+        }
         const isCorrect = q && chosen === q.answerIndex;
         statsBump(qid, !!isCorrect);
       });
@@ -1062,6 +1125,7 @@
     setActiveNav("mode/test");
     const s = loadSession("test");
     setTimerVisible(false);
+    setFooterVisible(true);
     els.main.innerHTML = "";
 
     const title = document.createElement("div");
@@ -1115,6 +1179,7 @@
         category: q.category,
         correct: stat.correct ?? 0,
         wrong: stat.wrong ?? 0,
+        skipped: stat.skipped ?? 0,
         attempts: total,
         accuracy: acc ?? 0,
       });
@@ -1126,6 +1191,7 @@
     setActiveNav("mode/review");
     setTopbar(t("review"), "");
     setTimerVisible(false);
+    setFooterVisible(true);
     setProgress(0, 0);
 
     const rows = getStatsRows();
@@ -1197,6 +1263,7 @@
     setActiveNav("stats");
     setTopbar(t("statistics"), "");
     setTimerVisible(false);
+    setFooterVisible(true);
     setProgress(0, 0);
 
     const rows = getStatsRows();
@@ -1211,6 +1278,7 @@
     const sort = readJSON(key("stats.sort"), "mostWrong");
     const sortRows = (which) => {
       if (which === "mostCorrect") return rows.sort((a, b) => b.correct - a.correct);
+      if (which === "mostSkipped") return rows.sort((a, b) => b.skipped - a.skipped);
       if (which === "bestAccuracy") return rows.sort((a, b) => b.accuracy - a.accuracy);
       if (which === "worstAccuracy") return rows.sort((a, b) => a.accuracy - b.accuracy);
       return rows.sort((a, b) => b.wrong - a.wrong);
@@ -1231,6 +1299,7 @@
           <select class="field__control" id="${sortSelectId}">
             <option value="mostWrong">${t("mostWrong")}</option>
             <option value="mostCorrect">${t("mostCorrect")}</option>
+            <option value="mostSkipped">${t("mostSkipped")}</option>
             <option value="bestAccuracy">${t("bestAccuracy")}</option>
             <option value="worstAccuracy">${t("worstAccuracy")}</option>
           </select>
@@ -1247,6 +1316,7 @@
           <th>${t("attempts")}</th>
           <th>${t("correct")}</th>
           <th>${t("wrong")}</th>
+          <th>${t("skipped")}</th>
           <th>${t("accuracy")}</th>
         </tr>
       </thead>
@@ -1260,6 +1330,7 @@
         <td class="mono">${r.attempts}</td>
         <td class="mono">${r.correct}</td>
         <td class="mono">${r.wrong}</td>
+        <td class="mono">${r.skipped}</td>
         <td class="mono">${Math.round(r.accuracy * 100)}%</td>
       `;
       tbody.appendChild(tr);
@@ -1281,6 +1352,7 @@
     setActiveNav("dictionary");
     setTopbar(t("myDictionary"), "");
     setTimerVisible(false);
+    setFooterVisible(true);
     setProgress(0, 0);
 
     const all = myDictReadAll();
@@ -1548,12 +1620,18 @@
   }
 
   function initEvents() {
-    els.sidebarOpenBtn.addEventListener("click", openSidebar);
+    els.sidebarOpenBtn.addEventListener("click", toggleSidebar);
     els.sidebarCloseBtn.addEventListener("click", closeSidebar);
     els.overlay.addEventListener("click", closeSidebar);
 
     document.querySelectorAll(".nav__item[data-route]").forEach((b) => {
-      b.addEventListener("click", () => setRoute(b.getAttribute("data-route")));
+      b.addEventListener("click", () => {
+        const route = b.getAttribute("data-route");
+        // Always close, even if route is already active (hashchange won't fire)
+        closeSidebar();
+        if (route === state.route) return;
+        setRoute(route);
+      });
     });
 
     els.languageSelect.addEventListener("change", () => {
@@ -1638,6 +1716,9 @@
       }
       if (r === "mode/train") {
         const s = ensureSessionForMode("train");
+        if (s.currentQuestionId && !s.currentAttempt) {
+          statsBumpSkip(s.currentQuestionId);
+        }
         if (!Array.isArray(s.history)) s.history = [];
         if (s.currentQuestionId) s.history.push(s.currentQuestionId);
         const nextId = pickNextTrainingQuestionId(s, Date.now());
@@ -1649,6 +1730,15 @@
       }
       if (r === "mode/test") {
         const s = loadSession("test");
+        if (s) {
+          const currentQid = s.questionIds?.[s.index];
+          const hasAnswer = typeof s.answers?.[currentQid] === "number";
+          if (!s.skipped) s.skipped = {};
+          if (currentQid && !hasAnswer && !s.skipped[currentQid]) {
+            statsBumpSkip(currentQid);
+            s.skipped[currentQid] = true;
+          }
+        }
         if (s && s.index < s.questionIds.length - 1) {
           s.index += 1;
           saveSession("test", s);
@@ -1680,6 +1770,12 @@
     });
 
     window.addEventListener("hashchange", onRouteChange);
+    // keep sidebar state consistent when switching between mobile/desktop breakpoints
+    const mq = window.matchMedia("(max-width: 980px)");
+    const onMqChange = () => syncSidebarForViewport();
+    if (typeof mq.addEventListener === "function") mq.addEventListener("change", onMqChange);
+    else if (typeof mq.addListener === "function") mq.addListener(onMqChange);
+    window.addEventListener("resize", onMqChange);
     window.addEventListener("keydown", (ev) => {
       if (ev.key === "Escape") {
         closeSidebar();
@@ -1730,6 +1826,7 @@
       backBtn: document.getElementById("backBtn"),
       homeBtn: document.getElementById("homeBtn"),
       nextBtn: document.getElementById("nextBtn"),
+      pageFooter: document.getElementById("pageFooter"),
       toast: document.getElementById("toast"),
       navHome: document.getElementById("navHome"),
       navSectionModes: document.getElementById("navSectionModes"),
@@ -1767,6 +1864,7 @@
     // Ensure modals are not visible on load (helps even with cached CSS)
     closeModal("wordModal");
     closeModal("confirmModal");
+    syncSidebarForViewport();
     // migrate personal dictionary keys to canonical lowercase (case-insensitive)
     try {
       const all = myDictReadAll();

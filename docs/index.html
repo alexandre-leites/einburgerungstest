@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#111827" />
     <title>Einbürgerungstest – Self-learning</title>
-    <link rel="stylesheet" href="styles/general.css?v=2026-01-20-1" />
+    <script>
+      (function () {
+        var v = Date.now();
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "styles/general.css?v=" + v;
+        document.head.appendChild(link);
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -127,16 +135,13 @@
             <div class="card__title" id="wordBaseTitle">Base dictionary</div>
             <div class="stack" id="wordBaseContent"></div>
           </div>
-          <div class="card">
-            <div class="card__title" id="wordPersonalTitle">My note</div>
-            <textarea class="textarea" id="wordNoteInput" rows="4" placeholder=""></textarea>
-            <div class="row row--right">
-              <button class="btn btn--ghost" type="button" id="removeWordBtn">Remove</button>
-              <button class="btn btn--primary" type="button" id="saveWordBtn">Save</button>
-            </div>
-          </div>
         </div>
       </div>
+    </div>
+
+    <div class="context-menu" id="wordContextMenu" hidden role="menu" aria-label="Word actions">
+      <button class="context-menu__item" type="button" id="wordCtxViewBtn" role="menuitem">View</button>
+      <button class="context-menu__item" type="button" id="wordCtxToggleBtn" role="menuitem">Add</button>
     </div>
 
     <div class="modal" id="confirmModal" hidden role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
@@ -207,6 +212,13 @@
 
     <div class="toast" id="toast" hidden></div>
 
-    <script src="scripts/general.js?v=2026-01-20-1"></script>
+    <script>
+      (function () {
+        var v = Date.now();
+        var s = document.createElement("script");
+        s.src = "scripts/general.js?v=" + v;
+        document.body.appendChild(s);
+      })();
+    </script>
   </body>
 </html>

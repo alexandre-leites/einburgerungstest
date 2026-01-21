@@ -87,9 +87,11 @@
       openInTraining: "Im Training öffnen",
       word: "Wort",
       baseDictionary: "Basis-Wörterbuch",
-      myNote: "Meine Notiz",
-      save: "Speichern",
-      remove: "Entfernen",
+      viewDefinition: "Definition & Beispiele",
+      addToMyDictionary: "Zum Wörterbuch hinzufügen",
+      removeFromMyDictionary: "Aus Wörterbuch entfernen",
+      addedToMyDictionary: "Zum Wörterbuch hinzugefügt.",
+      removedFromMyDictionary: "Aus Wörterbuch entfernt.",
       notInBaseDictionary: "Nicht im Basis-Wörterbuch gefunden.",
       noDefinition: "Keine Definition verfügbar (nur Beispiele).",
       emptyDictionary: "Noch keine Wörter gespeichert. Klicke auf ein Wort in einer Frage/Antwort.",
@@ -172,9 +174,11 @@
       openInTraining: "Open in training",
       word: "Word",
       baseDictionary: "Base dictionary",
-      myNote: "My note",
-      save: "Save",
-      remove: "Remove",
+      viewDefinition: "Definition & examples",
+      addToMyDictionary: "Add to my dictionary",
+      removeFromMyDictionary: "Remove from my dictionary",
+      addedToMyDictionary: "Added to your dictionary.",
+      removedFromMyDictionary: "Removed from your dictionary.",
       notInBaseDictionary: "Not found in base dictionary.",
       noDefinition: "No definition available (examples only).",
       emptyDictionary: "No saved words yet. Click a word in any question/answer.",
@@ -257,9 +261,11 @@
       openInTraining: "Abrir no treino",
       word: "Palavra",
       baseDictionary: "Dicionário base",
-      myNote: "Minha nota",
-      save: "Salvar",
-      remove: "Remover",
+      viewDefinition: "Definição e exemplos",
+      addToMyDictionary: "Adicionar ao meu dicionário",
+      removeFromMyDictionary: "Remover do meu dicionário",
+      addedToMyDictionary: "Adicionado ao seu dicionário.",
+      removedFromMyDictionary: "Removido do seu dicionário.",
       notInBaseDictionary: "Não encontrada no dicionário base.",
       noDefinition: "Sem definição disponível (apenas exemplos).",
       emptyDictionary: "Nenhuma palavra salva ainda. Clique em uma palavra de qualquer pergunta/resposta.",
@@ -283,6 +289,9 @@
     activeSession: null, // {mode, orderIds, index, ...}
     testTicker: null,
     currentWord: null,
+    currentWordDisplay: null,
+    ignoreNextWordClick: false,
+    wordLongPressTimer: null,
     prevRoute: null,
     memOrderedShouldReset: false,
   };
@@ -427,6 +436,27 @@
 
   function myDictWriteAll(all) {
     writeJSON(key("myDictionary"), all);
+  }
+
+  function myDictHas(wordKey) {
+    const all = myDictReadAll();
+    return !!all[wordKey];
+  }
+
+  function myDictAdd(wordKey, display) {
+    const all = myDictReadAll();
+    all[wordKey] = {
+      word: display ?? wordKey,
+      addedAt: all[wordKey]?.addedAt ?? new Date().toISOString(),
+    };
+    myDictWriteAll(all);
+  }
+
+  function myDictRemove(wordKey) {
+    const all = myDictReadAll();
+    if (!all[wordKey]) return;
+    delete all[wordKey];
+    myDictWriteAll(all);
   }
 
   function canonicalWordKey(wordRaw) {
@@ -1550,7 +1580,7 @@
       <thead>
         <tr>
           <th>${t("word")}</th>
-          <th>${t("myNote")}</th>
+          <th class="mono">Added</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -1558,10 +1588,11 @@
     const tbody = table.querySelector("tbody");
     words.forEach((w) => {
       const display = all[w]?.word ?? w;
+      const addedAt = all[w]?.addedAt ?? "";
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><button class="btn btn--ghost" type="button" data-word="${w}">${display}</button></td>
-        <td class="muted">${(all[w]?.note ?? "").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</td>
+        <td class="mono muted">${String(addedAt).slice(0, 19).replace("T", " ")}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -1587,7 +1618,18 @@
         const raw = card.querySelector("#importTextarea").value;
         const parsed = JSON.parse(raw);
         if (!parsed || typeof parsed !== "object") throw new Error("bad");
-        myDictWriteAll(parsed);
+        // accept both old schema (with note) and new schema
+        const migrated = {};
+        Object.keys(parsed).forEach((k) => {
+          const canon = canonicalWordKey(k);
+          if (!canon) return;
+          const v = parsed[k] ?? {};
+          migrated[canon] = {
+            word: v.word ?? k,
+            addedAt: v.addedAt ?? v.updatedAt ?? v.createdAt ?? new Date().toISOString(),
+          };
+        });
+        myDictWriteAll(migrated);
         toast(t("importDone"));
         renderDictionary();
       } catch (err) {
@@ -1602,22 +1644,62 @@
     setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
   }
 
+  function isTouchPrimary() {
+    // Prefer pointer/hover media queries over maxTouchPoints (which can be >0 on some desktops)
+    try {
+      const coarse = window.matchMedia("(pointer: coarse)").matches;
+      const noHover = window.matchMedia("(hover: none)").matches;
+      if (coarse && noHover) return true;
+    } catch (err) {
+      // ignore
+    }
+    return (navigator.maxTouchPoints ?? 0) > 0;
+  }
+
+  function closeWordContextMenu() {
+    if (!els.wordContextMenu) return;
+    els.wordContextMenu.hidden = true;
+  }
+
+  function positionContextMenu(x, y) {
+    const menu = els.wordContextMenu;
+    if (!menu) return;
+    menu.style.left = "0px";
+    menu.style.top = "0px";
+    menu.hidden = false;
+    const rect = menu.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width - 8;
+    const maxY = window.innerHeight - rect.height - 8;
+    const px = Math.max(8, Math.min(x, maxX));
+    const py = Math.max(8, Math.min(y, maxY));
+    menu.style.left = `${px}px`;
+    menu.style.top = `${py}px`;
+  }
+
+  function openWordContextMenu(wordRaw, point) {
+    const display = normalizeWord(wordRaw);
+    const canon = canonicalWordKey(wordRaw);
+    if (!display || !canon) return;
+    state.currentWord = canon;
+    state.currentWordDisplay = display;
+
+    setText(els.wordCtxViewBtn, t("viewDefinition"));
+    const saved = myDictHas(canon);
+    setText(els.wordCtxToggleBtn, saved ? t("removeFromMyDictionary") : t("addToMyDictionary"));
+
+    positionContextMenu(point.x, point.y);
+  }
+
   function openWordModal(wordRaw) {
     const word = normalizeWord(wordRaw);
     const canon = canonicalWordKey(wordRaw);
     if (!word || !canon) return;
     state.currentWord = canon;
+    state.currentWordDisplay = word;
 
     setText(els.wordModalTitle, `${t("word")}: ${word}`);
     setText(els.wordModalSubtitle, state.lang === "de" ? "DE → EN/PT" : `${state.lang.toUpperCase()} (UI)`);
     setText(els.wordBaseTitle, t("baseDictionary"));
-    setText(els.wordPersonalTitle, t("myNote"));
-    els.wordNoteInput.placeholder =
-      state.lang === "pt"
-        ? "Ex.: lembrete pessoal, mnemônico, associação…"
-        : state.lang === "en"
-          ? "E.g., your mnemonic / note…"
-          : "z.B. Merkhilfe / Notiz…";
 
     const base = findBaseDictionaryEntry(word);
     els.wordBaseContent.innerHTML = "";
@@ -1668,39 +1750,7 @@
       els.wordBaseContent.appendChild(block("pt", "PT (Brasil)"));
     }
 
-    const myAll = myDictReadAll();
-    const existing = myAll[canon] ?? null;
-    els.wordNoteInput.value = existing?.note ?? "";
-    els.removeWordBtn.disabled = !existing;
-
     openModal("wordModal");
-    els.wordNoteInput.focus();
-  }
-
-  function saveCurrentWordNote() {
-    const wordKey = state.currentWord;
-    if (!wordKey) return;
-    const all = myDictReadAll();
-    all[wordKey] = {
-      word: all[wordKey]?.word ?? wordKey,
-      note: els.wordNoteInput.value ?? "",
-      updatedAt: new Date().toISOString(),
-    };
-    myDictWriteAll(all);
-    toast(t("save"));
-    els.removeWordBtn.disabled = false;
-  }
-
-  function removeCurrentWord() {
-    const wordKey = state.currentWord;
-    if (!wordKey) return;
-    const all = myDictReadAll();
-    if (!all[wordKey]) return;
-    delete all[wordKey];
-    myDictWriteAll(all);
-    els.wordNoteInput.value = "";
-    els.removeWordBtn.disabled = true;
-    toast(t("remove"));
   }
 
   function onRouteChange() {
@@ -1752,9 +1802,6 @@
     setText(els.homeBtn, t("home"));
     setText(els.nextBtn, t("next"));
     setText(els.wordBaseTitle, t("baseDictionary"));
-    setText(els.wordPersonalTitle, t("myNote"));
-    setText(els.saveWordBtn, t("save"));
-    setText(els.removeWordBtn, t("remove"));
     setText(els.confirmTitle, t("confirm"));
     setText(els.confirmCancelBtn, t("cancel"));
     setText(els.confirmOkBtn, t("ok"));
@@ -1974,8 +2021,24 @@
       if (modalId) closeModal(modalId);
     });
 
-    els.saveWordBtn.addEventListener("click", saveCurrentWordNote);
-    els.removeWordBtn.addEventListener("click", removeCurrentWord);
+    els.wordCtxViewBtn.addEventListener("click", () => {
+      closeWordContextMenu();
+      openWordModal(state.currentWordDisplay ?? state.currentWord);
+    });
+    els.wordCtxToggleBtn.addEventListener("click", () => {
+      const key = state.currentWord;
+      const display = state.currentWordDisplay ?? key;
+      if (!key) return;
+      if (myDictHas(key)) {
+        myDictRemove(key);
+        toast(t("removedFromMyDictionary"));
+      } else {
+        myDictAdd(key, display);
+        toast(t("addedToMyDictionary"));
+      }
+      closeWordContextMenu();
+      if (state.route === "dictionary") renderDictionary();
+    });
 
     document.addEventListener("click", (ev) => {
       const target = ev.target;
@@ -1983,10 +2046,67 @@
       const w = target.closest?.(".word");
       if (w && w instanceof HTMLElement) {
         ev.preventDefault();
-        ev.stopPropagation();
-        openWordModal(w.dataset.word);
+        ev.stopImmediatePropagation();
+        if (state.ignoreNextWordClick) {
+          state.ignoreNextWordClick = false;
+          return;
+        }
+        // Use layout breakpoint instead of touch heuristics:
+        // - mobile layout: tap opens definition
+        // - desktop layout: click opens context menu
+        if (isMobileNav()) {
+          openWordModal(w.dataset.word);
+          return;
+        }
+        const r = w.getBoundingClientRect();
+        openWordContextMenu(w.dataset.word, { x: r.left + r.width / 2, y: r.bottom + 8 });
       }
     });
+
+    document.addEventListener("click", (ev) => {
+      const target = ev.target;
+      if (!(target instanceof HTMLElement)) return;
+      // Don't close the menu on the same click that targets a word (desktop opens from that click)
+      if (target.closest?.(".word")) return;
+      if (target.closest?.("#wordContextMenu")) return;
+      closeWordContextMenu();
+    });
+
+    document.addEventListener(
+      "touchstart",
+      (ev) => {
+        const target = ev.target;
+        if (!(target instanceof HTMLElement)) return;
+        const w = target.closest?.(".word");
+        if (!(w instanceof HTMLElement)) return;
+        if (!isTouchPrimary()) return;
+        if (state.wordLongPressTimer) window.clearTimeout(state.wordLongPressTimer);
+        const touch = ev.touches?.[0];
+        if (!touch) return;
+        state.wordLongPressTimer = window.setTimeout(() => {
+          state.ignoreNextWordClick = true;
+          openWordContextMenu(w.dataset.word, { x: touch.clientX, y: touch.clientY });
+        }, 450);
+      },
+      { passive: true },
+    );
+
+    document.addEventListener(
+      "touchend",
+      () => {
+        if (state.wordLongPressTimer) window.clearTimeout(state.wordLongPressTimer);
+        state.wordLongPressTimer = null;
+      },
+      { passive: true },
+    );
+    document.addEventListener(
+      "touchcancel",
+      () => {
+        if (state.wordLongPressTimer) window.clearTimeout(state.wordLongPressTimer);
+        state.wordLongPressTimer = null;
+      },
+      { passive: true },
+    );
 
     window.addEventListener("hashchange", onRouteChange);
     // keep sidebar state consistent when switching between mobile/desktop breakpoints
@@ -2000,6 +2120,7 @@
         closeSidebar();
         closeModal("wordModal");
         closeModal("confirmModal");
+        closeWordContextMenu();
       }
     });
   }
@@ -2065,10 +2186,9 @@
       wordModalSubtitle: document.getElementById("wordModalSubtitle"),
       wordBaseTitle: document.getElementById("wordBaseTitle"),
       wordBaseContent: document.getElementById("wordBaseContent"),
-      wordPersonalTitle: document.getElementById("wordPersonalTitle"),
-      wordNoteInput: document.getElementById("wordNoteInput"),
-      saveWordBtn: document.getElementById("saveWordBtn"),
-      removeWordBtn: document.getElementById("removeWordBtn"),
+      wordContextMenu: document.getElementById("wordContextMenu"),
+      wordCtxViewBtn: document.getElementById("wordCtxViewBtn"),
+      wordCtxToggleBtn: document.getElementById("wordCtxToggleBtn"),
       confirmTitle: document.getElementById("confirmTitle"),
       confirmText: document.getElementById("confirmText"),
       confirmCancelBtn: document.getElementById("confirmCancelBtn"),
@@ -2102,6 +2222,7 @@
     // Ensure modals are not visible on load (helps even with cached CSS)
     closeModal("wordModal");
     closeModal("confirmModal");
+    closeWordContextMenu();
     syncSidebarForViewport();
     // migrate personal dictionary keys to canonical lowercase (case-insensitive)
     try {
@@ -2114,8 +2235,7 @@
         const v = all[k] ?? {};
         migrated[canon] = {
           word: v.word ?? k,
-          note: v.note ?? "",
-          updatedAt: v.updatedAt ?? null,
+          addedAt: v.addedAt ?? v.updatedAt ?? v.createdAt ?? new Date().toISOString(),
         };
         if (canon !== k) changed = true;
       });

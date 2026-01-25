@@ -31,7 +31,11 @@ The application runs entirely in your browser with no backend required - just op
 
 ## 🚀 Getting Started
 
-### Running the Application
+### Live Demo
+
+Try the application online: **[https://alexandre-leites.github.io/einburgerungstest/#/home](https://alexandre-leites.github.io/einburgerungstest/#/home)**
+
+### Running Locally
 
 **On macOS/Linux:**
 ```bash

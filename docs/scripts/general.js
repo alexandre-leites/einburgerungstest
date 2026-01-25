@@ -2903,6 +2903,27 @@
         closeModal("confirmModal");
         closeWordContextMenu();
       }
+      
+      // Arrow key navigation for memorization mode (desktop only)
+      if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
+        const r = state.route;
+        if (r === "mode/memorization/random" || r === "mode/memorization/ordered") {
+          // Don't interfere if user is typing in an input field
+          if (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA" || ev.target.isContentEditable) {
+            return;
+          }
+          
+          ev.preventDefault();
+          
+          if (ev.key === "ArrowLeft") {
+            // Trigger back button
+            els.backBtn.click();
+          } else if (ev.key === "ArrowRight") {
+            // Trigger next button
+            els.nextBtn.click();
+          }
+        }
+      }
     });
   }
 

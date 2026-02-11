@@ -12,6 +12,15 @@
     trainDefaultCredits: 10,
     trainCooldownMinMs: 3 * 60 * 1000,
     trainCooldownMaxMs: 10 * 60 * 1000,
+    focusTopicAll: "ALL",
+    subCategoryKeys: [
+      "FUNDAMENTAL_RIGHTS",
+      "POLITICAL_SYSTEM",
+      "STATE_ADMIN",
+      "HISTORY",
+      "SOCIETY_WELFARE",
+      "EUROPE",
+    ],
   };
 
   const UI = {
@@ -33,6 +42,21 @@
       settings: "Einstellungen",
       language: "Sprache",
       stateForTest: "Bundesland (für Test)",
+      focusTopic: "Schwerpunktthema",
+      focusTopicAll: "Alle",
+      focusFundamentalRights: "Grundrechte & Verfassung",
+      focusPoliticalSystem: "Politisches System",
+      focusStateAdmin: "Staat & Verwaltung",
+      focusHistory: "Geschichte",
+      focusSocietyWelfare: "Gesellschaft & Soziales",
+      focusEurope: "Europa",
+      focusShortAll: "Alle",
+      focusShortFundamentalRights: "Grundrechte",
+      focusShortPoliticalSystem: "Politik",
+      focusShortStateAdmin: "Staat",
+      focusShortHistory: "Geschichte",
+      focusShortSocietyWelfare: "Gesellschaft",
+      focusShortEurope: "Europa",
       resetData: "Daten zurücksetzen",
       resetDataTitle: "Daten zurücksetzen",
       resetDataSubtitle: "Wähle aus, was gelöscht werden soll.",
@@ -157,6 +181,21 @@
       settings: "Settings",
       language: "Language",
       stateForTest: "State (for test)",
+      focusTopic: "Focus topic",
+      focusTopicAll: "All",
+      focusFundamentalRights: "Fundamental Rights & Constitution",
+      focusPoliticalSystem: "Political System",
+      focusStateAdmin: "State & Administration",
+      focusHistory: "History",
+      focusSocietyWelfare: "Society & Welfare",
+      focusEurope: "Europe",
+      focusShortAll: "All",
+      focusShortFundamentalRights: "Rights",
+      focusShortPoliticalSystem: "Politics",
+      focusShortStateAdmin: "State",
+      focusShortHistory: "History",
+      focusShortSocietyWelfare: "Society",
+      focusShortEurope: "Europe",
       resetData: "Reset data",
       resetDataTitle: "Reset data",
       resetDataSubtitle: "Choose what you want to delete.",
@@ -280,6 +319,21 @@
       settings: "Configurações",
       language: "Idioma",
       stateForTest: "Estado (para teste)",
+      focusTopic: "Tema de foco",
+      focusTopicAll: "Todos",
+      focusFundamentalRights: "Direitos fundamentais e constituição",
+      focusPoliticalSystem: "Sistema político",
+      focusStateAdmin: "Estado e administração",
+      focusHistory: "História",
+      focusSocietyWelfare: "Sociedade e bem-estar",
+      focusEurope: "Europa",
+      focusShortAll: "Todos",
+      focusShortFundamentalRights: "Direitos",
+      focusShortPoliticalSystem: "Política",
+      focusShortStateAdmin: "Estado",
+      focusShortHistory: "História",
+      focusShortSocietyWelfare: "Sociedade",
+      focusShortEurope: "Europa",
       resetData: "Resetar dados",
       resetDataTitle: "Resetar dados",
       resetDataSubtitle: "Selecione o que você quer deletar.",
@@ -395,6 +449,7 @@
     baseDictionaryIndex: new Map(), // canonical form -> lemma
     lang: APP.defaultLang,
     selectedState: APP.defaultState,
+    selectedFocusTopic: APP.focusTopicAll,
     route: "home",
     activeSession: null, // {mode, orderIds, index, ...}
     testTicker: null,
@@ -429,6 +484,31 @@
   function t(id) {
     const dict = UI[state.lang] ?? UI.de;
     return dict[id] ?? UI.de[id] ?? id;
+  }
+
+  const FOCUS_TOPIC_LABEL_KEYS = {
+    [APP.focusTopicAll]: "focusTopicAll",
+    FUNDAMENTAL_RIGHTS: "focusFundamentalRights",
+    POLITICAL_SYSTEM: "focusPoliticalSystem",
+    STATE_ADMIN: "focusStateAdmin",
+    HISTORY: "focusHistory",
+    SOCIETY_WELFARE: "focusSocietyWelfare",
+    EUROPE: "focusEurope",
+  };
+
+  function getSubCategoryLabel(subCategoryKey) {
+    if (!subCategoryKey) return "";
+    return t(FOCUS_TOPIC_LABEL_KEYS[subCategoryKey] ?? subCategoryKey);
+  }
+
+  function getQuestionMetaLine(q, prefix) {
+    const parts = [];
+    if (prefix) parts.push(prefix);
+    parts.push(q._id);
+    parts.push(q.category);
+    const subLabel = q.sub_category ? getSubCategoryLabel(q.sub_category) : "";
+    if (subLabel) parts.push(subLabel);
+    return parts.join(" • ");
   }
 
   function setText(el, text) {
@@ -690,16 +770,38 @@
     }
   }
 
-  function pickQuestionsForTest() {
+  function getGermanyPool() {
     const germany = state.questions.filter((q) => q.category === "GERMANY");
+    if (state.selectedFocusTopic === APP.focusTopicAll) return germany;
+    return germany.filter((q) => q.sub_category === state.selectedFocusTopic);
+  }
+
+  function pickQuestionsForTest() {
     const stateQs = state.questions.filter((q) => q.category === state.selectedState);
-    const germanyPick = shuffle([...germany]).slice(0, APP.testGermanyCount);
     const statePick = shuffle([...stateQs]).slice(0, APP.testStateCount);
-    return [...germanyPick, ...statePick];
+    const germanyByCategory = new Map();
+    for (const q of state.questions) {
+      if (q.category !== "GERMANY" || !q.sub_category) continue;
+      if (!germanyByCategory.has(q.sub_category)) germanyByCategory.set(q.sub_category, []);
+      germanyByCategory.get(q.sub_category).push(q);
+    }
+    const categories = APP.subCategoryKeys.filter((k) => germanyByCategory.has(k));
+    const perCategory = Math.floor(APP.testGermanyCount / categories.length);
+    let remainder = APP.testGermanyCount - perCategory * categories.length;
+    const germanyPick = [];
+    for (const cat of categories) {
+      let n = perCategory + (remainder > 0 ? 1 : 0);
+      if (remainder > 0) remainder -= 1;
+      const pool = shuffle([...germanyByCategory.get(cat)]);
+      for (let i = 0; i < n && i < pool.length; i++) germanyPick.push(pool[i]);
+    }
+    return [...shuffle(germanyPick), ...statePick];
   }
 
   function getPracticeQuestions() {
-    return state.questions.filter((q) => q.category === "GERMANY" || q.category === state.selectedState);
+    const germanyPool = getGermanyPool();
+    const stateQs = state.questions.filter((q) => q.category === state.selectedState);
+    return [...germanyPool, ...stateQs];
   }
 
   function getPracticeQuestionIds() {
@@ -717,7 +819,9 @@
   }
 
   function getMemorizationQuestions() {
-    return state.questions.filter((q) => q.category === "GERMANY" || q.category === state.selectedState);
+    const germanyPool = getGermanyPool();
+    const stateQs = state.questions.filter((q) => q.category === state.selectedState);
+    return [...germanyPool, ...stateQs];
   }
 
   function getMemorizationQuestionIds() {
@@ -996,7 +1100,7 @@
 
     const idLine = document.createElement("div");
     idLine.className = "question__id";
-    setText(idLine, `${t("question")} • ${question._id} • ${question.category}`);
+    setText(idLine, getQuestionMetaLine(question).replace(/^/, `${t("question")} • `));
 
     const textLine = document.createElement("div");
     textLine.className = "question__text";
@@ -1224,7 +1328,7 @@
     if (!q) return;
 
     const label = orderMode === "ordered" ? t("memorizationOrdered") : t("memorizationRandom");
-    setTopbar(`${t("memorization")} • ${label}`, `${q._id} • ${q.category}`);
+    setTopbar(`${t("memorization")} • ${label}`, getQuestionMetaLine(q));
     setTimerVisible(false);
     setFooterVisible(true);
     setProgress(session.index + 1, session.orderIds.length);
@@ -1307,7 +1411,7 @@
     const q = getQuestionById(qid);
     if (!q) return;
 
-    setTopbar(t("training"), `${q._id} • ${q.category}`);
+    setTopbar(t("training"), getQuestionMetaLine(q));
     setTimerVisible(false);
     setFooterVisible(true);
     setProgress(session.answeredCount ?? 0, "∞");
@@ -1360,7 +1464,7 @@
     const q = getQuestionById(qid);
     if (!q) return;
 
-    setTopbar(t("test"), `${state.selectedState} • ${q._id}`);
+    setTopbar(t("test"), getQuestionMetaLine(q, state.selectedState));
     setTimerVisible(true);
     setFooterVisible(true);
 
@@ -2569,6 +2673,8 @@
     setText(els.navSectionSettings, t("settings"));
     setText(els.languageLabel, t("language"));
     setText(els.stateLabel, t("stateForTest"));
+    setText(els.focusTopicLabel, t("focusTopic"));
+    setText(els.resetFocusTopicLabel, t("focusTopic"));
     setText(els.resetBtn, t("resetData"));
     setText(els.timerLabel, t("timer"));
     setText(els.progressLabel, t("progress"));
@@ -2591,8 +2697,24 @@
     setText(els.resetDataCancelBtn, t("cancel"));
     setText(els.resetDataOkBtn, t("ok"));
 
+    initFocusTopicSelect();
     document.documentElement.lang = state.lang === "pt" ? "pt-BR" : state.lang;
   }
+
+  const FOCUS_TOPIC_KEYS = [
+    APP.focusTopicAll,
+    ...APP.subCategoryKeys,
+  ];
+
+  const FOCUS_TOPIC_SHORT_LABEL_KEYS = {
+    [APP.focusTopicAll]: "focusShortAll",
+    FUNDAMENTAL_RIGHTS: "focusShortFundamentalRights",
+    POLITICAL_SYSTEM: "focusShortPoliticalSystem",
+    STATE_ADMIN: "focusShortStateAdmin",
+    HISTORY: "focusShortHistory",
+    SOCIETY_WELFARE: "focusShortSocietyWelfare",
+    EUROPE: "focusShortEurope",
+  };
 
   function initStatesSelect() {
     const states = [...new Set(state.questions.map((q) => q.category))]
@@ -2607,6 +2729,19 @@
     });
     if (!states.includes(state.selectedState)) state.selectedState = states[0] ?? APP.defaultState;
     els.stateSelect.value = state.selectedState;
+  }
+
+  function initFocusTopicSelect() {
+    els.focusTopicSelect.innerHTML = "";
+    FOCUS_TOPIC_KEYS.forEach((value) => {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = t(FOCUS_TOPIC_SHORT_LABEL_KEYS[value] ?? value);
+      opt.title = t(FOCUS_TOPIC_LABEL_KEYS[value] ?? value);
+      els.focusTopicSelect.appendChild(opt);
+    });
+    if (!FOCUS_TOPIC_KEYS.includes(state.selectedFocusTopic)) state.selectedFocusTopic = APP.focusTopicAll;
+    els.focusTopicSelect.value = state.selectedFocusTopic;
   }
 
   function initEvents() {
@@ -2641,9 +2776,7 @@
       onRouteChange();
     });
 
-    els.stateSelect.addEventListener("change", () => {
-      state.selectedState = els.stateSelect.value;
-      writeJSON(key("selectedState"), state.selectedState);
+    function clearSessionsAndRefresh() {
       clearSession("test");
       clearSession("memorization");
       clearSession("memorization.random");
@@ -2656,16 +2789,28 @@
       if (state.route === "mode/memorization/random" || state.route === "mode/memorization/ordered") {
         onRouteChange();
       }
+    }
+
+    els.stateSelect.addEventListener("change", () => {
+      state.selectedState = els.stateSelect.value;
+      writeJSON(key("selectedState"), state.selectedState);
+      clearSessionsAndRefresh();
+    });
+
+    els.focusTopicSelect.addEventListener("change", () => {
+      state.selectedFocusTopic = els.focusTopicSelect.value;
+      writeJSON(key("selectedFocusTopic"), state.selectedFocusTopic);
+      clearSessionsAndRefresh();
     });
 
     els.resetBtn.addEventListener("click", () => {
-      // defaults: everything checked except language + state
       els.resetChkStats.checked = true;
       els.resetChkSessions.checked = true;
       els.resetChkDictionary.checked = true;
       els.resetChkOther.checked = true;
       els.resetChkLanguage.checked = false;
       els.resetChkState.checked = false;
+      els.resetChkFocusTopic.checked = false;
       openModal("resetDataModal");
     });
 
@@ -2676,11 +2821,13 @@
       const delOther = !!els.resetChkOther.checked;
       const delLang = !!els.resetChkLanguage.checked;
       const delState = !!els.resetChkState.checked;
+      const delFocusTopic = !!els.resetChkFocusTopic.checked;
 
       const keys = Object.keys(localStorage).filter((k) => k.startsWith(APP.prefix));
       keys.forEach((k) => {
         if (!delLang && k === key("lang")) return;
         if (!delState && k === key("selectedState")) return;
+        if (!delFocusTopic && k === key("selectedFocusTopic")) return;
 
         if (delStats && (k === key("statsById") || k === key("stats.sort") || k === key("testHistory"))) {
           localStorage.removeItem(k);
@@ -2704,12 +2851,13 @@
       stopTestTicker();
       closeModal("resetDataModal");
 
-      // re-load state/lang only if user chose to delete them
       if (delLang) state.lang = readJSON(key("lang"), APP.defaultLang);
       if (delState) state.selectedState = readJSON(key("selectedState"), APP.defaultState);
+      if (delFocusTopic) state.selectedFocusTopic = readJSON(key("selectedFocusTopic"), APP.focusTopicAll);
 
       els.languageSelect.value = state.lang;
       initStatesSelect();
+      initFocusTopicSelect();
       syncStaticUITexts();
       toast(t("resetDone"));
       onRouteChange();
@@ -2995,6 +3143,8 @@
       progressValue: document.getElementById("progressValue"),
       languageSelect: document.getElementById("languageSelect"),
       stateSelect: document.getElementById("stateSelect"),
+      focusTopicSelect: document.getElementById("focusTopicSelect"),
+      focusTopicLabel: document.getElementById("focusTopicLabel"),
       resetBtn: document.getElementById("resetBtn"),
       backBtn: document.getElementById("backBtn"),
       homeBtn: document.getElementById("homeBtn"),
@@ -3015,6 +3165,8 @@
       navSectionSettings: document.getElementById("navSectionSettings"),
       languageLabel: document.getElementById("languageLabel"),
       stateLabel: document.getElementById("stateLabel"),
+      resetFocusTopicLabel: document.getElementById("resetFocusTopicLabel"),
+      resetChkFocusTopic: document.getElementById("resetChkFocusTopic"),
       wordModalTitle: document.getElementById("wordModalTitle"),
       wordModalSubtitle: document.getElementById("wordModalSubtitle"),
       wordBaseTitle: document.getElementById("wordBaseTitle"),
@@ -3047,11 +3199,13 @@
 
     state.lang = readJSON(key("lang"), APP.defaultLang);
     state.selectedState = readJSON(key("selectedState"), APP.defaultState);
+    state.selectedFocusTopic = readJSON(key("selectedFocusTopic"), APP.focusTopicAll);
     els.languageSelect.value = state.lang;
     syncStaticUITexts();
 
     await loadData();
     initStatesSelect();
+    initFocusTopicSelect();
     // Ensure modals are not visible on load (helps even with cached CSS)
     closeModal("wordModal");
     closeModal("confirmModal");

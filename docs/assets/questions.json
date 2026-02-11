@@ -26,7 +26,8 @@
       "people pay taxes.",
       "people have the right to vote.",
       "Freedom of expression applies here."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-2",
@@ -55,7 +56,8 @@
       "attends religious classes.",
       "takes part in politics classes.",
       "takes part in language lessons."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-3",
@@ -84,7 +86,8 @@
       "The state does not have to follow the laws.",
       "Only Germans have to obey the laws.",
       "The courts make the laws."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-4",
@@ -113,7 +116,8 @@
       "Law of the fist",
       "Freedom of expression",
       "Vigilantism"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-5",
@@ -142,7 +146,8 @@
       "The voter may neither be influenced nor forced to cast a specific vote during the election and may not suffer any disadvantages as a result of the election.",
       "Only people who have never been in prison are allowed to vote.",
       "All eligible voters must vote."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-6",
@@ -171,7 +176,8 @@
       "Federal law",
       "German law",
       "Basic Law"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-7",
@@ -200,7 +206,8 @@
       "Entertainment.",
       "Work.",
       "Apartment."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-8",
@@ -229,7 +236,8 @@
       "Everyone should have the same amount of money.",
       "Every person is allowed to express their opinion.",
       "Everyone is equal before the law."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-9",
@@ -258,7 +266,8 @@
       "human dignity",
       "asylum",
       "Freedom of expression"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-10",
@@ -287,7 +296,8 @@
       "the torture",
       "the death penalty",
       "the fine"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-11",
@@ -316,7 +326,8 @@
       "Federal Constitution",
       "Code of Laws",
       "Constitutional Treaty"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-12",
@@ -345,7 +356,8 @@
       "Yes, but two thirds of the members of the Bundestag must be in favor of it.",
       "No, because freedom of the press is a fundamental right. It cannot be abolished.",
       "No, because only the Federal Council can abolish freedom of the press."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-13",
@@ -374,7 +386,8 @@
       "all MPs who do not belong to the governing party(s).",
       "the group with the most MPs.",
       "all parties that were able to reach the 5% threshold in the last election."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-14",
@@ -403,7 +416,8 @@
       "can express my opinion in letters to the editor.",
       "allowed to wear Nazi symbols.",
       "I am allowed to express my opinion as long as I do not contradict the government."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-15",
@@ -432,7 +446,8 @@
       "Forced labor",
       "free career choice",
       "Work abroad"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-16",
@@ -461,7 +476,8 @@
       "when expressing opinions about the federal government",
       "in discussions about religions",
       "when criticizing the state"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-17",
@@ -490,7 +506,8 @@
       "Petitions from citizens.",
       "Freedom of assembly for residents.",
       "Unequal treatment of citizens by the state."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-18",
@@ -519,7 +536,8 @@
       "the right to life",
       "Religious freedom",
       "Freedom of expression"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-19",
@@ -548,7 +566,8 @@
       "You can change your job.",
       "You can choose a different religion.",
       "You are only allowed to move around in public lightly clothed."
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-20",
@@ -577,7 +596,8 @@
       "oriented towards the rule of law.",
       "law-abiding.",
       "unconstitutional."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-21",
@@ -606,7 +626,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-22",
@@ -635,7 +656,8 @@
       "dictatorship",
       "republic",
       "principality"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-23",
@@ -664,7 +686,8 @@
       "employed in small family businesses.",
       "Volunteer for a federal state.",
       "self-employed with his own company."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-24",
@@ -693,7 +716,8 @@
       "15",
       "16",
       "17"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-25",
@@ -722,7 +746,8 @@
       "Alsace-Lorraine",
       "Mecklenburg-Western Pomerania",
       "Saxony-Anhalt"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-26",
@@ -751,7 +776,8 @@
       "a democratic and social federal state.",
       "a capitalist and social monarchy.",
       "a social and socialist federal state."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-27",
@@ -780,7 +806,8 @@
       "a state.",
       "a dictatorship.",
       "a monarchy."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-28",
@@ -809,7 +836,8 @@
       "the economy",
       "the people entitled to vote",
       "the administration"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-29",
@@ -838,7 +866,8 @@
       "eagle",
       "bear",
       "Horse"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-30",
@@ -867,7 +896,8 @@
       "Press censorship",
       "Freedom of expression",
       "different parties"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-31",
@@ -896,7 +926,8 @@
       "Coalition.",
       "Ministry.",
       "Fraction."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-32",
@@ -925,7 +956,8 @@
       "Government",
       "press",
       "jurisprudence"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-33",
@@ -954,7 +986,8 @@
       "the religious communities form the state.",
       "the state is dependent on the religious communities.",
       "The state and religious communities form a unity."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-34",
@@ -983,7 +1016,8 @@
       "a constitutional state",
       "a monarchy",
       "a welfare state"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-35",
@@ -1012,7 +1046,8 @@
       "Social security contributions",
       "donations",
       "Club contributions"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-36",
@@ -1041,7 +1076,8 @@
       "the car insurance",
       "building insurance",
       "the liability insurance"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-37",
@@ -1070,7 +1106,8 @@
       "Prime Minister / Prime Minister",
       "Senator",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-38",
@@ -1099,7 +1136,8 @@
       "State.",
       "Confederation of States.",
       "Central government."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-39",
@@ -1128,7 +1166,8 @@
       "its own currency",
       "an army of its own",
       "own government"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-40",
@@ -1157,7 +1196,8 @@
       "Unity and justice and freedom …",
       "Joy of beautiful sparks of the gods...",
       "Germany unites fatherland..."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-41",
@@ -1186,7 +1226,8 @@
       "so that bribery in politics is limited",
       "to prevent political demonstrations",
       "to stimulate economic competition"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-42",
@@ -1215,7 +1256,8 @@
       "the parliament",
       "the courts",
       "the police"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-43",
@@ -1244,7 +1286,8 @@
       "when she fights against the constitution",
       "when she expresses criticism of the head of state",
       "when their program suggests a new direction"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-44",
@@ -1273,7 +1316,8 @@
       "the Federal President",
       "Members of the state parliament",
       "Members of the Bundestag"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-45",
@@ -1302,7 +1346,8 @@
       "Accident insurance",
       "Home contents insurance",
       "Liability and fire insurance"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-46",
@@ -1331,7 +1376,8 @@
       "He sells food and clothing.",
       "It supplies all residents with newspapers free of charge.",
       "He produces cars and buses."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-47",
@@ -1360,7 +1406,8 @@
       "He pays child support.",
       "He supports museums.",
       "He supports athletes and sportswomen."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-48",
@@ -1389,7 +1436,8 @@
       "the Federal President",
       "the citizens' assembly",
       "the government"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-49",
@@ -1418,7 +1466,8 @@
       "the federal states",
       "the family ministry",
       "the universities"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-50",
@@ -1447,7 +1496,8 @@
       "social market economy.",
       "controlled central economy.",
       "Planned economy."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-51",
@@ -1476,7 +1526,8 @@
       "Citizens are allowed to demonstrate peacefully.",
       "People are arrested by private police for no reason.",
       "someone commits a crime and is arrested because of it."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-52",
@@ -1505,7 +1556,8 @@
       "Bundestag.",
       "Prussian king.",
       "Federal Constitutional Court."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-53",
@@ -1534,7 +1586,8 @@
       "There are only right-wing parties.",
       "Citizens decide on laws.",
       "The state must comply with the laws."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-54",
@@ -1563,7 +1616,8 @@
       "Judiciary",
       "executive",
       "directive"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-55",
@@ -1592,7 +1646,8 @@
       "the Federal Constitutional Court in Karlsruhe",
       "the Federal Council building in Berlin",
       "the Federal Chancellery in Berlin"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-56",
@@ -1621,7 +1676,8 @@
       "Public order office",
       "tax office",
       "Foreign Office"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-57",
@@ -1650,7 +1706,8 @@
       "the Prime Minister of the largest federal state",
       "a representative from the strongest faction",
       "a former Federal Chancellor"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-58",
@@ -1679,7 +1736,8 @@
       "the Federal President",
       "the President of the Federal Council",
       "the President of the Bundestag"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-59",
@@ -1708,7 +1766,8 @@
       "PDS and WASG",
       "CSU and FDP",
       "Alliance 90/The Greens and SPD"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-60",
@@ -1737,7 +1796,8 @@
       "Legislature.",
       "Directive.",
       "Judiciary."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-61",
@@ -1766,7 +1826,8 @@
       "The Federal Constitutional Court stands above the constitution.",
       "The interest groups exercise sovereignty together with the government.",
       "State power comes from the people."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-62",
@@ -1795,7 +1856,8 @@
       "State election.",
       "European elections.",
       "Federal election."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-63",
@@ -1824,7 +1886,8 @@
       "the courts",
       "the tax office",
       "the ministries"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-64",
@@ -1853,7 +1916,8 @@
       "an eastern state and a western state.",
       "16 cantons.",
       "Federal, state and local governments."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-65",
@@ -1882,7 +1946,8 @@
       "to control the federal government.",
       "to elect the Federal Chancellor.",
       "to form the federal cabinet."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-66",
@@ -1911,7 +1976,8 @@
       "Clemens Brentano",
       "Johann Wolfgang von Goethe",
       "Heinrich Hoffmann von Fallersleben"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-67",
@@ -1940,7 +2006,8 @@
       "Foreign policy",
       "Economic policy",
       "School policy"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-68",
@@ -1969,7 +2036,8 @@
       "because all students must have a school leaving certificate",
       "because there are different schools in the federal states",
       "because it is his job according to the Basic Law"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-69",
@@ -1998,7 +2066,8 @@
       "District administrators",
       "communities",
       "District offices"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-70",
@@ -2027,7 +2096,8 @@
       "He/She controls the ruling party.",
       "He/she selects the ministers.",
       "He/she proposes the Chancellor for election."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-71",
@@ -2056,7 +2126,8 @@
       "in Berlin because the Federal Chancellery and the Bundestag are located there.",
       "at Meseberg Castle, the federal government's guest house, to receive state guests.",
       "at Bellevue Castle, the official residence of the Federal President, to receive state guests."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-72",
@@ -2085,7 +2156,8 @@
       "Angela Merkel",
       "Franziska Giffey",
       "Olaf Scholz"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-73",
@@ -2114,7 +2186,8 @@
       "The Left and Alliance 90/The Greens.",
       "FDP and SPD.",
       "The Left and FDP."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-74",
@@ -2143,7 +2216,8 @@
       "People's Chamber",
       "Bundestag",
       "Federal Court of Justice"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-75",
@@ -2172,7 +2246,8 @@
       "Bärbel Bas",
       "Bodo Ramelow",
       "Joachim Gauck"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-76",
@@ -2201,7 +2276,8 @@
       "Club of German Entrepreneurs",
       "Christian German environmental protection",
       "Christian Democratic Union"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-77",
@@ -2230,7 +2306,8 @@
       "a German port",
       "a German citizens' initiative",
       "the German army"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-78",
@@ -2259,7 +2336,8 @@
       "Social political party of Germany",
       "Social Democratic Party of Germany",
       "Socially Just Party of Germany"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-79",
@@ -2288,7 +2366,8 @@
       "Free Germany Party",
       "Leading Democratic Party",
       "Free Democratic Party"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-80",
@@ -2317,7 +2396,8 @@
       "District Court",
       "Federal Constitutional Court",
       "Administrative Court"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-81",
@@ -2346,7 +2426,8 @@
       "the Federal Assembly",
       "the people",
       "the Bundestag"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-82",
@@ -2375,7 +2456,8 @@
       "the Federal President",
       "the Federal Chancellor",
       "the President of the Federal Council"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-83",
@@ -2404,7 +2486,8 @@
       "the Federal Assembly",
       "the Bundestag",
       "the federal government"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-84",
@@ -2433,7 +2516,8 @@
       "drafts the laws.",
       "represents the country.",
       "monitors compliance with the law."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-85",
@@ -2462,7 +2546,8 @@
       "the ministers of the federal government",
       "the government representatives of the federal states",
       "the party members"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-86",
@@ -2491,7 +2576,8 @@
       "the Federal Council",
       "the Federal Parliament",
       "the Federal Constitutional Court"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-87",
@@ -2520,7 +2606,8 @@
       "the Federal President",
       "the President of the Federal Council",
       "the President of the Bundestag"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-88",
@@ -2549,7 +2636,8 @@
       "decides who will become the Federal Minister.",
       "determines who sits in the Federal Council.",
       "suggests the heads of government of the federal states."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-89",
@@ -2578,7 +2666,8 @@
       "Council of Elders",
       "fraction",
       "opposition"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-90",
@@ -2607,7 +2696,8 @@
       "the Federal Assembly.",
       "the Bundestag.",
       "the federal government."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-91",
@@ -2636,7 +2726,8 @@
       "easier if new parties come into the Federal Council.",
       "more difficult if this changes the majority in the Federal Council.",
       "easier if it is a rich federal state."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-92",
@@ -2665,7 +2756,8 @@
       "Christian South German Union",
       "Christian Social Entrepreneur Association",
       "Christian Social Union"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-93",
@@ -2694,7 +2786,8 @@
       "It can have fewer first votes.",
       "more of the party's direct candidates enter parliament.",
       "The risk of having to form a coalition is greater."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-94",
@@ -2723,7 +2816,8 @@
       "18",
       "21",
       "23"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-95",
@@ -2752,7 +2846,8 @@
       "Compulsory schooling",
       "Confidentiality",
       "Religious duty"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-96",
@@ -2781,7 +2876,8 @@
       "an identity card",
       "a social security card",
       "a driving license"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-97",
@@ -2810,7 +2906,8 @@
       "Social assistance",
       "Child benefit",
       "Housing benefit"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-98",
@@ -2839,7 +2936,8 @@
       "They are no longer allowed to take part in parliamentary sessions.",
       "The Federal President must give his/her prior consent.",
       "The voters of these representatives can vote again."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-99",
@@ -2868,7 +2966,8 @@
       "only employees",
       "all nationals",
       "only employers"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-100",
@@ -2897,7 +2996,8 @@
       "the life insurance",
       "unemployment insurance",
       "the nursing care insurance"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-101",
@@ -2926,7 +3026,8 @@
       "male and female employees.",
       "pensioners.",
       "Employers."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-102",
@@ -2955,7 +3056,8 @@
       "Federal Cross of Merit.",
       "Patriotic Order of Merit.",
       "Honorary title “Hero of the German Democratic Republic”."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-103",
@@ -2984,7 +3086,8 @@
       "of SPD, FDP and Alliance 90/The Greens in one government",
       "from CSU, Die LINKE and Alliance 90/The Greens in one government",
       "the Bundestag factions of the CDU and SPD"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-104",
@@ -3013,7 +3116,8 @@
       "The woman was often late for work.",
       "The woman does private things during working hours.",
       "The woman is having a child and her boss knows it."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-105",
@@ -3042,7 +3146,8 @@
       "They write the election notifications before the election.",
       "They pass on interim results to the media.",
       "They count the votes after the election ends."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-106",
@@ -3071,7 +3176,8 @@
       "They write cards and letters with the details of the polling station.",
       "They pass on interim results to journalists.",
       "They count the votes after the election ends."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-107",
@@ -3100,7 +3206,8 @@
       "4 years",
       "6 years",
       "8 years"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-108",
@@ -3129,7 +3236,8 @@
       "is a citizen of the Federal Republic of Germany and is at least 18 years old.",
       "has lived in the Federal Republic of Germany for at least 3 years.",
       "is a citizen of the Federal Republic of Germany and is at least 21 years old."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-109",
@@ -3158,7 +3266,8 @@
       "every four years",
       "every five years",
       "every six years"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-110",
@@ -3187,7 +3296,8 @@
       "3 years",
       "4 years",
       "5 years"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-111",
@@ -3216,7 +3326,8 @@
       "Only married people are allowed to vote.",
       "Only people with a permanent job are allowed to vote.",
       "All residents in Germany must vote."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-112",
@@ -3245,7 +3356,8 @@
       "secret.",
       "job-related.",
       "gender dependent."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-113",
@@ -3274,7 +3386,8 @@
       "most men voted in the majority.",
       "received the most votes from the workers.",
       "received the most first votes for their candidate for chancellor."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-114",
@@ -3303,7 +3416,8 @@
       "a right.",
       "a compulsion.",
       "a burden."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-115",
@@ -3332,7 +3446,8 @@
       "You have to go vote.",
       "You can choose.",
       "You have to go to the counting of votes."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-116",
@@ -3361,7 +3476,8 @@
       "active voting process.",
       "active election campaign.",
       "active right to vote."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-117",
@@ -3390,7 +3506,8 @@
       "4%",
       "5%",
       "6%"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-118",
@@ -3419,7 +3536,8 @@
       "Anyone who wants can choose.",
       "If you don't vote, you lose the right to vote.",
       "Anyone who can vote can vote."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-119",
@@ -3448,7 +3566,8 @@
       "If I want to vote, my employer must give me time off.",
       "Each person can decide without coercion whether they want to vote and who they want to vote for.",
       "I can freely decide where I want to vote."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-120",
@@ -3477,7 +3596,8 @@
       "Three-class voting rights.",
       "Majority and proportional representation.",
       "universal male suffrage."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-121",
@@ -3506,7 +3626,8 @@
       "Admission limit.",
       "Underlying value.",
       "Policy."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-122",
@@ -3535,7 +3656,8 @@
       "open, safe, free.",
       "closed, equal, safe.",
       "safe, open, voluntary."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-123",
@@ -3564,7 +3686,8 @@
       "Attendance control in the Bundestag for voting",
       "Minimum share of votes to get into parliament",
       "Attendance control in the Federal Council for voting"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-124",
@@ -3593,7 +3716,8 @@
       "the parliaments of the countries.",
       "of the Parliament for Germany.",
       "of the Federal President."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-125",
@@ -3622,7 +3746,8 @@
       "to enable the change of government according to the will of the majority of voters.",
       "maintain existing laws in the country.",
       "to give the poor more power."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-126",
@@ -3651,7 +3776,8 @@
       "a voting permit from the Federal President",
       "a notification from the Federal Assembly",
       "a notification from the parish office"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-127",
@@ -3680,7 +3806,8 @@
       "Citizens can lose orientation with many small parties.",
       "Many small parties make it difficult to form a government.",
       "the small parties don't have that much money to pay the politicians."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-128",
@@ -3709,7 +3836,8 @@
       "Chancellor/Chancellors.",
       "Ambassadors.",
       "Prime Ministers."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-129",
@@ -3738,7 +3866,8 @@
       "the Prime Minister of a federal state.",
       "the Bundestag.",
       "the Federal President."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-130",
@@ -3767,7 +3896,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-131",
@@ -3796,7 +3926,8 @@
       "the boss of a bank.",
       "the head of a community.",
       "the leader of a party."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-132",
@@ -3825,7 +3956,8 @@
       "They work voluntarily and unpaid in clubs and associations.",
       "You work in the federal government.",
       "You work in a hospital and earn money."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-133",
@@ -3854,7 +3986,8 @@
       "You can cast your vote by postal vote.",
       "You can cast your vote by telephone on election day.",
       "Children aged 14 and over are allowed to vote."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-134",
@@ -3883,7 +4016,8 @@
       "I become a member of a sports club and train cycling.",
       "I am contacting the tax office because as a taxpayer I have a right to the bus route.",
       "I am writing a letter to the municipality's forestry office."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-135",
@@ -3912,7 +4046,8 @@
       "small businesses",
       "Self-employed people",
       "male and female employees"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-136",
@@ -3941,7 +4076,8 @@
       "unjustified termination by your boss.",
       "Problems with the neighbors.",
       "Difficulties after a traffic accident."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-137",
@@ -3970,7 +4106,8 @@
       "the criminal court",
       "the labor court",
       "the district court"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-138",
@@ -3999,7 +4136,8 @@
       "conduct dunning proceedings against the employer",
       "File a dismissal protection claim",
       "report the employer to the police"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-139",
@@ -4028,7 +4166,8 @@
       "has committed a crime and is being charged.",
       "has a different opinion than that of the government.",
       "parked his car incorrectly and it was towed away."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-140",
@@ -4057,7 +4196,8 @@
       "gives citizens legal advice.",
       "issues certificates.",
       "defends the accused."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-141",
@@ -4086,7 +4226,8 @@
       "a judge",
       "a lay judge/lay judge",
       "a public prosecutor"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-142",
@@ -4115,7 +4256,8 @@
       "works in a court and makes judgments.",
       "changes laws.",
       "supervises young people in court."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-143",
@@ -4144,7 +4286,8 @@
       "Executive.",
       "Operational.",
       "Legislature."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-144",
@@ -4173,7 +4316,8 @@
       "judicial power.",
       "planning violence.",
       "legislative power."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-145",
@@ -4202,7 +4346,8 @@
       "Executive.",
       "Press.",
       "Legislature."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-146",
@@ -4231,7 +4376,8 @@
       "procedure",
       "protocol",
       "process"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-147",
@@ -4260,7 +4406,8 @@
       "Speak justice",
       "Create plans",
       "enact laws"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-148",
@@ -4289,7 +4436,8 @@
       "to listen to citizens",
       "to decide the laws",
       "to monitor compliance with laws"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-149",
@@ -4318,7 +4466,8 @@
       "all German citizens older than 24 and younger than 70 years",
       "all people who have lived in Germany for at least 5 years",
       "only people with a completed law degree"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-150",
@@ -4347,7 +4496,8 @@
       "a volunteer judge.",
       "a member of a local council.",
       "a person who has studied law."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-151",
@@ -4376,7 +4526,8 @@
       "the Federal Republic of Germany",
       "the GDR",
       "the USA"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-152",
@@ -4405,7 +4556,8 @@
       "1932 to 1950",
       "1933 to 1945",
       "1945 to 1989"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-153",
@@ -4434,7 +4586,8 @@
       "Beginning of the construction of the Berlin Wall",
       "Election of Konrad Adenauer as Federal Chancellor",
       "End of the Second World War in Europe"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-154",
@@ -4463,7 +4616,8 @@
       "1945",
       "1949",
       "1961"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-155",
@@ -4492,7 +4646,8 @@
       "1921 to 1934",
       "1933 to 1945",
       "1949 to 1963"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-156",
@@ -4521,7 +4676,8 @@
       "1927",
       "1933",
       "1936"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-157",
@@ -4550,7 +4706,8 @@
       "a democratic state.",
       "a monarchy.",
       "a principality."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-158",
@@ -4579,7 +4736,8 @@
       "Democracy.",
       "Monarchy.",
       "Soviet Republic."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-159",
@@ -4608,7 +4766,8 @@
       "Press censorship",
       "arbitrary arrests",
       "Persecution of the Jews"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-160",
@@ -4637,7 +4796,8 @@
       "the Second World War",
       "the Vietnam War",
       "the Gulf War"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-161",
@@ -4666,7 +4826,8 @@
       "of freedom of expression",
       "general religious freedom",
       "the development of democracy"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-162",
@@ -4695,7 +4856,8 @@
       "the construction of the Reichstag building.",
       "the construction of the Wehrmacht.",
       "the assassination attempt on Hitler on July 20, 1944."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-163",
@@ -4724,7 +4886,8 @@
       "1930",
       "1938",
       "1945"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-164",
@@ -4753,7 +4916,8 @@
       "The National Socialists lose an election and dissolve the Reichstag.",
       "Jewish shops and synagogues are destroyed by Nazis and their supporters.",
       "Hitler becomes Reich President and has all parties banned."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-165",
@@ -4782,7 +4946,8 @@
       "Kurt Georg Kiesinger",
       "Helmut Schmidt",
       "Willy Brandt"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-166",
@@ -4811,7 +4976,8 @@
       "during the workers' uprising in the GDR in 1953",
       "at the 1968 demonstrations in the Federal Republic of Germany",
       "at the anti-nuclear power demonstrations in the Federal Republic of Germany in 1985"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-167",
@@ -4840,7 +5006,8 @@
       "France, Soviet Union, Italy, Japan",
       "USA, Soviet Union, Spain, Portugal",
       "USA, Soviet Union, Great Britain, France"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-168",
@@ -4869,7 +5036,8 @@
       "Soviet Union",
       "France",
       "Japan"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-169",
@@ -4898,7 +5066,8 @@
       "1945",
       "1949",
       "1951"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-170",
@@ -4927,7 +5096,8 @@
       "Freedom of the press",
       "the ban on parties",
       "the protection of human dignity"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-171",
@@ -4956,7 +5126,8 @@
       "is planned and controlled by the state, supply and demand are not taken into account.",
       "depends on demand abroad.",
       "depends on supply and demand, but the state ensures social balance."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-172",
@@ -4985,7 +5156,8 @@
       "French occupation zone.",
       "British occupied zone.",
       "Soviet occupation zone."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-173",
@@ -5014,7 +5186,8 @@
       "of the United Nations (UN).",
       "the European Union (EU).",
       "of the Warsaw Pact."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-174",
@@ -5043,7 +5216,8 @@
       "1949",
       "1953",
       "1956"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-175",
@@ -5072,7 +5246,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-176",
@@ -5101,7 +5276,8 @@
       "1=Soviet Union, 2=Great Britain, 3=USA, 4=France",
       "1=Great Britain, 2=Soviet Union, 3=USA, 4=France",
       "1=Great Britain, 2=USA, 3=Soviet Union, 4=France"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-177",
@@ -5130,7 +5306,8 @@
       "Berlin",
       "Dresden",
       "Frankfurt/Oder"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-178",
@@ -5159,7 +5336,8 @@
       "The American soldiers were afraid of attacks during land transport.",
       "For Great Britain, airlift supplies were quicker.",
       "The Soviet Union suspended all land transport."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-179",
@@ -5188,7 +5366,8 @@
       "through the unconditional surrender of Germany",
       "with the withdrawal of the Germans from the occupied territories",
       "by a revolution in Germany"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-180",
@@ -5217,7 +5396,8 @@
       "Willy Brandt.",
       "Konrad Adenauer.",
       "Gerhard Schröder."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-181",
@@ -5246,7 +5426,8 @@
       "He asked Poland and the Polish Jews for forgiveness.",
       "He showed his humility before the Warsaw Pact.",
       "He said a prayer at the Tomb of the Unknown Soldier."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-182",
@@ -5275,7 +5456,8 @@
       "SPD and CDU",
       "CDU and FDP",
       "KPD and CSU"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-183",
@@ -5304,7 +5486,8 @@
       "50s",
       "70s",
       "80s"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-184",
@@ -5333,7 +5516,8 @@
       "This marked the beginning of the Second World War.",
       "This meant the end of the Second World War and the beginning of reconstruction.",
       "This refers to the hour in which the clock is changed from summer time to winter time."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-185",
@@ -5362,7 +5546,8 @@
       "Northern Germany versus Southern Germany.",
       "Nazi Germany against the Allies.",
       "Europe against the USA."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-186",
@@ -5391,7 +5576,8 @@
       "June 17th",
       "July 20th",
       "November 9th"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-187",
@@ -5420,7 +5606,8 @@
       "Federal Republic of Germany",
       "GDR",
       "“Third Reich”"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-188",
@@ -5449,7 +5636,8 @@
       "1956",
       "1959",
       "1961"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-189",
@@ -5478,7 +5666,8 @@
       "1933",
       "1961",
       "1990"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-190",
@@ -5507,7 +5696,8 @@
       "The German Republic",
       "Third German Republic",
       "German Democratic Republic"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-191",
@@ -5536,7 +5726,8 @@
       "1989",
       "1992",
       "1995"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-192",
@@ -5565,7 +5756,8 @@
       "Bavaria",
       "Saarland",
       "Hesse"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-193",
@@ -5594,7 +5786,8 @@
       "a separate state.",
       "divided by a wall.",
       "only accessible by plane."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-194",
@@ -5623,7 +5816,8 @@
       "Nation.",
       "Federal states.",
       "Cities."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-195",
@@ -5652,7 +5846,8 @@
       "Saxony-Anhalt",
       "North Rhine-Westphalia",
       "Saarland"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-196",
@@ -5681,7 +5876,8 @@
       "from a liberal market economy to socialism.",
       "from a monarchy to social democracy.",
       "from a religious state to a communist state."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-197",
@@ -5710,7 +5906,8 @@
       "Hesse",
       "Bavaria",
       "Bremen"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-198",
@@ -5739,7 +5936,8 @@
       "Lower Saxony",
       "Saxony",
       "Baden-Württemberg"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-199",
@@ -5768,7 +5966,8 @@
       "the Ministry of State Security.",
       "a ruling party.",
       "the Ministry of Public Education."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-200",
@@ -5797,7 +5996,8 @@
       "Schleswig-Holstein",
       "Mecklenburg-Western Pomerania",
       "Saarland"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-201",
@@ -5826,7 +6026,8 @@
       "Mecklenburg-Western Pomerania, Brandenburg, Saxony, Saxony-Anhalt, Thuringia",
       "Bavaria, Baden-Württemberg, Rhineland-Palatinate, Thuringia, Saxony",
       "Saxony, Thuringia, Hesse, Lower Saxony, Brandenburg"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-202",
@@ -5855,7 +6056,8 @@
       "to the Warsaw Pact",
       "to NATO",
       "to the non-aligned states"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-203",
@@ -5884,7 +6086,8 @@
       "Planned economy",
       "supply and demand",
       "capitalism"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-204",
@@ -5913,7 +6116,8 @@
       "Today's five eastern federal states joined the Federal Republic of Germany.",
       "The western federal states joined the GDR.",
       "The GDR occupied the Federal Republic of Germany."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-205",
@@ -5942,7 +6146,8 @@
       "to the Warsaw Pact.",
       "to OPEC.",
       "to the European Defense Community."
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-206",
@@ -5971,7 +6176,8 @@
       "On Mondays there were demonstrations against the GDR regime.",
       "Demonstrators met in the Federal Republic of Germany on the first Monday of every month.",
       "On Mondays people demonstrated against the West in the GDR."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-207",
@@ -6000,7 +6206,8 @@
       "in the Rhine Confederation",
       "in the Warsaw Pact",
       "in the European alliance"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-208",
@@ -6029,7 +6236,8 @@
       "a famous German memorial",
       "the GDR secret service",
       "a German sports club during the Second World War"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-209",
@@ -6058,7 +6266,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-210",
@@ -6087,7 +6296,8 @@
       "nationwide strikes and a popular uprising",
       "the 1st SED party conference",
       "Fidel Castro's first visit"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-211",
@@ -6116,7 +6326,8 @@
       "Willy Brandt",
       "Mikhail Gorbachev",
       "Ludwig Erhard"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-212",
@@ -6145,7 +6356,8 @@
       "Federal states of Germany",
       "Federal Republic of Germany",
       "Federal District of Germany"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-213",
@@ -6174,7 +6386,8 @@
       "78 million",
       "83 million",
       "90 million"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-214",
@@ -6203,7 +6416,8 @@
       "red-white-black",
       "black-red-green",
       "black-yellow-red"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-215",
@@ -6232,7 +6446,8 @@
       "Helmut Kohl",
       "Konrad Adenauer",
       "Helmut Schmidt"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-216",
@@ -6264,7 +6479,8 @@
       "the federal eagle",
       "the imperial eagle",
       "the imperial crown"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-217",
@@ -6293,7 +6509,8 @@
       "1933 to 1945",
       "1949 to 1990",
       "1945 to 1961"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-218",
@@ -6322,7 +6539,8 @@
       "5",
       "6",
       "7"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-219",
@@ -6351,7 +6569,8 @@
       "1949.",
       "1971.",
       "1990."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-220",
@@ -6380,7 +6599,8 @@
       "to the adoption of the Basic Law",
       "to the reunification of Germany",
       "to the victims of National Socialism"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-221",
@@ -6409,7 +6629,8 @@
       "All people can enter Germany without identity checks.",
       "Germans can travel to any country without passport control.",
       "Germans can pay with the euro in every country."
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-222",
@@ -6438,7 +6659,8 @@
       "Portugal",
       "Spain",
       "Switzerland"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-223",
@@ -6467,7 +6689,8 @@
       "Bulgaria",
       "Poland",
       "Greece"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-224",
@@ -6496,7 +6719,8 @@
       "European Union",
       "Unitary Union",
       "Euro Union"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-225",
@@ -6525,7 +6749,8 @@
       "Norway",
       "Spain",
       "Austria"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-226",
@@ -6554,7 +6779,8 @@
       "1",
       "4",
       "3"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-227",
@@ -6583,7 +6809,8 @@
       "Denmark",
       "Norway",
       "Sweden"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-228",
@@ -6612,7 +6839,8 @@
       "EU eastward expansion",
       "European Community",
       "German reunification"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-229",
@@ -6641,7 +6869,8 @@
       "Bulgaria",
       "Norway",
       "Luxembourg"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-230",
@@ -6670,7 +6899,8 @@
       "6 years.",
       "7 years.",
       "8 years."
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-231",
@@ -6699,7 +6929,8 @@
       "The term means the immigration stop to Europe.",
       "This refers to European emigrants in the USA.",
       "The term means the merger of European states to form the EU."
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-232",
@@ -6728,7 +6959,8 @@
       "the countries that are allowed to join the EU",
       "the European constitution",
       "the members of the European Parliament"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-233",
@@ -6757,7 +6989,8 @@
       "Bulgaria",
       "Greece",
       "Portugal"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-234",
@@ -6786,7 +7019,8 @@
       "Paris",
       "Berlin",
       "Strasbourg"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-235",
@@ -6815,7 +7049,8 @@
       "Freedom to travel to all EU countries",
       "Peace and security in the EU countries",
       "Uniform public holidays in the EU countries"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-236",
@@ -6844,7 +7079,8 @@
       "23",
       "25",
       "27"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-237",
@@ -6873,7 +7109,8 @@
       "Establishment of the European Economic Community (EEC)",
       "Germany's obligation to pay reparations",
       "Determination of the Oder-Neisse line as the eastern border"
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-238",
@@ -6902,7 +7139,8 @@
       "Strasbourg, Luxembourg and Brussels",
       "Rome, Bern and Vienna",
       "Bonn, Zurich and Milan"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-239",
@@ -6931,7 +7169,8 @@
       "through the “Treaty of Rome”",
       "through the “Paris Treaties”",
       "through the “London Treaties”"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-240",
@@ -6960,7 +7199,8 @@
       "1998",
       "2002",
       "2005"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-241",
@@ -6989,7 +7229,8 @@
       "She doesn't have to do anything because she automatically receives parental allowance.",
       "She must submit an application to the parental allowance office.",
       "She must ask the employment office for permission."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-242",
@@ -7018,7 +7259,8 @@
       "the federal states",
       "the parents/guardians",
       "the schools"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-243",
@@ -7047,7 +7289,8 @@
       "You must register the demonstration.",
       "They can't do anything because demonstrations are generally forbidden in Germany.",
       "Maik and Sybille have to found a new club because only clubs are allowed to demonstrate."
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-244",
@@ -7076,7 +7319,8 @@
       "a diploma",
       "the power of attorney",
       "a journeyman's exam"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-245",
@@ -7105,7 +7349,8 @@
       "Tom (20 years) and Klaus (45 years)",
       "Sofie (35 years old) and Lisa (40 years old)",
       "Anne (13 years old) and Tim (25 years old)"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-246",
@@ -7134,7 +7379,8 @@
       "18",
       "19",
       "21"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-247",
@@ -7163,7 +7409,8 @@
       "Birth preparation",
       "Maternity leave",
       "puerperal bed"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-248",
@@ -7192,7 +7439,8 @@
       "of the parents.",
       "the grandparents.",
       "of the schools."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-249",
@@ -7221,7 +7469,8 @@
       "the parents",
       "the relatives",
       "the schools"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-250",
@@ -7250,7 +7499,8 @@
       "is well trained.",
       "is a woman.",
       "is a member of a party."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-251",
@@ -7279,7 +7529,8 @@
       "It's just the family's business.",
       "you can't be punished for it.",
       "you can be punished for it."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-252",
@@ -7308,7 +7559,8 @@
       "You can have multiple spouses at the same time.",
       "You are not allowed to remarry once you have been married.",
       "A woman is not allowed to remarry if her husband dies."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-253",
@@ -7337,7 +7589,8 @@
       "at the registry office",
       "at the public order office",
       "at the trade office"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-254",
@@ -7366,7 +7619,8 @@
       "A man and woman are married for one year and then divorce is possible.",
       "Visitation rights for the children last for one year.",
       "Husband and wife lead their own lives separately for at least a year. After that, divorce is possible."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-255",
@@ -7395,7 +7649,8 @@
       "School Board.",
       "Youth Welfare Office.",
       "Health Department."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-256",
@@ -7424,7 +7679,8 @@
       "an approval from a party",
       "a permit from the residents’ registration office",
       "a restaurant permit from the responsible authority"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-257",
@@ -7453,7 +7709,8 @@
       "an evening high school.",
       "a secondary school.",
       "a private university."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-258",
@@ -7482,7 +7739,8 @@
       "It can take a child who is beaten or goes hungry from the family.",
       "It pays child benefit to the parents.",
       "It checks whether the child attends a kindergarten."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-259",
@@ -7511,7 +7769,8 @@
       "Apprenticeship search.",
       "Tax return.",
       "Health insurance."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-260",
@@ -7540,7 +7799,8 @@
       "Freedom of choice for all subjects.",
       "Entitlement to school fees.",
       "Compulsory attendance."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-261",
@@ -7569,7 +7829,8 @@
       "an evening high school",
       "a secondary school",
       "a private university"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-262",
@@ -7598,7 +7859,8 @@
       "You may discriminate against other people if there are sufficient personal reasons for doing so.",
       "Nobody is allowed to sue people if they have been disadvantaged.",
       "It is the law for everyone to donate money annually to disadvantaged groups."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-263",
@@ -7627,7 +7889,8 @@
       "are treated like adults.",
       "share the punishment with their parents.",
       "are not punished."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-264",
@@ -7656,7 +7919,8 @@
       "on May Day",
       "at Oktoberfest",
       "at Pentecost"
-    ]
+    ],
+    "sub_category": "POLITICAL_SYSTEM"
   },
   {
     "_id": "frage-265",
@@ -7685,7 +7949,8 @@
       "to the public order office",
       "to the employment agency",
       "to the registry office"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-266",
@@ -7714,7 +7979,8 @@
       "at 10 p.m",
       "when the neighbors go to sleep",
       "at midnight, midnight"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-267",
@@ -7743,7 +8009,8 @@
       "You have the right to take your daughter back to her parents' home.",
       "You can go to the police and report the daughter.",
       "They are looking for another man for their daughter."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-268",
@@ -7772,7 +8039,8 @@
       "She may be able to take the theory test in her native language. There are more than ten languages ​​to choose from.",
       "If she doesn't speak German, she can't have a driver's license.",
       "She must get her driving license in the country where her language is spoken."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-269",
@@ -7801,7 +8069,8 @@
       "a kindergarten place.",
       "a place in a sports club.",
       "a holiday pass."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-270",
@@ -7830,7 +8099,8 @@
       "only for young people.",
       "for further training.",
       "only for pensioners."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-271",
@@ -7859,7 +8129,8 @@
       "decorate a Christmas tree",
       "dress up with masks and costumes",
       "Put pumpkins in front of the door"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-272",
@@ -7888,7 +8159,8 @@
       "Two women live together.",
       "A single father lives with his two children.",
       "A man is married to two women at the same time."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-273",
@@ -7917,7 +8189,8 @@
       "to the health department.",
       "to the residents' registration office.",
       "to the youth welfare office."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-274",
@@ -7946,7 +8219,8 @@
       "the secrecy of letters",
       "the duty of confidentiality",
       "the freedom of expression"
-    ]
+    ],
+    "sub_category": "FUNDAMENTAL_RIGHTS"
   },
   {
     "_id": "frage-275",
@@ -7975,7 +8249,8 @@
       "a certificate from a doctor",
       "the consent of the children",
       "the support of a lawyer"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-276",
@@ -8004,7 +8279,8 @@
       "I have to put up with this treatment.",
       "I threaten the person.",
       "I can complain to the head of the authority."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-277",
@@ -8033,7 +8309,8 @@
       "has salary expectations that are too high.",
       "has no experience in this profession.",
       "mother is."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-278",
@@ -8062,7 +8339,8 @@
       "has no experience.",
       "has salary expectations that are too high.",
       "doesn't speak English."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-279",
@@ -8091,7 +8369,8 @@
       "all tenants in the house.",
       "Rules that all residents must adhere to.",
       "the address of the nearest public order office."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-280",
@@ -8120,7 +8399,8 @@
       "throw away the notice.",
       "Raise an objection.",
       "wait until another decision comes."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-281",
@@ -8149,7 +8429,8 @@
       "Equal treatment.",
       "Freedom of assembly.",
       "freedom of movement."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-282",
@@ -8178,7 +8459,8 @@
       "Library supervision",
       "Election worker/election worker",
       "teacher / teacher"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-283",
@@ -8207,7 +8489,8 @@
       "I lodge an objection with the authorities.",
       "I'll send the invoice back to the authorities.",
       "I'm going to the tax office with the bill."
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-284",
@@ -8236,7 +8519,8 @@
       "Children learn everything at school that is important in their careers. You don't have to continue studying after school.",
       "Adults must continue to learn even after training.",
       "Everyone has to stop working earlier because everything is changing."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-285",
@@ -8265,7 +8549,8 @@
       "Payroll tax",
       "Unemployment insurance contributions",
       "Contributions to pension and health insurance"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-286",
@@ -8294,7 +8579,8 @@
       "the auditor",
       "the operating group",
       "the operations management"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-287",
@@ -8323,7 +8609,8 @@
       "the working hours",
       "the notice period",
       "the insurance requirement"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-288",
@@ -8352,7 +8639,8 @@
       "at the residents’ registration office",
       "at the municipality (city or municipality)",
       "at the health department"
-    ]
+    ],
+    "sub_category": "STATE_ADMIN"
   },
   {
     "_id": "frage-289",
@@ -8381,7 +8669,8 @@
       "he has salary expectations that are too high.",
       "he has dark skin.",
       "he has no experience in the job."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-290",
@@ -8410,7 +8699,8 @@
       "complain about the television",
       "replace the device without asking",
       "extend the guarantee"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-291",
@@ -8439,7 +8729,8 @@
       "There is a church tax that is linked to income and wage tax.",
       "you have to pay more taxes if you don't belong to a church.",
       "the church is responsible for the tax return."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-292",
@@ -8468,7 +8759,8 @@
       "All people believe in God.",
       "Everyone can believe whatever they want.",
       "The state decides which god people believe in."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-293",
@@ -8497,7 +8789,8 @@
       "decorate a Christmas tree",
       "Painting eggs",
       "Shoot rockets into the air"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-294",
@@ -8526,7 +8819,8 @@
       "German Remembrance Day.",
       "international day of mourning.",
       "Bavarian custom."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-295",
@@ -8555,7 +8849,8 @@
       "Christianity",
       "Buddhism",
       "Islam"
-    ]
+    ],
+    "sub_category": "EUROPE"
   },
   {
     "_id": "frage-296",
@@ -8584,7 +8879,8 @@
       "the Thanksgiving Day.",
       "the Advent season.",
       "All Saints Day."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-297",
@@ -8613,7 +8909,8 @@
       "Poland",
       "Morocco",
       "Türkiye"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-298",
@@ -8642,7 +8939,8 @@
       "France, Romania, Somalia.",
       "Chile, Hungary, Zimbabwe.",
       "North Korea, Mexico, Egypt."
-    ]
+    ],
+    "sub_category": "HISTORY"
   },
   {
     "_id": "frage-299",
@@ -8671,7 +8969,8 @@
       "Guest workers.",
       "Temporary workers.",
       "Shift workers."
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-300",
@@ -8700,7 +8999,8 @@
       "Spain",
       "Portugal",
       "Türkiye"
-    ]
+    ],
+    "sub_category": "SOCIETY_WELFARE"
   },
   {
     "_id": "frage-301",
@@ -8729,7 +9029,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-302",
@@ -8758,7 +9059,8 @@
       "Neckar-Odenwald district",
       "North Frisia",
       "Altötting"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-303",
@@ -8787,7 +9089,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-304",
@@ -8816,7 +9119,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-305",
@@ -8845,7 +9149,8 @@
       "black-gold",
       "white-blue",
       "green-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-306",
@@ -8874,7 +9179,8 @@
       "at the consumer advice center",
       "at the State Center for Civic Education",
       "at the churches"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-307",
@@ -8903,7 +9209,8 @@
       "Stuttgart",
       "Karlsruhe",
       "Mannheim"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-308",
@@ -8932,7 +9239,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-309",
@@ -8961,7 +9269,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-310",
@@ -8990,7 +9299,8 @@
       "Minister of Justice / Minister of Justice",
       "Minister of the Interior / Minister of the Interior",
       "Foreign Minister/Minister of Foreign Affairs"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-311",
@@ -9019,7 +9329,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-312",
@@ -9048,7 +9359,8 @@
       "Rhein-Sieg district",
       "North Frisia",
       "Altötting"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-313",
@@ -9077,7 +9389,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-314",
@@ -9106,7 +9419,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-315",
@@ -9135,7 +9449,8 @@
       "white-blue",
       "green-white-red",
       "black-yellow"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-316",
@@ -9164,7 +9479,8 @@
       "at the State Center for Civic Education",
       "at the consumer advice center",
       "at the churches"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-317",
@@ -9193,7 +9509,8 @@
       "regensburg",
       "Nuremberg",
       "Munich"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-318",
@@ -9222,7 +9539,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-319",
@@ -9251,7 +9569,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-320",
@@ -9280,7 +9599,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-321",
@@ -9309,7 +9629,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-322",
@@ -9338,7 +9659,8 @@
       "Prignitz",
       "Pankow",
       "Mecklenburg Lake District"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-323",
@@ -9367,7 +9689,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-324",
@@ -9396,7 +9719,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-325",
@@ -9425,7 +9749,8 @@
       "white-red",
       "green-white-red",
       "black-gold"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-326",
@@ -9454,7 +9779,8 @@
       "at the churches",
       "at the consumer advice center",
       "at the State Center for Civic Education"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-327",
@@ -9483,7 +9809,8 @@
       "Saarland",
       "Brandenburg",
       "Hesse"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-328",
@@ -9512,7 +9839,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-329",
@@ -9541,7 +9869,8 @@
       "Mayor / Mayoress",
       "President of the Senate",
       "Governing Mayor / Governing Mayoress"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-330",
@@ -9570,7 +9899,8 @@
       "Interior Senator",
       "Senator for Foreign Relations",
       "Senator for Justice"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-331",
@@ -9599,7 +9929,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-332",
@@ -9628,7 +9959,8 @@
       "Rhein-Sieg district",
       "Vogtland district",
       "Amberg-Sulzbach"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-333",
@@ -9657,7 +9989,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-334",
@@ -9686,7 +10019,8 @@
       "18",
       "16",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-335",
@@ -9715,7 +10049,8 @@
       "red-white",
       "green-white-red",
       "black-yellow"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-336",
@@ -9744,7 +10079,8 @@
       "at the municipal public order office",
       "at the State Center for Civic Education",
       "at the consumer advice center"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-337",
@@ -9773,7 +10109,8 @@
       "cottbus",
       "Brandenburg",
       "Frankfurt/Oder"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-338",
@@ -9802,7 +10139,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-339",
@@ -9831,7 +10169,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-340",
@@ -9860,7 +10199,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-341",
@@ -9889,7 +10229,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-342",
@@ -9918,7 +10259,8 @@
       "Hemelingen",
       "Pankow",
       "Babelsberg"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-343",
@@ -9947,7 +10289,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-344",
@@ -9976,7 +10319,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-345",
@@ -10005,7 +10349,8 @@
       "red-white",
       "green-white-red",
       "black-gold"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-346",
@@ -10034,7 +10379,8 @@
       "at the State Center for Civic Education",
       "at the churches",
       "at the consumer advice center"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-347",
@@ -10063,7 +10409,8 @@
       "Munich",
       "Frankfurt",
       "Erfurt"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-348",
@@ -10092,7 +10439,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-349",
@@ -10121,7 +10469,8 @@
       "First mayor/first female mayor",
       "President of the Senate",
       "Governing Mayor / Governing Mayoress"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-350",
@@ -10150,7 +10499,8 @@
       "Finance Senator",
       "Senator for Justice",
       "Interior Senator"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-351",
@@ -10179,7 +10529,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-352",
@@ -10208,7 +10559,8 @@
       "Hemelingen",
       "Pankow",
       "Mecklenburg Lake District"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-353",
@@ -10237,7 +10589,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-354",
@@ -10266,7 +10619,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-355",
@@ -10295,7 +10649,8 @@
       "white-red",
       "green-white-red",
       "black-yellow"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-356",
@@ -10324,7 +10679,8 @@
       "at the consumer advice center",
       "at the churches",
       "at the State Center for Civic Education"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-357",
@@ -10353,7 +10709,8 @@
       "Saxony",
       "Bavaria",
       "Thuringia"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-358",
@@ -10382,7 +10739,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-359",
@@ -10411,7 +10769,8 @@
       "First mayor/first female mayor",
       "Governing Senator",
       "Mayor / Mayoress"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-360",
@@ -10440,7 +10799,8 @@
       "Senator for Foreign Relations",
       "Finance Senator",
       "Interior Senator"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-361",
@@ -10469,7 +10829,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-362",
@@ -10498,7 +10859,8 @@
       "Altötting",
       "Prignitz",
       "Main-Taunus district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-363",
@@ -10527,7 +10889,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-364",
@@ -10556,7 +10919,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-365",
@@ -10585,7 +10949,8 @@
       "red-white",
       "black-gold",
       "green-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-366",
@@ -10614,7 +10979,8 @@
       "at the consumer advice center",
       "at the municipal public order office",
       "at the churches"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-367",
@@ -10643,7 +11009,8 @@
       "Darmstadt",
       "Frankfurt",
       "Wiesbaden"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-368",
@@ -10672,7 +11039,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-369",
@@ -10701,7 +11069,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-370",
@@ -10730,7 +11099,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-371",
@@ -10759,7 +11129,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-372",
@@ -10788,7 +11159,8 @@
       "Altötting",
       "Neunkirchen",
       "Rhein-Sieg district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-373",
@@ -10817,7 +11189,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-374",
@@ -10846,7 +11219,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-375",
@@ -10875,7 +11249,8 @@
       "black-red-gold",
       "black-yellow",
       "green-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-376",
@@ -10904,7 +11279,8 @@
       "at the State Center for Civic Education",
       "at the consumer advice center",
       "at the municipal public order office"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-377",
@@ -10933,7 +11309,8 @@
       "Homburg",
       "Saarbrücken",
       "Völklingen"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-378",
@@ -10962,7 +11339,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-379",
@@ -10991,7 +11369,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-380",
@@ -11020,7 +11399,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-381",
@@ -11049,7 +11429,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-382",
@@ -11078,7 +11459,8 @@
       "Mecklenburg Lake District",
       "Vogtland district",
       "Rhein-Sieg district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-383",
@@ -11107,7 +11489,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-384",
@@ -11136,7 +11519,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-385",
@@ -11165,7 +11549,8 @@
       "blue-white-yellow-red",
       "green-white-red",
       "black-yellow"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-386",
@@ -11194,7 +11579,8 @@
       "at the churches",
       "at the municipal public order office",
       "at the consumer advice center"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-387",
@@ -11223,7 +11609,8 @@
       "Schwerin",
       "Rostock",
       "Wismar"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-388",
@@ -11252,7 +11639,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-389",
@@ -11281,7 +11669,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-390",
@@ -11310,7 +11699,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-391",
@@ -11339,7 +11729,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-392",
@@ -11368,7 +11759,8 @@
       "Rhein-Sieg district",
       "North Frisia",
       "Vogtland district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-393",
@@ -11397,7 +11789,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-394",
@@ -11426,7 +11819,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-395",
@@ -11455,7 +11849,8 @@
       "black-red-gold",
       "black-yellow",
       "blue-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-396",
@@ -11484,7 +11879,8 @@
       "at the municipal public order office",
       "at the consumer advice center",
       "at the churches"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-397",
@@ -11513,7 +11909,8 @@
       "Braunschweig",
       "Wolfsburg",
       "Osnabruck"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-398",
@@ -11542,7 +11939,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-399",
@@ -11571,7 +11969,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-400",
@@ -11600,7 +11999,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-401",
@@ -11629,7 +12029,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-402",
@@ -11658,7 +12059,8 @@
       "Rhein-Sieg district",
       "North Frisia",
       "Vogtland district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-403",
@@ -11687,7 +12089,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-404",
@@ -11716,7 +12119,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-405",
@@ -11745,7 +12149,8 @@
       "green-white-red",
       "black-gold",
       "blue-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-406",
@@ -11774,7 +12179,8 @@
       "at the municipal public order office",
       "at the consumer advice center",
       "at the State Center for Civic Education"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-407",
@@ -11803,7 +12209,8 @@
       "Bonn",
       "Dusseldorf",
       "Dortmund"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-408",
@@ -11832,7 +12239,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-409",
@@ -11861,7 +12269,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-410",
@@ -11890,7 +12299,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-411",
@@ -11919,7 +12329,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-412",
@@ -11948,7 +12359,8 @@
       "Altötting",
       "Emsland",
       "Prignitz"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-413",
@@ -11977,7 +12389,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-414",
@@ -12006,7 +12419,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-415",
@@ -12035,7 +12449,8 @@
       "black-red-gold",
       "black-yellow",
       "green-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-416",
@@ -12064,7 +12479,8 @@
       "at the consumer advice center",
       "at the municipal public order office",
       "at the State Center for Civic Education"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-417",
@@ -12093,7 +12509,8 @@
       "Kaiserslautern",
       "Ludwigshafen",
       "Koblenz"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-418",
@@ -12122,7 +12539,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-419",
@@ -12151,7 +12569,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-420",
@@ -12180,7 +12599,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-421",
@@ -12209,7 +12629,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-422",
@@ -12238,7 +12659,8 @@
       "Altötting",
       "Uckermark",
       "North Frisia"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-423",
@@ -12267,7 +12689,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-424",
@@ -12296,7 +12719,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-425",
@@ -12325,7 +12749,8 @@
       "white-green",
       "green-white-red",
       "black-yellow"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-426",
@@ -12354,7 +12779,8 @@
       "at the municipal public order office",
       "at the churches",
       "at the consumer advice center"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-427",
@@ -12383,7 +12809,8 @@
       "Dresden",
       "Chemnitz",
       "Zwickau"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-428",
@@ -12412,7 +12839,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-429",
@@ -12441,7 +12869,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-430",
@@ -12470,7 +12899,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-431",
@@ -12499,7 +12929,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-432",
@@ -12528,7 +12959,8 @@
       "Altötting",
       "Uckermark",
       "Börde"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-433",
@@ -12557,7 +12989,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-434",
@@ -12586,7 +13019,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-435",
@@ -12615,7 +13049,8 @@
       "yellow-black",
       "green-white-red",
       "white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-436",
@@ -12644,7 +13079,8 @@
       "at the State Center for Civic Education",
       "at the municipal public order office",
       "at the consumer advice center"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-437",
@@ -12673,7 +13109,8 @@
       "Dessau",
       "Magdeburg",
       "Wittenberg"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-438",
@@ -12702,7 +13139,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-439",
@@ -12731,7 +13169,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-440",
@@ -12760,7 +13199,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-441",
@@ -12789,7 +13229,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-442",
@@ -12818,7 +13259,8 @@
       "Mecklenburg Lake District",
       "North Frisia",
       "Rhein-Sieg district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-443",
@@ -12847,7 +13289,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-444",
@@ -12876,7 +13319,8 @@
       "16",
       "18",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-445",
@@ -12905,7 +13349,8 @@
       "blue-white-red",
       "white-red",
       "green-white-red"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-446",
@@ -12934,7 +13379,8 @@
       "at the municipal public order office",
       "with the state representative for political education",
       "at the churches"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-447",
@@ -12963,7 +13409,8 @@
       "Flensburg",
       "Lübeck",
       "Kiel"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-448",
@@ -12992,7 +13439,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-449",
@@ -13021,7 +13469,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-450",
@@ -13050,7 +13499,8 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-451",
@@ -13079,7 +13529,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-452",
@@ -13108,7 +13559,8 @@
       "Altötting",
       "North Frisia",
       "Wartburg district"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-453",
@@ -13137,7 +13589,8 @@
       "4",
       "5",
       "6"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-454",
@@ -13166,7 +13619,8 @@
       "18",
       "16",
       "20"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-455",
@@ -13195,7 +13649,8 @@
       "white-red",
       "green-white-red",
       "black-gold"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-456",
@@ -13224,7 +13679,8 @@
       "at the consumer advice center",
       "at the State Center for Civic Education",
       "at the municipal public order office"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-457",
@@ -13253,7 +13709,8 @@
       "Erfurt",
       "Gera",
       "Jena"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-458",
@@ -13282,7 +13739,8 @@
       "2",
       "3",
       "4"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-459",
@@ -13311,7 +13769,8 @@
       "Prime Minister / Prime Minister",
       "Mayor/Mayoress",
       "Prime Minister / Prime Minister"
-    ]
+    ],
+    "sub_category": null
   },
   {
     "_id": "frage-460",
@@ -13340,6 +13799,7 @@
       "Foreign Minister/Minister of Foreign Affairs",
       "Minister of Finance / Minister of Finance",
       "Minister of the Interior / Minister of the Interior"
-    ]
+    ],
+    "sub_category": null
   }
 ]

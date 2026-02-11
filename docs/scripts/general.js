@@ -699,7 +699,7 @@
   }
 
   function getPracticeQuestions() {
-    return state.questions.filter((q) => q.category === state.selectedState);
+    return state.questions.filter((q) => q.category === "GERMANY" || q.category === state.selectedState);
   }
 
   function getPracticeQuestionIds() {
@@ -1842,6 +1842,7 @@
       confirmDialog(t("newTest"), () => {
         clearSession("test");
         setRoute("mode/test");
+        onRouteChange();
       });
     });
     title.querySelector("#goStatsBtn").addEventListener("click", () => setRoute("stats"));
@@ -2618,7 +2619,17 @@
         const route = b.getAttribute("data-route");
         // Always close, even if route is already active (hashchange won't fire)
         closeSidebar();
-        if (route === state.route) return;
+        if (route === state.route) {
+          // Special case: if clicking Test nav item while on test results, start a new test
+          if (route === "mode/test") {
+            const testSession = loadSession("test");
+            if (testSession?.finished) {
+              clearSession("test");
+              onRouteChange();
+            }
+          }
+          return;
+        }
         setRoute(route);
       });
     });

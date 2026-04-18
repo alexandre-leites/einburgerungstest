@@ -1,1 +1,14 @@
 .DS_Store
+node_modules/
+coverage/
+dist/
+
+# Local tooling artifacts
+scripts/fill_log.txt
+scripts/fill_report.json
+docs/assets/dictionary.json.bak
+
+# Editors
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,61 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "script"
+  },
+  "globals": {
+    "EBT": "writable",
+    "I18N": "readonly"
+  },
+  "rules": {
+    "no-implicit-globals": "warn",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-undef": "error",
+    "eqeqeq": ["error", "smart"],
+    "prefer-const": "off",
+    "no-var": "off",
+    "no-console": "off",
+    "no-empty": ["error", { "allowEmptyCatch": true }]
+  },
+  "overrides": [
+    {
+      "files": ["docs/scripts/utils.js"],
+      "env": {
+        "commonjs": true,
+        "node": true
+      },
+      "globals": {
+        "globalThis": "readonly"
+      }
+    },
+    {
+      "files": ["scripts/*.js", "scripts/*.mjs", "tests/**/*.js", "*.config.js"],
+      "env": {
+        "browser": false,
+        "node": true,
+        "es2022": true
+      },
+      "parserOptions": {
+        "sourceType": "module"
+      }
+    },
+    {
+      "files": ["tests/**/*.js"],
+      "env": {
+        "node": true
+      },
+      "globals": {
+        "describe": "readonly",
+        "it": "readonly",
+        "expect": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly"
+      }
+    }
+  ]
+}

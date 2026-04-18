@@ -1,0 +1,7 @@
+node_modules/
+docs/assets/questions.json
+docs/assets/dictionary.json
+docs/assets/dictionary.json.bak
+scripts/fill_log.txt
+scripts/fill_report.json
+coverage/

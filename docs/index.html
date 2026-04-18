@@ -224,9 +224,38 @@
     <script>
       (function () {
         var v = Date.now();
-        var s = document.createElement("script");
-        s.src = "scripts/general.js?v=" + v;
-        document.body.appendChild(s);
+        // Load order matters: framework modules first, then the monolithic app.
+        // general.js awaits EBT.I18N.load() inside its own init(), so loading
+        // it last here is fine.
+        var files = [
+          "scripts/utils.js",
+          "scripts/storage.js",
+          "scripts/migrations.js",
+          "scripts/validation.js",
+          "scripts/i18n.js",
+          "scripts/stats-store.js",
+          "scripts/mydict-store.js",
+          "scripts/session-store.js",
+          "scripts/router.js",
+          "scripts/general.js",
+        ];
+        var i = 0;
+        function loadNext() {
+          if (i >= files.length) return;
+          var s = document.createElement("script");
+          s.src = files[i] + "?v=" + v;
+          s.onload = function () {
+            i += 1;
+            loadNext();
+          };
+          s.onerror = function () {
+            console.error("Failed to load", files[i]);
+            i += 1;
+            loadNext();
+          };
+          document.body.appendChild(s);
+        }
+        loadNext();
       })();
     </script>
   </body>

@@ -9,6 +9,10 @@
     testGermanyCount: 30,
     testStateCount: 3,
     testDurationMs: 60 * 60 * 1000,
+    // Fraction of test questions reserved for the user's weakest questions
+    // (lowest correct count, then lowest total views). The rest are picked
+    // uniformly at random so tests stay varied.
+    testWeaknessRatio: 0.4,
     trainDefaultCredits: 10,
     trainCooldownMinMs: 3 * 60 * 1000,
     trainCooldownMaxMs: 10 * 60 * 1000,
@@ -21,433 +25,6 @@
       "SOCIETY_WELFARE",
       "EUROPE",
     ],
-  };
-
-  const UI = {
-    de: {
-      home: "Home",
-      modes: "Modi",
-      memorization: "Memorieren",
-      memorizationRandom: "Zufällige Reihenfolge",
-      memorizationOrdered: "Geordnet (nach ID)",
-      goToId: "Zu ID springen",
-      go: "Los",
-      resetToFirst: "Zur ersten Frage",
-      training: "Training",
-      test: "Test",
-      review: "Wiederholen",
-      tools: "Tools",
-      statistics: "Statistiken",
-      myDictionary: "Mein Wörterbuch",
-      settings: "Einstellungen",
-      language: "Sprache",
-      stateForTest: "Bundesland (für Test)",
-      focusTopic: "Schwerpunktthema",
-      focusTopicAll: "Alle",
-      focusFundamentalRights: "Grundrechte & Verfassung",
-      focusPoliticalSystem: "Politisches System",
-      focusStateAdmin: "Staat & Verwaltung",
-      focusHistory: "Geschichte",
-      focusSocietyWelfare: "Gesellschaft & Soziales",
-      focusEurope: "Europa",
-      focusShortAll: "Alle",
-      focusShortFundamentalRights: "Grundrechte",
-      focusShortPoliticalSystem: "Politik",
-      focusShortStateAdmin: "Staat",
-      focusShortHistory: "Geschichte",
-      focusShortSocietyWelfare: "Gesellschaft",
-      focusShortEurope: "Europa",
-      resetData: "Daten zurücksetzen",
-      resetDataTitle: "Daten zurücksetzen",
-      resetDataSubtitle: "Wähle aus, was gelöscht werden soll.",
-      resetStats: "Statistiken",
-      resetSessions: "Sitzungen",
-      resetMyDictionary: "Mein Wörterbuch",
-      resetOther: "Andere lokale Einstellungen",
-      resetLanguage: "Sprache",
-      resetState: "Bundesland",
-      resetDone: "Ausgewählte Daten gelöscht.",
-      back: "Zurück",
-      next: "Nächste",
-      timer: "Timer",
-      progress: "Fortschritt",
-      start: "Start",
-      resume: "Fortsetzen",
-      newTest: "Neuer Test",
-      confirm: "Bestätigen",
-      cancel: "Abbrechen",
-      ok: "OK",
-      resetConfirm: "Möchtest du alle lokalen Daten (Statistiken, Sitzungen, Wörterbuch) wirklich löschen?",
-      dataResetDone: "Lokale Daten gelöscht.",
-      loading: "Lade…",
-      loadFailed: "Konnte Daten nicht laden.",
-      introTitle: "Dein Self-learning für den Einbürgerungstest",
-      introText:
-        "Wähle einen Modus im Menü. Fragen werden zufällig gemischt. Die Position der richtigen Antwort bleibt immer gleich (1–4).",
-      homeWhatYouGetTitle: "Was du hier bekommst",
-      homeWhatYouGetText:
-        "Sprachen (DE/EN/PT), Wort-Menü (Definition/Beispiele oder ins Wörterbuch), persönliche Statistiken (richtig/falsch/übersprungen) und mehrere Lernmodi.",
-      homeModesTitle: "Modi",
-      homeModeMemTitle: "Memorieren",
-      homeModeMemText: "Nur die richtige Antwort wird angezeigt (Position bleibt gleich).",
-      homeModeTrainTitle: "Training",
-      homeModeTrainText: "Mit Feedback (grün/rot) und Wiederholungen: schwere Fragen kommen öfter zurück.",
-      homeModeTestTitle: "Test",
-      homeModeTestText: "33 Fragen (30 Deutschland + 3 Bundesland), 60 Minuten, Ergebnis erst am Ende.",
-      homeModeReviewTitle: "Wiederholen",
-      homeModeReviewText: "Zeigt dir die Fragen, die du am häufigsten falsch machst oder überspringst.",
-      startMode: "Iniciar",
-      hideTip: "Nicht mehr anzeigen",
-      tipMemorizationTitle: "Memorieren",
-      tipMemorizationText:
-        "Du siehst nur die richtige Antwort. Die anderen Positionen werden als „------“ angezeigt, damit du dir die Position merkst.",
-      tipTrainingTitle: "Training",
-      tipTrainingText:
-        "Tippe eine Option an, um sofort Feedback zu bekommen. In dieser Sitzung kommen Fragen, die du oft falsch beantwortest, häufiger zurück.",
-      tipTestTitle: "Test",
-      tipTestText:
-        "33 Fragen in 60 Minuten. Ergebnis erst am Ende. Nicht beantwortete Fragen zählen als übersprungen.",
-      tipReviewTitle: "Wiederholen",
-      tipReviewText: "Hier siehst du deine schwierigsten Fragen (falsch und übersprungen) und kannst gezielt üben.",
-      testRulesTitle: "Test-Regeln",
-      testRulesText:
-        "Während des Tests erhältst du 33 Fragen. Du hast 60 Minuten Zeit. Für jede Frage wählst du die richtige Antwort aus vier Möglichkeiten. Wenn du mindestens 17 Fragen richtig beantwortest, bestehst du.",
-      testComposition:
-        "Zusammensetzung: 30 allgemeine Fragen (Deutschland) + 3 Fragen aus deinem Bundesland.",
-      question: "Frage",
-      answered: "Beantwortet",
-      finishTest: "Test beenden",
-      finishTestConfirm: "Möchtest du den Test wirklich beenden? Danach siehst du das Ergebnis.",
-      testFinished: "Test beendet",
-      pass: "Bestanden",
-      fail: "Nicht bestanden",
-      correct: "Richtig",
-      wrong: "Falsch",
-      skipped: "Übersprungen",
-      accuracy: "Genauigkeit",
-      noStatsYet: "Noch keine Statistiken. Beantworte ein paar Fragen im Training oder im Test.",
-      statsByTopic: "Statistiken nach Thema",
-      topic: "Thema",
-      stateTopicLabel: "Bundesland",
-      sortBy: "Sortieren nach",
-      yourAnswer: "Deine Antwort",
-      correctAnswer: "Richtige Antwort",
-      result: "Ergebnis",
-      testDetails: "Test-Details",
-      questionReview: "Fragenübersicht",
-      totalTests: "Gesamte Tests",
-      averageScore: "Durchschnittliche Punktzahl",
-      passRate: "Bestehensquote",
-      testHistory: "Test-Verlauf",
-      date: "Datum",
-      score: "Punktzahl",
-      mostWrong: "Meiste Fehler",
-      mostCorrect: "Meiste Treffer",
-      mostSkipped: "Meist übersprungen",
-      bestAccuracy: "Beste Quote",
-      worstAccuracy: "Schlechteste Quote",
-      attempts: "Versuche",
-      openInTraining: "Im Training öffnen",
-      word: "Wort",
-      baseDictionary: "Basis-Wörterbuch",
-      viewDefinition: "Definition & Beispiele",
-      addToMyDictionary: "Zum Wörterbuch hinzufügen",
-      removeFromMyDictionary: "Aus Wörterbuch entfernen",
-      addedToMyDictionary: "Zum Wörterbuch hinzugefügt.",
-      removedFromMyDictionary: "Aus Wörterbuch entfernt.",
-      notInBaseDictionary: "Nicht im Basis-Wörterbuch gefunden.",
-      noDefinition: "Keine Definition verfügbar (nur Beispiele).",
-      emptyDictionary: "Noch keine Wörter gespeichert. Klicke auf ein Wort in einer Frage/Antwort.",
-      export: "Exportieren",
-      import: "Importieren",
-      importPlaceholder: "JSON einfügen und importieren…",
-      importDone: "Importiert.",
-      invalidJson: "Ungültiges JSON.",
-      copiedToClipboard: "In die Zwischenablage kopiert.",
-      imageMissing: "Bild konnte nicht geladen werden.",
-    },
-    en: {
-      home: "Home",
-      modes: "Modes",
-      memorization: "Memorization",
-      memorizationRandom: "Random order",
-      memorizationOrdered: "Ordered (by ID)",
-      goToId: "Jump to ID",
-      go: "Go",
-      resetToFirst: "Reset to first",
-      training: "Training",
-      test: "Test",
-      review: "Review",
-      tools: "Tools",
-      statistics: "Statistics",
-      myDictionary: "My dictionary",
-      settings: "Settings",
-      language: "Language",
-      stateForTest: "State (for test)",
-      focusTopic: "Focus topic",
-      focusTopicAll: "All",
-      focusFundamentalRights: "Fundamental Rights & Constitution",
-      focusPoliticalSystem: "Political System",
-      focusStateAdmin: "State & Administration",
-      focusHistory: "History",
-      focusSocietyWelfare: "Society & Welfare",
-      focusEurope: "Europe",
-      focusShortAll: "All",
-      focusShortFundamentalRights: "Rights",
-      focusShortPoliticalSystem: "Politics",
-      focusShortStateAdmin: "State",
-      focusShortHistory: "History",
-      focusShortSocietyWelfare: "Society",
-      focusShortEurope: "Europe",
-      resetData: "Reset data",
-      resetDataTitle: "Reset data",
-      resetDataSubtitle: "Choose what you want to delete.",
-      resetStats: "Statistics",
-      resetSessions: "Sessions",
-      resetMyDictionary: "My dictionary",
-      resetOther: "Other local settings",
-      resetLanguage: "Language",
-      resetState: "State",
-      resetDone: "Selected data cleared.",
-      back: "Back",
-      next: "Next",
-      timer: "Timer",
-      progress: "Progress",
-      start: "Start",
-      resume: "Resume",
-      newTest: "New test",
-      confirm: "Confirm",
-      cancel: "Cancel",
-      ok: "OK",
-      resetConfirm: "Do you really want to delete all local data (stats, sessions, dictionary)?",
-      dataResetDone: "Local data cleared.",
-      loading: "Loading…",
-      loadFailed: "Failed to load data.",
-      introTitle: "Your self-learning for the Einbürgerungstest",
-      introText:
-        "Pick a mode in the menu. Questions are shuffled. The position of the correct answer stays the same (1–4).",
-      homeWhatYouGetTitle: "What you get",
-      homeWhatYouGetText:
-        "Languages (DE/EN/PT), word context menu (definition/examples or add to dictionary), personal stats (right/wrong/skipped) and multiple learning modes.",
-      homeModesTitle: "Modes",
-      homeModeMemTitle: "Memorization",
-      homeModeMemText: "Shows only the correct answer (position stays the same).",
-      homeModeTrainTitle: "Training",
-      homeModeTrainText: "Instant feedback (green/red) and repetitions: harder questions come back more often.",
-      homeModeTestTitle: "Test",
-      homeModeTestText: "33 questions (30 Germany + 3 state), 60 minutes, result only at the end.",
-      homeModeReviewTitle: "Review",
-      homeModeReviewText: "Shows questions you most often get wrong or skip.",
-      startMode: "Start",
-      hideTip: "Don’t show again",
-      tipMemorizationTitle: "Memorization",
-      tipMemorizationText:
-        "You only see the correct answer. Other positions show “------” so you can memorize the answer position.",
-      tipTrainingTitle: "Training",
-      tipTrainingText:
-        "Tap an option to get instant feedback. In this session, questions you miss often come back more frequently.",
-      tipTestTitle: "Test",
-      tipTestText:
-        "33 questions in 60 minutes. Result only at the end. Unanswered questions count as skipped.",
-      tipReviewTitle: "Review",
-      tipReviewText: "See your hardest questions (wrong and skipped) and practice them again.",
-      testRulesTitle: "Test rules",
-      testRulesText:
-        "During the test, you will receive 33 questions. You have 60 minutes to answer them. For each question, you must choose the correct answer from four possible answers. If you answer at least 17 questions correctly, you will pass the test.",
-      testComposition: "Composition: 30 general questions (Germany) + 3 questions from your state.",
-      question: "Question",
-      answered: "Answered",
-      finishTest: "Finish test",
-      finishTestConfirm: "Do you really want to finish the test? You will then see the result.",
-      testFinished: "Test finished",
-      pass: "Pass",
-      fail: "Fail",
-      correct: "Correct",
-      wrong: "Wrong",
-      skipped: "Skipped",
-      accuracy: "Accuracy",
-      noStatsYet: "No stats yet. Answer a few questions in Training or Test.",
-      statsByTopic: "Statistics by topic",
-      topic: "Topic",
-      stateTopicLabel: "State",
-      sortBy: "Sort by",
-      yourAnswer: "Your answer",
-      correctAnswer: "Correct answer",
-      result: "Result",
-      testDetails: "Test details",
-      questionReview: "Question review",
-      totalTests: "Total tests",
-      averageScore: "Average score",
-      passRate: "Pass rate",
-      testHistory: "Test history",
-      date: "Date",
-      score: "Score",
-      mostWrong: "Most wrong",
-      mostCorrect: "Most correct",
-      mostSkipped: "Most skipped",
-      bestAccuracy: "Best accuracy",
-      worstAccuracy: "Worst accuracy",
-      attempts: "Attempts",
-      openInTraining: "Open in training",
-      word: "Word",
-      baseDictionary: "Base dictionary",
-      viewDefinition: "Definition & examples",
-      addToMyDictionary: "Add to my dictionary",
-      removeFromMyDictionary: "Remove from my dictionary",
-      addedToMyDictionary: "Added to your dictionary.",
-      removedFromMyDictionary: "Removed from your dictionary.",
-      notInBaseDictionary: "Not found in base dictionary.",
-      noDefinition: "No definition available (examples only).",
-      emptyDictionary: "No saved words yet. Click a word in any question/answer.",
-      export: "Export",
-      import: "Import",
-      importPlaceholder: "Paste JSON and import…",
-      importDone: "Imported.",
-      invalidJson: "Invalid JSON.",
-      copiedToClipboard: "Copied to clipboard.",
-      imageMissing: "Image could not be loaded.",
-    },
-    pt: {
-      home: "Home",
-      modes: "Modos",
-      memorization: "Memorização",
-      memorizationRandom: "Ordem aleatória",
-      memorizationOrdered: "Ordem por ID",
-      goToId: "Ir para ID",
-      go: "Ir",
-      resetToFirst: "Voltar para a primeira",
-      training: "Treino",
-      test: "Teste",
-      review: "Revisão",
-      tools: "Ferramentas",
-      statistics: "Estatísticas",
-      myDictionary: "Meu dicionário",
-      settings: "Configurações",
-      language: "Idioma",
-      stateForTest: "Estado (para teste)",
-      focusTopic: "Tema de foco",
-      focusTopicAll: "Todos",
-      focusFundamentalRights: "Direitos fundamentais e constituição",
-      focusPoliticalSystem: "Sistema político",
-      focusStateAdmin: "Estado e administração",
-      focusHistory: "História",
-      focusSocietyWelfare: "Sociedade e bem-estar",
-      focusEurope: "Europa",
-      focusShortAll: "Todos",
-      focusShortFundamentalRights: "Direitos",
-      focusShortPoliticalSystem: "Política",
-      focusShortStateAdmin: "Estado",
-      focusShortHistory: "História",
-      focusShortSocietyWelfare: "Sociedade",
-      focusShortEurope: "Europa",
-      resetData: "Resetar dados",
-      resetDataTitle: "Resetar dados",
-      resetDataSubtitle: "Selecione o que você quer deletar.",
-      resetStats: "Estatísticas",
-      resetSessions: "Sessões",
-      resetMyDictionary: "Meu dicionário",
-      resetOther: "Outras configurações locais",
-      resetLanguage: "Idioma",
-      resetState: "Estado",
-      resetDone: "Dados selecionados apagados.",
-      back: "Voltar",
-      next: "Próxima",
-      timer: "Cronômetro",
-      progress: "Progresso",
-      start: "Iniciar",
-      resume: "Continuar",
-      newTest: "Novo teste",
-      confirm: "Confirmar",
-      cancel: "Cancelar",
-      ok: "OK",
-      resetConfirm: "Deseja mesmo apagar todos os dados locais (estatísticas, sessões, dicionário)?",
-      dataResetDone: "Dados locais apagados.",
-      loading: "Carregando…",
-      loadFailed: "Falha ao carregar dados.",
-      introTitle: "Seu self-learning para o Einbürgerungstest",
-      introText:
-        "Escolha um modo no menu. As perguntas são embaralhadas. A posição da resposta correta sempre fica igual (1–4).",
-      homeWhatYouGetTitle: "O que você tem aqui",
-      homeWhatYouGetText:
-        "Idiomas (DE/EN/PT), menu de palavra (definição/exemplos ou adicionar ao dicionário), estatísticas pessoais (acertos/erros/puladas) e vários modos de estudo.",
-      homeModesTitle: "Modos",
-      homeModeMemTitle: "Memorização",
-      homeModeMemText: "Mostra apenas a resposta correta (a posição continua a mesma).",
-      homeModeTrainTitle: "Treino",
-      homeModeTrainText: "Feedback imediato (verde/vermelho) e repetições: as mais difíceis voltam mais.",
-      homeModeTestTitle: "Teste",
-      homeModeTestText: "33 questões (30 Alemanha + 3 estado), 60 minutos, resultado só no final.",
-      homeModeReviewTitle: "Revisão",
-      homeModeReviewText: "Mostra as questões que você mais erra ou mais pula.",
-      startMode: "Iniciar",
-      hideTip: "Não mostrar novamente",
-      tipMemorizationTitle: "Memorização",
-      tipMemorizationText:
-        "Você vê apenas a resposta correta. As outras posições aparecem como “------” para memorizar a posição da resposta.",
-      tipTrainingTitle: "Treino",
-      tipTrainingText:
-        "Toque em uma alternativa para ver o feedback na hora. Nesta sessão, as questões que você erra mais voltam com mais frequência.",
-      tipTestTitle: "Teste",
-      tipTestText:
-        "33 questões em 60 minutos. Resultado só no final. Questões não respondidas contam como puladas.",
-      tipReviewTitle: "Revisão",
-      tipReviewText: "Veja as questões mais difíceis (erradas e puladas) e pratique novamente.",
-      testRulesTitle: "Regras do teste",
-      testRulesText:
-        "During the test, you will receive a booklet containing 33 questions. You have 60 minutes to answer them. For each question, you must choose the correct answer from four possible answers. If you answer at least 17 questions correctly, you will pass the test.",
-      testComposition: "Composição: 30 questões gerais (Alemanha) + 3 questões do seu estado.",
-      question: "Pergunta",
-      answered: "Respondidas",
-      finishTest: "Finalizar teste",
-      finishTestConfirm: "Deseja mesmo finalizar o teste? Em seguida você verá o resultado.",
-      testFinished: "Teste finalizado",
-      pass: "Aprovado",
-      fail: "Reprovado",
-      correct: "Acertos",
-      wrong: "Erros",
-      skipped: "Puladas",
-      accuracy: "Precisão",
-      noStatsYet: "Sem estatísticas ainda. Responda algumas questões no Treino ou no Teste.",
-      statsByTopic: "Estatísticas por tema",
-      topic: "Tema",
-      stateTopicLabel: "Estado",
-      sortBy: "Ordenar por",
-      yourAnswer: "Sua resposta",
-      correctAnswer: "Resposta correta",
-      result: "Resultado",
-      testDetails: "Detalhes do teste",
-      questionReview: "Revisão das questões",
-      totalTests: "Total de testes",
-      averageScore: "Pontuação média",
-      passRate: "Taxa de aprovação",
-      testHistory: "Histórico de testes",
-      date: "Data",
-      score: "Pontuação",
-      mostWrong: "Mais erradas",
-      mostCorrect: "Mais acertadas",
-      mostSkipped: "Mais puladas",
-      bestAccuracy: "Melhor precisão",
-      worstAccuracy: "Pior precisão",
-      attempts: "Tentativas",
-      openInTraining: "Abrir no treino",
-      word: "Palavra",
-      baseDictionary: "Dicionário base",
-      viewDefinition: "Definição e exemplos",
-      addToMyDictionary: "Adicionar ao meu dicionário",
-      removeFromMyDictionary: "Remover do meu dicionário",
-      addedToMyDictionary: "Adicionado ao seu dicionário.",
-      removedFromMyDictionary: "Removido do seu dicionário.",
-      notInBaseDictionary: "Não encontrada no dicionário base.",
-      noDefinition: "Sem definição disponível (apenas exemplos).",
-      emptyDictionary: "Nenhuma palavra salva ainda. Clique em uma palavra de qualquer pergunta/resposta.",
-      export: "Exportar",
-      import: "Importar",
-      importPlaceholder: "Cole o JSON e importe…",
-      importDone: "Importado.",
-      invalidJson: "JSON inválido.",
-      copiedToClipboard: "Copiado para a área de transferência.",
-      imageMissing: "Não foi possível carregar a imagem.",
-    },
   };
 
   const state = {
@@ -472,27 +49,39 @@
 
   const els = {};
 
+  // Pull helpers from extracted modules (utils.js, storage.js, stats-store.js,
+  // mydict-store.js). Kept as locally-named bindings so the many existing
+  // call sites in this file keep working unchanged.
+  const Utils = window.EBT.Utils;
+  const Storage = window.EBT.Storage;
+  const StatsStore = window.EBT.Stats;
+  const MyDictStore = window.EBT.MyDict;
+
+  // Thin legacy shims: preserve the original (prefixed-key) signatures that
+  // the rest of this file uses. New code should prefer EBT.Storage directly.
   function key(name) {
     return `${APP.prefix}${name}`;
   }
-
   function readJSON(storageKey, fallback) {
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (!raw) return fallback;
-      return JSON.parse(raw);
-    } catch (err) {
-      return fallback;
-    }
+    const suffix =
+      typeof storageKey === "string" && storageKey.indexOf(APP.prefix) === 0
+        ? storageKey.slice(APP.prefix.length)
+        : storageKey;
+    return Storage.readJSON(suffix, fallback);
   }
-
   function writeJSON(storageKey, value) {
-    localStorage.setItem(storageKey, JSON.stringify(value));
+    const suffix =
+      typeof storageKey === "string" && storageKey.indexOf(APP.prefix) === 0
+        ? storageKey.slice(APP.prefix.length)
+        : storageKey;
+    Storage.writeJSON(suffix, value);
   }
 
   function t(id) {
-    const dict = UI[state.lang] ?? UI.de;
-    return dict[id] ?? UI.de[id] ?? id;
+    if (window.EBT && window.EBT.I18N) {
+      return window.EBT.I18N.t(state.lang, id);
+    }
+    return id;
   }
 
   const FOCUS_TOPIC_LABEL_KEYS = {
@@ -534,44 +123,15 @@
     }, 2200);
   }
 
-  function pad2(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function formatTimeMs(ms) {
-    const clamped = Math.max(0, ms);
-    const totalSec = Math.floor(clamped / 1000);
-    const min = Math.floor(totalSec / 60);
-    const sec = totalSec % 60;
-    return `${pad2(min)}:${pad2(sec)}`;
-  }
-
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const tmp = array[i];
-      array[i] = array[j];
-      array[j] = tmp;
-    }
-    return array;
-  }
-
-  function randInt(minInclusive, maxInclusive) {
-    const min = Math.ceil(minInclusive);
-    const max = Math.floor(maxInclusive);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  function tokenize(text) {
-    const re = /([A-Za-zÄÖÜäöüß]+|\s+|[^A-Za-zÄÖÜäöüß\s]+)/g;
-    return String(text ?? "").match(re) ?? [];
-  }
-
-  function normalizeWord(word) {
-    return String(word ?? "")
-      .trim()
-      .replace(/^[^A-Za-zÄÖÜäöüß]+|[^A-Za-zÄÖÜäöüß]+$/g, "");
-  }
+  // Pure helpers aliased from utils.js.
+  const formatTimeMs = Utils.formatTimeMs;
+  const shuffle = Utils.shuffle;
+  const randInt = Utils.randInt;
+  const tokenize = Utils.tokenize;
+  const normalizeWord = Utils.normalizeWord;
+  const highlightWord = Utils.highlightWord;
+  const accuracyOf = Utils.accuracyOf;
+  const canonicalWordKey = Utils.canonicalWordKey;
 
   function findBaseDictionaryEntry(word) {
     const w = normalizeWord(word);
@@ -583,67 +143,16 @@
     return { key: lemma, entry };
   }
 
-  function escapeRegExp(str) {
-    return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  function highlightWord(text, word) {
-    const w = normalizeWord(word);
-    if (!w) return String(text ?? "");
-    const escaped = escapeRegExp(w);
-    // Unicode letter boundaries (avoid missing ÄÖÜäöüß)
-    const re = new RegExp(`(^|[^\\p{L}])(${escaped})(?=[^\\p{L}]|$)`, "giu");
-    return String(text ?? "").replace(re, (m, p1, p2) => `${p1}<strong>${p2}</strong>`);
-  }
-
-  function statsReadAll() {
-    return readJSON(key("statsById"), {});
-  }
-
-  function statsBump(questionId, isCorrect) {
-    const all = statsReadAll();
-    const current = all[questionId] ?? { correct: 0, wrong: 0, skipped: 0, lastAnsweredAt: null, lastSkippedAt: null };
-    const updated = {
-      ...current,
-      correct: current.correct + (isCorrect ? 1 : 0),
-      wrong: current.wrong + (isCorrect ? 0 : 1),
-      lastAnsweredAt: new Date().toISOString(),
-    };
-    all[questionId] = updated;
-    writeJSON(key("statsById"), all);
-  }
-
-  function statsBumpSkip(questionId) {
-    const all = statsReadAll();
-    const current = all[questionId] ?? { correct: 0, wrong: 0, skipped: 0, lastAnsweredAt: null, lastSkippedAt: null };
-    const updated = {
-      ...current,
-      skipped: (current.skipped ?? 0) + 1,
-      lastSkippedAt: new Date().toISOString(),
-    };
-    all[questionId] = updated;
-    writeJSON(key("statsById"), all);
-  }
-
-  function accuracyOf(stat) {
-    const total = (stat?.correct ?? 0) + (stat?.wrong ?? 0);
-    if (!total) return null;
-    return (stat.correct ?? 0) / total;
-  }
-
-  function myDictReadAll() {
-    return readJSON(key("myDictionary"), {});
-  }
-
-  function myDictWriteAll(all) {
-    writeJSON(key("myDictionary"), all);
-  }
-
+  // Stats / personal-dictionary stores (thin aliases over extracted modules).
+  const statsReadAll = StatsStore.readAll;
+  const statsBump = StatsStore.bump;
+  const statsBumpSkip = StatsStore.bumpSkip;
+  const myDictReadAll = MyDictStore.readAll;
+  const myDictWriteAll = MyDictStore.writeAll;
   function myDictHas(wordKey) {
     const all = myDictReadAll();
     return !!all[wordKey];
   }
-
   function myDictAdd(wordKey, display) {
     const all = myDictReadAll();
     all[wordKey] = {
@@ -652,16 +161,11 @@
     };
     myDictWriteAll(all);
   }
-
   function myDictRemove(wordKey) {
     const all = myDictReadAll();
     if (!all[wordKey]) return;
     delete all[wordKey];
     myDictWriteAll(all);
-  }
-
-  function canonicalWordKey(wordRaw) {
-    return normalizeWord(wordRaw).toLowerCase();
   }
 
   function isMobileNav() {
@@ -733,10 +237,17 @@
   function setRoute(route) {
     const next = route || "home";
     state.route = next;
-    window.location.hash = `#/${next}`;
+    if (window.EBT?.Router?.setHash) {
+      window.EBT.Router.setHash(next);
+    } else {
+      window.location.hash = `#/${next}`;
+    }
   }
 
   function getRouteFromHash() {
+    if (window.EBT?.Router?.getRouteFromHash) {
+      return window.EBT.Router.getRouteFromHash();
+    }
     const raw = window.location.hash || "#/home";
     const cleaned = raw.replace(/^#\/?/, "");
     return cleaned || "home";
@@ -785,26 +296,27 @@
     return germany.filter((q) => q.sub_category === state.selectedFocusTopic);
   }
 
+  // Weakness-aware reserved-pick helper lives in utils.js so it can be
+  // unit tested from Node without a browser.
+  const pickWithWeaknessReservation = Utils.pickWithWeaknessReservation;
+
   function pickQuestionsForTest() {
+    const stats = statsReadAll();
+    const germanyQs = state.questions.filter((q) => q.category === "GERMANY");
+    const germanyPick = pickWithWeaknessReservation(
+      germanyQs,
+      APP.testGermanyCount,
+      APP.testWeaknessRatio,
+      stats,
+    );
     const stateQs = state.questions.filter((q) => q.category === state.selectedState);
-    const statePick = shuffle([...stateQs]).slice(0, APP.testStateCount);
-    const germanyByCategory = new Map();
-    for (const q of state.questions) {
-      if (q.category !== "GERMANY" || !q.sub_category) continue;
-      if (!germanyByCategory.has(q.sub_category)) germanyByCategory.set(q.sub_category, []);
-      germanyByCategory.get(q.sub_category).push(q);
-    }
-    const categories = APP.subCategoryKeys.filter((k) => germanyByCategory.has(k));
-    const perCategory = Math.floor(APP.testGermanyCount / categories.length);
-    let remainder = APP.testGermanyCount - perCategory * categories.length;
-    const germanyPick = [];
-    for (const cat of categories) {
-      let n = perCategory + (remainder > 0 ? 1 : 0);
-      if (remainder > 0) remainder -= 1;
-      const pool = shuffle([...germanyByCategory.get(cat)]);
-      for (let i = 0; i < n && i < pool.length; i++) germanyPick.push(pool[i]);
-    }
-    return [...shuffle(germanyPick), ...statePick];
+    const statePick = pickWithWeaknessReservation(
+      stateQs,
+      APP.testStateCount,
+      APP.testWeaknessRatio,
+      stats,
+    );
+    return [...germanyPick, ...statePick];
   }
 
   function getPracticeQuestions() {
@@ -815,16 +327,6 @@
 
   function getPracticeQuestionIds() {
     return getPracticeQuestions().map((q) => q._id);
-  }
-
-  function getOrderedPracticeQuestionIds() {
-    const ids = getPracticeQuestionIds();
-    const parseId = (id) => {
-      const parts = String(id).split("-");
-      const n = Number(parts[1]);
-      return Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
-    };
-    return [...ids].sort((a, b) => parseId(a) - parseId(b) || a.localeCompare(b));
   }
 
   function getMemorizationQuestions() {
@@ -1669,10 +1171,10 @@
       table.innerHTML = `
         <thead>
           <tr>
-            <th>${t("question")}</th>
-            <th>${t("yourAnswer")}</th>
-            <th>${t("correctAnswer")}</th>
-            <th>${t("result")}</th>
+            <th scope="col">${t("question")}</th>
+            <th scope="col">${t("yourAnswer")}</th>
+            <th scope="col">${t("correctAnswer")}</th>
+            <th scope="col">${t("result")}</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -1973,10 +1475,10 @@
       table.innerHTML = `
         <thead>
           <tr>
-            <th>${t("question")}</th>
-            <th>${t("yourAnswer")}</th>
-            <th>${t("correctAnswer")}</th>
-            <th>${t("result")}</th>
+            <th scope="col">${t("question")}</th>
+            <th scope="col">${t("yourAnswer")}</th>
+            <th scope="col">${t("correctAnswer")}</th>
+            <th scope="col">${t("result")}</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -2184,11 +1686,11 @@
     table.innerHTML = `
       <thead>
         <tr>
-          <th>${t("question")}</th>
-          <th>${t("attempts")}</th>
-          <th>${t("wrong")}</th>
-          <th>${t("accuracy")}</th>
-          <th></th>
+          <th scope="col">${t("question")}</th>
+          <th scope="col">${t("attempts")}</th>
+          <th scope="col">${t("wrong")}</th>
+          <th scope="col">${t("accuracy")}</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -2259,11 +1761,11 @@
         historyTable.innerHTML = `
           <thead>
             <tr>
-              <th>${t("date")}</th>
-              <th>${t("score")}</th>
-              <th>${t("accuracy")}</th>
-              <th>${t("result")}</th>
-              <th></th>
+              <th scope="col">${t("date")}</th>
+              <th scope="col">${t("score")}</th>
+              <th scope="col">${t("accuracy")}</th>
+              <th scope="col">${t("result")}</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -2278,7 +1780,6 @@
             minute: "2-digit" 
           });
           const score = test.score?.correct ?? 0;
-          const wrong = test.score?.wrong ?? 0;
           const pct = Math.round((score / APP.testTotal) * 100);
           const resultBadge = test.passed 
             ? `<span style="color:#10b981">✓ ${t("pass")}</span>`
@@ -2334,10 +1835,10 @@
       topicTable.innerHTML = `
         <thead>
           <tr>
-            <th>${t("topic")}</th>
-            <th>${t("correct")}</th>
-            <th>${t("wrong")}</th>
-            <th>${t("accuracy")}</th>
+            <th scope="col">${t("topic")}</th>
+            <th scope="col">${t("correct")}</th>
+            <th scope="col">${t("wrong")}</th>
+            <th scope="col">${t("accuracy")}</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -2393,12 +1894,12 @@
     table.innerHTML = `
       <thead>
         <tr>
-          <th>${t("question")}</th>
-          <th>${t("attempts")}</th>
-          <th>${t("correct")}</th>
-          <th>${t("wrong")}</th>
-          <th>${t("skipped")}</th>
-          <th>${t("accuracy")}</th>
+          <th scope="col">${t("question")}</th>
+          <th scope="col">${t("attempts")}</th>
+          <th scope="col">${t("correct")}</th>
+          <th scope="col">${t("wrong")}</th>
+          <th scope="col">${t("skipped")}</th>
+          <th scope="col">${t("accuracy")}</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -2482,8 +1983,8 @@
     table.innerHTML = `
       <thead>
         <tr>
-          <th>${t("word")}</th>
-          <th class="mono">Added</th>
+          <th scope="col">${t("word")}</th>
+          <th class="mono" scope="col">Added</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -2493,10 +1994,19 @@
       const display = all[w]?.word ?? w;
       const addedAt = all[w]?.addedAt ?? "";
       const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><button class="btn btn--ghost" type="button" data-word="${w}">${display}</button></td>
-        <td class="mono muted">${String(addedAt).slice(0, 19).replace("T", " ")}</td>
-      `;
+      // Build DOM with textContent to avoid XSS from imported dictionary payloads.
+      const wordCell = document.createElement("td");
+      const wordBtn = document.createElement("button");
+      wordBtn.className = "btn btn--ghost";
+      wordBtn.type = "button";
+      wordBtn.dataset.word = w;
+      wordBtn.textContent = display;
+      wordCell.appendChild(wordBtn);
+      const addedCell = document.createElement("td");
+      addedCell.className = "mono muted";
+      addedCell.textContent = String(addedAt).slice(0, 19).replace("T", " ");
+      tr.appendChild(wordCell);
+      tr.appendChild(addedCell);
       tbody.appendChild(tr);
     });
     card.appendChild(table);
@@ -2621,7 +2131,20 @@
         { key: "pt", label: "PT" },
       ];
 
-      const defaultTab = state.lang === "pt" ? "pt" : state.lang === "en" ? "en" : "de";
+      const lemma = String(base.key ?? word).trim().toLowerCase();
+      const hasRealDefinition = (langKey) => {
+        const entry = base.entry?.[langKey];
+        if (!entry) return false;
+        const d = String(entry.description ?? "").trim();
+        if (!d) return false;
+        // Treat "description equals the lemma" as no real definition.
+        return d.toLowerCase() !== lemma;
+      };
+
+      const preferredTab = state.lang === "pt" ? "pt" : state.lang === "en" ? "en" : "de";
+      const defaultTab = hasRealDefinition(preferredTab)
+        ? preferredTab
+        : (langs.find((l) => hasRealDefinition(l.key))?.key ?? preferredTab);
       const tabIdPrefix = `wordTab-${Date.now()}`;
 
       const tabs = document.createElement("div");
@@ -2662,7 +2185,8 @@
         const desc = document.createElement("div");
         desc.className = "muted";
         const descText = String(entry.description ?? "").trim();
-        desc.textContent = descText ? descText : t("noDefinition");
+        const isJustLemma = descText && descText.toLowerCase() === lemma;
+        desc.textContent = descText && !isJustLemma ? descText : t("noDefinition");
         panel.appendChild(desc);
 
         if (Array.isArray(entry.phrases) && entry.phrases.length) {
@@ -2713,8 +2237,52 @@
     openModal("wordModal");
   }
 
+  // Routes are registered once and dispatched via EBT.Router. Adding a new
+  // route means appending a { path, render } entry here and registering the
+  // renderer on window.EBT.Render. See docs/scripts/modes/README.md for the
+  // pattern used when moving a render function out of general.js.
+  function registerRoutes() {
+    const Router = window.EBT.Router;
+    if (!Router) return;
+
+    // Expose every render function under EBT.Render so any future mode-file
+    // split can delegate to / replace entries here without touching this file.
+    window.EBT.Render = window.EBT.Render || {};
+    const R = window.EBT.Render;
+    R.home = R.home || renderHome;
+    R.memorization = R.memorization || renderMemorization;
+    R.training = R.training || renderTraining;
+    R.test = R.test || renderTest;
+    R.testResults = R.testResults || renderTestResults;
+    R.testHistoryView = R.testHistoryView || renderTestHistoryView;
+    R.review = R.review || renderReview;
+    R.stats = R.stats || renderStats;
+    R.dictionary = R.dictionary || renderDictionary;
+
+    Router.routes.length = 0;
+    Router.registerAll([
+      { path: "home", render: () => R.home() },
+      { path: "mode/memorization/random", render: () => R.memorization() },
+      { path: "mode/memorization/ordered", render: () => R.memorization() },
+      { path: "mode/train", render: () => R.training() },
+      {
+        path: "mode/test",
+        render: () => {
+          const s = loadSession("test");
+          if (s?.finished) return R.testResults();
+          return R.test();
+        },
+      },
+      { path: "mode/review", render: () => R.review() },
+      { path: "stats", render: () => R.stats() },
+      { path: "test-history-view", render: () => R.testHistoryView() },
+      { path: "dictionary", render: () => R.dictionary() },
+    ]);
+  }
+
   function onRouteChange() {
-    const route = getRouteFromHash();
+    const Router = window.EBT.Router;
+    const route = Router ? Router.getRouteFromHash() : getRouteFromHash();
     state.prevRoute = state.route;
     state.route = route;
     if (route === "mode/memorization/ordered" && state.prevRoute !== "mode/memorization/ordered") {
@@ -2722,21 +2290,8 @@
     }
     closeSidebar();
     if (route !== "mode/test") stopTestTicker();
-
-    if (route === "home") return renderHome();
-    if (route === "mode/memorization/random") return renderMemorization();
-    if (route === "mode/memorization/ordered") return renderMemorization();
-    if (route === "mode/train") return renderTraining();
-    if (route === "mode/test") {
-      const s = loadSession("test");
-      if (s?.finished) return renderTestResults();
-      return renderTest();
-    }
-    if (route === "mode/review") return renderReview();
-    if (route === "stats") return renderStats();
-    if (route === "test-history-view") return renderTestHistoryView();
-    if (route === "dictionary") return renderDictionary();
-
+    if (Router) return Router.dispatch(route);
+    // Fallback (should not be reached if router.js loaded)
     return renderHome();
   }
 
@@ -3174,7 +2729,11 @@
     try {
       const [qRes, dRes] = await Promise.all([fetch("assets/questions.json"), fetch("assets/dictionary.json")]);
       if (!qRes.ok) throw new Error("questions");
-      const questions = await qRes.json();
+      const rawQuestions = await qRes.json();
+      // Validate and drop malformed questions rather than crashing the whole app.
+      const { questions } = window.EBT?.Validation?.filterValidQuestions
+        ? window.EBT.Validation.filterValidQuestions(rawQuestions)
+        : { questions: rawQuestions };
       state.questions = questions;
       state.questionsById = new Map(questions.map((q) => [q._id, q]));
 
@@ -3183,8 +2742,12 @@
         // Support format:
         // - { "aliases": {form: lemma}, "<lemma>": {de/en/pt...}, ... }
         // - or legacy: { "<lemma>": {de/en/pt...}, ... }
-        const aliases = rawDict?.aliases && typeof rawDict.aliases === "object" ? rawDict.aliases : {};
-        const entries = { ...rawDict };
+        const sanitized = window.EBT?.Validation?.filterValidDictionary
+          ? window.EBT.Validation.filterValidDictionary(rawDict).dictionary
+          : rawDict;
+        const aliases =
+          sanitized?.aliases && typeof sanitized.aliases === "object" ? sanitized.aliases : {};
+        const entries = { ...sanitized };
         delete entries.aliases;
         state.baseDictionary = entries;
         state.baseDictionaryAliases = aliases;
@@ -3280,6 +2843,20 @@
       resetDataOkBtn: document.getElementById("resetDataOkBtn"),
     });
 
+    // Run data migrations before anything else touches localStorage.
+    if (window.EBT?.Migrations?.run) {
+      window.EBT.Migrations.run({ currentVersion: APP.version, prefix: APP.prefix });
+    }
+
+    // Load UI strings up front so t() returns real translations on first paint.
+    if (window.EBT?.I18N?.load) {
+      try {
+        await window.EBT.I18N.load();
+      } catch (err) {
+        console.error("[i18n] load failed", err);
+      }
+    }
+
     state.lang = readJSON(key("lang"), APP.defaultLang);
     state.selectedState = readJSON(key("selectedState"), APP.defaultState);
     state.selectedFocusTopic = readJSON(key("selectedFocusTopic"), APP.focusTopicAll);
@@ -3314,6 +2891,30 @@
       // ignore
     }
     initEvents();
+    registerRoutes();
+
+    // Expose the minimal surface that future per-mode files in
+    // docs/scripts/modes/ need to reach into this closure. See
+    // docs/scripts/modes/README.md for how this is used.
+    window.EBT.Core = {
+      APP,
+      state,
+      els,
+      t,
+      setTopbar,
+      setProgress,
+      setTimerVisible,
+      setFooterButtons,
+      setActiveNav,
+      renderQuestionCard,
+      getSubCategoryLabel,
+      getQuestionMetaLine,
+      loadSession,
+      saveSession,
+      clearSession,
+      pickQuestionsForTest,
+      findBaseDictionaryEntry,
+    };
 
     setRoute(getRouteFromHash());
     onRouteChange();

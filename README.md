@@ -59,19 +59,59 @@ The application will automatically open in your default browser at `http://local
 ## 📁 Project Structure
 
 ```
-einburgerungstest-memorization/
-├── docs/
-│   ├── index.html              # Main application file
+einburgerungstest/
+├── docs/                              # Everything served as static files (GitHub Pages)
+│   ├── index.html                     # Main application
 │   ├── assets/
-│   │   ├── questions.json      # All test questions with translations
-│   │   └── dictionary.json     # German word dictionary
-│   ├── images/                 # Question images
+│   │   ├── questions.json             # (generated) test questions
+│   │   ├── dictionary.json            # (generated) German word dictionary
+│   │   └── i18n/{de,en,pt}.json       # UI translations (source of truth)
+│   ├── images/                        # Question images
 │   ├── scripts/
-│   │   └── general.js          # Application logic
-│   └── styles/
-│       └── general.css         # Styling
-├── start.sh                    # Launch script for macOS/Linux
-└── start.bat                   # Launch script for Windows
+│   │   ├── utils.js                   # Pure helpers (testable from Node)
+│   │   ├── storage.js                 # localStorage wrapper
+│   │   ├── migrations.js              # User-data schema migrations
+│   │   ├── validation.js              # Runtime schema guards for question/dictionary data
+│   │   ├── i18n.js                    # Translation loader
+│   │   ├── stats-store.js             # Per-question stats
+│   │   ├── mydict-store.js            # Personal dictionary
+│   │   ├── session-store.js           # Session + test history I/O
+│   │   ├── router.js                  # Hash-route dispatch table
+│   │   ├── modes/                     # (future) per-mode renderers
+│   │   ├── types.js                   # Shared JSDoc typedefs
+│   │   ├── globals.d.ts               # Ambient EBT namespace declaration
+│   │   └── general.js                 # App core (state, events, renderers)
+│   └── styles/general.css
+├── data/
+│   ├── README.md                      # How to rebuild artefacts
+│   └── source/
+│       ├── questions-raw.json         # Source-of-truth questions
+│       └── corrections.json           # sub_category / text overrides
+├── scripts/
+│   ├── build-data.sh                  # Orchestrator
+│   ├── update_questions.js            # Corrections applier (Node, CJS)
+│   ├── fill_de_descriptions.py        # Dictionary filler from de.wiktionary
+│   └── check_i18n.mjs                 # Translation coverage check
+├── tests/                             # Vitest suite for pure helpers
+├── .github/workflows/ci.yml           # Lint + typecheck + i18n check + tests
+├── package.json                       # Dev tooling (eslint, prettier, vitest, tsc)
+├── jsconfig.json                      # JSDoc typecheck config
+├── .eslintrc.json, .prettierrc.json, .editorconfig
+├── start.sh / start.bat               # Local launcher
+└── LICENSE
+```
+
+## 🛠 Development
+
+```bash
+npm install           # install dev tooling
+npm run dev           # serve docs/ on :8976
+npm run lint          # ESLint
+npm run typecheck     # tsc --noEmit (JSDoc-based)
+npm run test          # Vitest
+npm run check:i18n    # translation coverage
+npm run check         # run everything CI runs
+./scripts/build-data.sh   # rebuild generated JSON from data/source/
 ```
 
 ## ⚠️ Important Disclaimers

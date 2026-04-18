@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "docs/scripts/i18n.js",
+    "docs/scripts/migrations.js",
+    "docs/scripts/mydict-store.js",
+    "docs/scripts/session-store.js",
+    "docs/scripts/stats-store.js",
+    "docs/scripts/router.js",
+    "docs/scripts/storage.js",
+    "docs/scripts/types.js",
+    "docs/scripts/utils.js",
+    "docs/scripts/validation.js",
+    "docs/scripts/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "docs/assets",
+    "scripts",
+    "tests",
+    "docs/scripts/general.js"
+  ]
+}

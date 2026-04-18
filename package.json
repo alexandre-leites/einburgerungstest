@@ -1,0 +1,25 @@
+{
+  "name": "einburgerungstest",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Self-learning tool for the German citizenship test (Einbürgerungstest). Static site served from docs/.",
+  "scripts": {
+    "dev": "python3 -m http.server 8976 --directory docs",
+    "lint": "eslint \"docs/scripts/**/*.js\" \"scripts/*.js\" \"tests/**/*.js\"",
+    "lint:fix": "eslint --fix \"docs/scripts/**/*.js\" \"scripts/*.js\" \"tests/**/*.js\"",
+    "format": "prettier --write \"docs/**/*.{js,css,html,json}\" \"scripts/*.js\" \"tests/**/*.js\" \"*.md\"",
+    "format:check": "prettier --check \"docs/**/*.{js,css,html,json}\" \"scripts/*.js\" \"tests/**/*.js\"",
+    "typecheck": "tsc --noEmit -p jsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:i18n": "node scripts/check_i18n.mjs",
+    "check": "npm run lint && npm run typecheck && npm run check:i18n && npm run test"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "jsdom": "^24.0.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}

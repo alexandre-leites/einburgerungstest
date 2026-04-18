@@ -1,12 +1,16 @@
 // update_questions.js
+//
+// Apply data/source/corrections.json on top of data/source/questions-raw.json
+// and write the result to docs/assets/questions.json. Invoked by
+// scripts/build-data.sh.
 
 const fs = require('fs');
 const path = require('path');
 
-// Configuration
-const QUESTIONS_FILE = '../docs/assets/questions.json';
-const CORRECTIONS_FILE = 'corrections.json';
-const OUTPUT_FILE = '../docs/assets/questions_updated.json'; // We save to a new file to be safe
+// Configuration (paths relative to repo root, resolved via __dirname below)
+const QUESTIONS_FILE = '../data/source/questions-raw.json';
+const CORRECTIONS_FILE = '../data/source/corrections.json';
+const OUTPUT_FILE = '../docs/assets/questions.json';
 
 /**
  * Main function to update the sub_categories

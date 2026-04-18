@@ -15,6 +15,7 @@ docs/
 ├── index.html                       Classic layout (sidebar + topbar + footer)
 ├── modern.html                      Modern layout (glass header + dock + drawer)
 ├── sw.js                            Service worker: network-first for HTML, cache-first for assets
+├── .nojekyll                        Marker disabling Jekyll on GitHub Pages (otherwise _-prefixed files are ignored)
 ├── partials/
 │   └── templates.html               25 <template id="tpl-..."> blocks, shared by both layouts
 ├── styles/

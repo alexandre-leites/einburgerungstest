@@ -87,6 +87,12 @@ When adding a feature, ask:
 
 HTML navigations use network-first (so `CACHE_VERSION` bumps aren't strictly required for HTML); assets use stale-while-revalidate. Bump anyway when in doubt.
 
+### 7. Do not delete `docs/.nojekyll`
+
+GitHub Pages runs Jekyll by default, and Jekyll silently **ignores every file or directory whose name starts with `_`**. That would drop all our shared helpers (`docs/scripts/modes/_nav-handlers.js`, `_settings.js`, `_question-card.js`, …) from the deployed site and the app would 404-cascade on load.
+
+The empty `docs/.nojekyll` file disables Jekyll. Keep it. Similarly, if you rename or add new underscore-prefixed files, no extra action is needed — they'll be served because of `.nojekyll`. If you ever see a "works locally, fails on GitHub Pages" report mentioning an `_` file, check that `.nojekyll` is still there.
+
 ## Working with the codebase
 
 ### Finding things

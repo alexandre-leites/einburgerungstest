@@ -53,6 +53,17 @@ Register in `docs/index.html`'s script list before `scripts/general.js`.
 A mode file **must not** touch `document.getElementById` or read from a
 global `els` cache — those are the View layer's job.
 
+## GitHub Pages / Jekyll gotcha
+
+Many files in this directory start with an underscore (`_nav-handlers.js`,
+`_settings.js`, `_question-card.js`, …). GitHub Pages runs Jekyll by
+default, and Jekyll **ignores every file or directory whose name starts
+with `_`**. Without intervention, those helpers would be dropped at deploy
+time and the app would 404.
+
+The empty file `docs/.nojekyll` disables Jekyll on Pages. **Do not delete
+it.** It is the sole reason underscore-prefixed files are served.
+
 ## Separation of concerns
 
 - **`selectors.js`** — logical-name → CSS selector registry.

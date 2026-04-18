@@ -131,5 +131,11 @@
   "importDone": "Importado.",
   "invalidJson": "JSON inválido.",
   "copiedToClipboard": "Copiado para a área de transferência.",
-  "imageMissing": "Não foi possível carregar a imagem."
+  "imageMissing": "Não foi possível carregar a imagem.",
+  "quotaExceeded": "Armazenamento local cheio. Por favor, apague o histórico de testes ou entradas do dicionário.",
+  "storageUnavailable": "Armazenamento local indisponível (modo privado?). O progresso não será salvo.",
+  "dictionaryFull": "Dicionário pessoal cheio. As entradas mais antigas foram removidas.",
+  "loadFailedOffline": "Erro ao carregar. Usando versão em cache.",
+  "retry": "Tentar novamente",
+  "usingCachedData": "Usando dados em cache de {date}."
 }

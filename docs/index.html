@@ -25,7 +25,7 @@
             <div class="brand__logo" aria-hidden="true">E</div>
             <div class="brand__text">
               <div class="brand__title">Einbürgerungstest</div>
-              <div class="brand__subtitle" id="brandSubtitle">Self-learning</div>
+              <div class="brand__subtitle" id="brandSubtitle" data-i18n-literal="Self-learning">Self-learning</div>
             </div>
           </div>
           <button class="icon-btn sidebar__close" id="sidebarCloseBtn" type="button" aria-label="Close menu">
@@ -34,8 +34,8 @@
         </div>
 
         <nav class="nav">
-          <button class="nav__item" type="button" data-route="home" id="navHome">Home</button>
-          <div class="nav__section" id="navSectionModes">Modes</div>
+          <button class="nav__item" type="button" data-route="home" id="navHome" data-i18n="home">Home</button>
+          <div class="nav__section" id="navSectionModes" data-i18n="modes">Modes</div>
           <button
             class="nav__item nav__item--has-submenu"
             type="button"
@@ -43,26 +43,26 @@
             data-route-prefix="mode/memorization/"
             id="navMemGroup"
           >
-            <span class="nav__itemText" id="navMemTitle">Memorization</span>
+            <span class="nav__itemText" id="navMemTitle" data-i18n="memorization">Memorization</span>
           </button>
           <div class="nav__submenu" aria-label="Memorization submenu">
-            <button class="nav__item nav__item--sub" type="button" data-route="mode/memorization/random" id="navMemRandom">
+            <button class="nav__item nav__item--sub" type="button" data-route="mode/memorization/random" id="navMemRandom" data-i18n="memorizationRandom">
               Random order
             </button>
-            <button class="nav__item nav__item--sub" type="button" data-route="mode/memorization/ordered" id="navMemOrdered">
+            <button class="nav__item nav__item--sub" type="button" data-route="mode/memorization/ordered" id="navMemOrdered" data-i18n="memorizationOrdered">
               Ordered (by ID)
             </button>
           </div>
-          <button class="nav__item" type="button" data-route="mode/train" id="navTrain">Training</button>
-          <button class="nav__item" type="button" data-route="mode/test" id="navTest">Test</button>
-          <button class="nav__item" type="button" data-route="mode/review" id="navReview">Review</button>
-          <div class="nav__section" id="navSectionTools">Tools</div>
-          <button class="nav__item" type="button" data-route="stats" id="navStats">Statistics</button>
-          <button class="nav__item" type="button" data-route="dictionary" id="navDict">My dictionary</button>
-          <div class="nav__section" id="navSectionSettings">Settings</div>
+          <button class="nav__item" type="button" data-route="mode/train" id="navTrain" data-i18n="training">Training</button>
+          <button class="nav__item" type="button" data-route="mode/test" id="navTest" data-i18n="test">Test</button>
+          <button class="nav__item" type="button" data-route="mode/review" id="navReview" data-i18n="review">Review</button>
+          <div class="nav__section" id="navSectionTools" data-i18n="tools">Tools</div>
+          <button class="nav__item" type="button" data-route="stats" id="navStats" data-i18n="statistics">Statistics</button>
+          <button class="nav__item" type="button" data-route="dictionary" id="navDict" data-i18n="myDictionary">My dictionary</button>
+          <div class="nav__section" id="navSectionSettings" data-i18n="settings">Settings</div>
           <div class="sidebar__settings">
             <label class="field" for="languageSelect">
-              <span class="field__label" id="languageLabel">Language</span>
+              <span class="field__label" id="languageLabel" data-i18n="language">Language</span>
               <select class="field__control" id="languageSelect">
                 <option value="de">DE</option>
                 <option value="en">EN</option>
@@ -71,21 +71,24 @@
             </label>
 
             <label class="field" for="stateSelect">
-              <span class="field__label" id="stateLabel">State (for test)</span>
+              <span class="field__label" id="stateLabel" data-i18n="stateForTest">State (for test)</span>
               <select class="field__control" id="stateSelect"></select>
             </label>
 
             <label class="field" for="focusTopicSelect">
-              <span class="field__label" id="focusTopicLabel">Focus topic</span>
+              <span class="field__label" id="focusTopicLabel" data-i18n="focusTopic">Focus topic</span>
               <select class="field__control" id="focusTopicSelect"></select>
             </label>
 
-            <button class="btn btn--ghost" type="button" id="resetBtn">Reset data</button>
+            <button class="btn btn--ghost" type="button" id="resetBtn" data-i18n="resetData">Reset data</button>
           </div>
         </nav>
 
         <div class="sidebar__footer" aria-label="Credits">
           Made with ❤️ by <span class="mono">alexslx</span>
+          <div style="margin-top:6px">
+            <a href="modern.html" style="color:var(--primary);text-decoration:none">modern layout →</a>
+          </div>
         </div>
       </aside>
 
@@ -105,11 +108,11 @@
 
           <div class="topbar__right">
             <div class="pill" id="timerPill" hidden>
-              <span class="pill__label" id="timerLabel">Timer</span>
+              <span class="pill__label" id="timerLabel" data-i18n="timer">Timer</span>
               <span class="pill__value mono" id="timerValue">60:00</span>
             </div>
             <div class="pill">
-              <span class="pill__label" id="progressLabel">Progress</span>
+              <span class="pill__label" id="progressLabel" data-i18n="progress">Progress</span>
               <span class="pill__value mono" id="progressValue">0/0</span>
             </div>
           </div>
@@ -118,9 +121,9 @@
         <main class="main" id="main" tabindex="-1"></main>
 
         <footer class="footer" id="pageFooter">
-          <button class="btn btn--ghost" type="button" id="backBtn">Back</button>
-          <button class="btn" type="button" id="homeBtn">Home</button>
-          <button class="btn btn--primary" type="button" id="nextBtn">Next</button>
+          <button class="btn btn--ghost" type="button" id="backBtn" data-i18n="back">Back</button>
+          <button class="btn" type="button" id="homeBtn" data-i18n="home">Home</button>
+          <button class="btn btn--primary" type="button" id="nextBtn" data-i18n="next">Next</button>
         </footer>
       </div>
     </div>
@@ -137,7 +140,7 @@
         </div>
         <div class="modal__content">
           <div class="card">
-            <div class="card__title" id="wordBaseTitle">Base dictionary</div>
+            <div class="card__title" id="wordBaseTitle" data-i18n="baseDictionary">Base dictionary</div>
             <div class="stack" id="wordBaseContent"></div>
           </div>
         </div>
@@ -153,14 +156,14 @@
       <div class="modal__backdrop" data-close-modal="confirmModal"></div>
       <div class="modal__panel modal__panel--sm">
         <div class="modal__header">
-          <div class="modal__title" id="confirmTitle">Confirm</div>
+          <div class="modal__title" id="confirmTitle" data-i18n="confirm">Confirm</div>
           <button class="icon-btn" type="button" data-close-modal="confirmModal" aria-label="Close">✕</button>
         </div>
         <div class="modal__content">
           <p class="muted" id="confirmText"></p>
           <div class="row row--right">
-            <button class="btn btn--ghost" type="button" data-close-modal="confirmModal" id="confirmCancelBtn">Cancel</button>
-            <button class="btn btn--primary" type="button" id="confirmOkBtn">OK</button>
+            <button class="btn btn--ghost" type="button" data-close-modal="confirmModal" id="confirmCancelBtn" data-i18n="cancel">Cancel</button>
+            <button class="btn btn--primary" type="button" id="confirmOkBtn" data-i18n="ok">OK</button>
           </div>
         </div>
       </div>
@@ -171,55 +174,88 @@
       <div class="modal__panel modal__panel--sm">
         <div class="modal__header">
           <div>
-            <div class="modal__title" id="resetDataTitle">Reset data</div>
-            <div class="modal__subtitle" id="resetDataSubtitle"></div>
+            <div class="modal__title" id="resetDataTitle" data-i18n="resetDataTitle">Reset data</div>
+            <div class="modal__subtitle" id="resetDataSubtitle" data-i18n="resetDataSubtitle"></div>
           </div>
           <button class="icon-btn" type="button" data-close-modal="resetDataModal" aria-label="Close">✕</button>
         </div>
         <div class="modal__content">
           <div class="stack">
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetStatsLabel">Statistics</span>
+              <span id="resetStatsLabel" data-i18n="resetStats">Statistics</span>
               <input type="checkbox" id="resetChkStats" />
             </label>
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetSessionsLabel">Sessions</span>
+              <span id="resetSessionsLabel" data-i18n="resetSessions">Sessions</span>
               <input type="checkbox" id="resetChkSessions" />
             </label>
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetDictionaryLabel">My dictionary</span>
+              <span id="resetDictionaryLabel" data-i18n="resetMyDictionary">My dictionary</span>
               <input type="checkbox" id="resetChkDictionary" />
             </label>
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetOtherLabel">Other local settings</span>
+              <span id="resetOtherLabel" data-i18n="resetOther">Other local settings</span>
               <input type="checkbox" id="resetChkOther" />
             </label>
             <hr style="border:0;border-top:1px solid rgba(248,250,252,0.14);margin:6px 0" />
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetLanguageLabel">Language</span>
+              <span id="resetLanguageLabel" data-i18n="resetLanguage">Language</span>
               <input type="checkbox" id="resetChkLanguage" />
             </label>
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetStateLabel">State</span>
+              <span id="resetStateLabel" data-i18n="resetState">State</span>
               <input type="checkbox" id="resetChkState" />
             </label>
             <label class="row" style="justify-content:space-between;gap:12px">
-              <span id="resetFocusTopicLabel">Focus topic</span>
+              <span id="resetFocusTopicLabel" data-i18n="focusTopic">Focus topic</span>
               <input type="checkbox" id="resetChkFocusTopic" />
             </label>
           </div>
 
           <div class="row row--right" style="margin-top:10px">
-            <button class="btn btn--ghost" type="button" data-close-modal="resetDataModal" id="resetDataCancelBtn">
+            <button class="btn btn--ghost" type="button" data-close-modal="resetDataModal" id="resetDataCancelBtn" data-i18n="cancel">
               Cancel
             </button>
-            <button class="btn btn--primary" type="button" id="resetDataOkBtn">OK</button>
+            <button class="btn btn--primary" type="button" id="resetDataOkBtn" data-i18n="ok">OK</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="toast" id="toast" hidden></div>
+    <div class="modal" id="questionReviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="questionReviewTitle">
+      <div class="modal__backdrop" data-close-modal="questionReviewModal"></div>
+      <div class="modal__panel" style="max-width:800px">
+        <div class="modal__header">
+          <div>
+            <div class="modal__title" id="questionReviewTitle"></div>
+            <div class="modal__subtitle" id="questionReviewSubtitle"></div>
+          </div>
+          <button class="icon-btn" type="button" data-close-modal="questionReviewModal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal__content">
+          <div class="card" data-ref="card"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!--
+      View-layer templates live in docs/partials/templates.html and are
+      fetched at app init by EBT.Templates.loadFromUrl(). See
+      docs/scripts/modes/README.md for the contract.
+    -->
+
+
+    <script>
+      // Register the service worker opportunistically. Silent on failure
+      // (localhost over file://, private browsing, etc.).
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("sw.js").catch(function () {});
+        });
+      }
+    </script>
 
     <script>
       (function () {
@@ -237,6 +273,30 @@
           "scripts/mydict-store.js",
           "scripts/session-store.js",
           "scripts/router.js",
+          "scripts/stats-aggregations.js",
+          "scripts/sessions.js",
+          "scripts/data-loader.js",
+          "scripts/selectors.js",
+          "scripts/view.js",
+          "scripts/templates.js",
+          "scripts/modes/home.js",
+          "scripts/modes/dictionary.js",
+          "scripts/modes/stats.js",
+          "scripts/modes/review.js",
+          "scripts/modes/_nav-handlers.js",
+          "scripts/modes/_reset-data.js",
+          "scripts/modes/_settings.js",
+          "scripts/modes/_question-card.js",
+          "scripts/modes/_word-ui.js",
+          "scripts/modes/_keyboard-shortcuts.js",
+          "scripts/modes/_test-lifecycle.js",
+          "scripts/modes/_test-review-shared.js",
+          "scripts/modes/_question-review-modal.js",
+          "scripts/modes/test-results.js",
+          "scripts/modes/test-history-view.js",
+          "scripts/modes/memorization.js",
+          "scripts/modes/training.js",
+          "scripts/modes/test.js",
           "scripts/general.js",
         ];
         var i = 0;

@@ -181,6 +181,97 @@
     return shuffle(weakPick.concat(randomPick));
   }
 
+  /**
+   * Training-mode credit update. Pure function used by the training-mode
+   * answer handler so the policy can be unit tested.
+   *
+   * @param {number} current       current credit for the question
+   * @param {boolean} isCorrect    did the user answer correctly?
+   * @param {{ correctDelta:number, wrongDelta:number, minCredits:number }} cfg
+   */
+  function nextTrainingCredits(current, isCorrect, cfg) {
+    var delta = isCorrect ? cfg.correctDelta : cfg.wrongDelta;
+    var raw = (current || 0) + delta;
+    return Math.max(cfg.minCredits, raw);
+  }
+
+  /**
+   * Weighted-random pick for training mode. Pure function; takes the full
+   * set of question IDs, a snapshot of their per-question credits and
+   * cooldown timestamps, and the current clock. Returns the chosen ID, or
+   * null if the pool is empty.
+   *
+   * Algorithm:
+   *   1. Consider only questions with credits > 0 AND nextEligibleAt <= now.
+   *   2. Weighted random among those by credits.
+   *   3. If nothing is eligible (all on cooldown), fall back to all
+   *      credit-positive questions regardless of cooldown.
+   *   4. If every credit is zero, return the first ID as a last-resort seed.
+   *
+   * @param {string[]} ids
+   * @param {{ credits: Object.<string, number>,
+   *           nextEligibleAt: Object.<string, number>,
+   *           defaultCredits: number,
+   *           nowMs: number,
+   *           random?: () => number }} ctx
+   * @returns {string | null}
+   */
+  function pickTrainingQuestionId(ids, ctx) {
+    if (!Array.isArray(ids) || ids.length === 0) return null;
+    var credits = ctx.credits || {};
+    var nextAt = ctx.nextEligibleAt || {};
+    var defaultCredits = typeof ctx.defaultCredits === "number" ? ctx.defaultCredits : 10;
+    var now = ctx.nowMs;
+    var random = typeof ctx.random === "function" ? ctx.random : Math.random;
+
+    function creditOf(qid) {
+      var raw = credits[qid];
+      return typeof raw === "number" ? raw : defaultCredits;
+    }
+
+    var eligible = [];
+    var totalWeight = 0;
+    for (var i = 0; i < ids.length; i++) {
+      var qid = ids[i];
+      var c = creditOf(qid);
+      if (c <= 0) continue;
+      var next = typeof nextAt[qid] === "number" ? nextAt[qid] : 0;
+      if (next > now) continue;
+      eligible.push({ qid: qid, weight: c });
+      totalWeight += c;
+    }
+
+    function drawFrom(pool, sum) {
+      var r = random() * sum;
+      for (var j = 0; j < pool.length; j++) {
+        r -= pool[j].weight;
+        if (r <= 0) return pool[j].qid;
+      }
+      return pool[pool.length - 1].qid;
+    }
+
+    if (eligible.length > 0 && totalWeight > 0) {
+      return drawFrom(eligible, totalWeight);
+    }
+
+    // Fallback: ignore cooldown, use any credit-positive question.
+    var anyPositive = [];
+    var sum = 0;
+    for (var k = 0; k < ids.length; k++) {
+      var w = Math.max(0, creditOf(ids[k]));
+      if (w > 0) {
+        anyPositive.push({ qid: ids[k], weight: w });
+        sum += w;
+      }
+    }
+    if (anyPositive.length > 0 && sum > 0) {
+      return drawFrom(anyPositive, sum);
+    }
+    // Everything fully exhausted — return the first ID so training can at
+    // least offer something instead of freezing.
+    return ids[0];
+  }
+
   return {
     pad2: pad2,
     formatTimeMs: formatTimeMs,
@@ -196,5 +287,7 @@
     accuracyOf: accuracyOf,
     weaknessKeyFor: weaknessKeyFor,
     pickWithWeaknessReservation: pickWithWeaknessReservation,
+    nextTrainingCredits: nextTrainingCredits,
+    pickTrainingQuestionId: pickTrainingQuestionId,
   };
 });

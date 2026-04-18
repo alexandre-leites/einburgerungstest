@@ -13,7 +13,16 @@
     // (lowest correct count, then lowest total views). The rest are picked
     // uniformly at random so tests stay varied.
     testWeaknessRatio: 0.4,
+    // Training mode tuning. Each question starts with `trainDefaultCredits`
+    // weight; weight is the picker's probability mass. Correct answers reduce
+    // weight (the picker shows the question less), wrong answers raise it
+    // (more reviews). Once a question is shown, it is on cooldown for a
+    // random time in [min, max]ms so the user doesn't see the same question
+    // twice in a row.
     trainDefaultCredits: 10,
+    trainCorrectDelta: -1,
+    trainWrongDelta: 2,
+    trainMinCredits: 0,
     trainCooldownMinMs: 3 * 60 * 1000,
     trainCooldownMaxMs: 10 * 60 * 1000,
     focusTopicAll: "ALL",
@@ -55,7 +64,6 @@
   const Utils = window.EBT.Utils;
   const Storage = window.EBT.Storage;
   const StatsStore = window.EBT.Stats;
-  const MyDictStore = window.EBT.MyDict;
 
   // Thin legacy shims: preserve the original (prefixed-key) signatures that
   // the rest of this file uses. New code should prefer EBT.Storage directly.
@@ -84,6 +92,27 @@
     return id;
   }
 
+  /**
+   * Guess a language for a first-time visitor based on navigator.language.
+   * Falls back to APP.defaultLang when nothing supported matches.
+   */
+  function detectPreferredLanguage() {
+    const supported = new Set(["de", "en", "pt"]);
+    try {
+      const langs = Array.isArray(navigator.languages) && navigator.languages.length
+        ? navigator.languages
+        : [navigator.language || ""];
+      for (const raw of langs) {
+        if (typeof raw !== "string" || !raw) continue;
+        const primary = raw.toLowerCase().split(/[-_]/)[0];
+        if (supported.has(primary)) return primary;
+      }
+    } catch (_e) {
+      // navigator may be unavailable in some environments — fall through.
+    }
+    return APP.defaultLang;
+  }
+
   const FOCUS_TOPIC_LABEL_KEYS = {
     [APP.focusTopicAll]: "focusTopicAll",
     FUNDAMENTAL_RIGHTS: "focusFundamentalRights",
@@ -109,28 +138,17 @@
     return parts.join(" • ");
   }
 
-  function setText(el, text) {
-    if (!el) return;
-    el.textContent = text;
-  }
+  // Chrome mutations delegate to EBT.View (docs/scripts/view.js). The
+  // wrappers here keep the historical call sites in this file unchanged
+  // while layouts override behaviour by swapping out index.html.
+  const View = window.EBT.View;
 
   function toast(message) {
-    setText(els.toast, message);
-    els.toast.hidden = false;
-    window.clearTimeout(toast._t);
-    toast._t = window.setTimeout(() => {
-      els.toast.hidden = true;
-    }, 2200);
+    View.showToast(message);
   }
 
   // Pure helpers aliased from utils.js.
-  const formatTimeMs = Utils.formatTimeMs;
-  const shuffle = Utils.shuffle;
-  const randInt = Utils.randInt;
-  const tokenize = Utils.tokenize;
   const normalizeWord = Utils.normalizeWord;
-  const highlightWord = Utils.highlightWord;
-  const accuracyOf = Utils.accuracyOf;
   const canonicalWordKey = Utils.canonicalWordKey;
 
   function findBaseDictionaryEntry(word) {
@@ -143,95 +161,20 @@
     return { key: lemma, entry };
   }
 
-  // Stats / personal-dictionary stores (thin aliases over extracted modules).
-  const statsReadAll = StatsStore.readAll;
+  // Stats aliases used only during Core assembly below.
   const statsBump = StatsStore.bump;
   const statsBumpSkip = StatsStore.bumpSkip;
-  const myDictReadAll = MyDictStore.readAll;
-  const myDictWriteAll = MyDictStore.writeAll;
-  function myDictHas(wordKey) {
-    const all = myDictReadAll();
-    return !!all[wordKey];
-  }
-  function myDictAdd(wordKey, display) {
-    const all = myDictReadAll();
-    all[wordKey] = {
-      word: display ?? wordKey,
-      addedAt: all[wordKey]?.addedAt ?? new Date().toISOString(),
-    };
-    myDictWriteAll(all);
-  }
-  function myDictRemove(wordKey) {
-    const all = myDictReadAll();
-    if (!all[wordKey]) return;
-    delete all[wordKey];
-    myDictWriteAll(all);
-  }
 
-  function isMobileNav() {
-    return window.matchMedia("(max-width: 980px)").matches;
-  }
+  const syncSidebarForViewport = View.syncSidebarForViewport;
+  const closeSidebar = View.closeSidebar;
 
-  function syncSidebarForViewport() {
-    if (isMobileNav()) {
-      // entering mobile: remove desktop collapsed state and ensure overlay matches is-open
-      els.sidebar.classList.remove("is-collapsed");
-      const isOpen = els.sidebar.classList.contains("is-open");
-      els.overlay.hidden = !isOpen;
-      return;
-    }
-    // entering desktop: close mobile overlay state and keep sidebar expanded by default
-    els.sidebar.classList.remove("is-open");
-    els.overlay.hidden = true;
-  }
+  const toggleSidebar = View.toggleSidebar;
 
-  function openSidebar() {
-    if (!isMobileNav()) return;
-    els.sidebar.classList.add("is-open");
-    els.overlay.hidden = false;
-  }
-
-  function closeSidebar() {
-    if (!isMobileNav()) return;
-    els.sidebar.classList.remove("is-open");
-    els.overlay.hidden = true;
-  }
-
-  function toggleSidebar() {
-    if (isMobileNav()) {
-      const isOpen = els.sidebar.classList.contains("is-open");
-      if (isOpen) closeSidebar();
-      else openSidebar();
-      return;
-    }
-    // desktop: collapse/expand sidebar (no overlay)
-    els.sidebar.classList.toggle("is-collapsed");
-    els.overlay.hidden = true;
-  }
-
-  function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    modal.hidden = false;
-    modal.style.display = "grid";
-  }
-
-  function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    modal.hidden = true;
-    modal.style.display = "none";
-  }
+  const openModal = View.openModal;
+  const closeModal = View.closeModal;
 
   function confirmDialog(text, onOk) {
-    setText(els.confirmText, text);
-    openModal("confirmModal");
-    const handler = () => {
-      els.confirmOkBtn.removeEventListener("click", handler);
-      closeModal("confirmModal");
-      onOk();
-    };
-    els.confirmOkBtn.addEventListener("click", handler);
+    View.showConfirm(text, onOk);
   }
 
   function setRoute(route) {
@@ -253,310 +196,29 @@
     return cleaned || "home";
   }
 
-  function setActiveNav(route) {
-    document.querySelectorAll(".nav__item[data-route]").forEach((btn) => {
-      const exact = btn.getAttribute("data-route") === route;
-      const prefix = btn.getAttribute("data-route-prefix");
-      const isActive = exact || (prefix && route.startsWith(prefix));
-      if (isActive) btn.setAttribute("aria-current", "page");
-      else btn.removeAttribute("aria-current");
-    });
-  }
-
-  function setTopbar(title, meta) {
-    setText(els.routeTitle, title);
-    setText(els.routeMeta, meta ?? "");
-  }
-
-  function setProgress(current, total) {
-    setText(els.progressValue, `${current}/${total}`);
-  }
-
-  function setTimerVisible(visible) {
-    els.timerPill.hidden = !visible;
-  }
-
+  // Test-mode lifecycle lives in modes/_test-lifecycle.js. Thin shims are
+  // kept so other parts of general.js (init, Settings.wire's
+  // stopTestTicker dep) still call them by name.
   function stopTestTicker() {
-    if (state.testTicker) window.clearInterval(state.testTicker);
-    state.testTicker = null;
+    window.EBT.TestLifecycle?.stopTicker();
   }
 
   function updateTestTimerUI(testSession) {
-    const now = Date.now();
-    const remaining = testSession.endTimeMs - now;
-    setText(els.timerValue, formatTimeMs(remaining));
-    if (remaining <= 0) {
-      finishTest(true);
-    }
+    window.EBT.TestLifecycle?.updateTimerUI(testSession);
   }
 
-  function getGermanyPool() {
-    const germany = state.questions.filter((q) => q.category === "GERMANY");
-    if (state.selectedFocusTopic === APP.focusTopicAll) return germany;
-    return germany.filter((q) => q.sub_category === state.selectedFocusTopic);
-  }
-
-  // Weakness-aware reserved-pick helper lives in utils.js so it can be
-  // unit tested from Node without a browser.
-  const pickWithWeaknessReservation = Utils.pickWithWeaknessReservation;
-
-  function pickQuestionsForTest() {
-    const stats = statsReadAll();
-    const germanyQs = state.questions.filter((q) => q.category === "GERMANY");
-    const germanyPick = pickWithWeaknessReservation(
-      germanyQs,
-      APP.testGermanyCount,
-      APP.testWeaknessRatio,
-      stats,
-    );
-    const stateQs = state.questions.filter((q) => q.category === state.selectedState);
-    const statePick = pickWithWeaknessReservation(
-      stateQs,
-      APP.testStateCount,
-      APP.testWeaknessRatio,
-      stats,
-    );
-    return [...germanyPick, ...statePick];
-  }
-
-  function getPracticeQuestions() {
-    const germanyPool = getGermanyPool();
-    const stateQs = state.questions.filter((q) => q.category === state.selectedState);
-    return [...germanyPool, ...stateQs];
-  }
-
-  function getPracticeQuestionIds() {
-    return getPracticeQuestions().map((q) => q._id);
-  }
-
-  function getMemorizationQuestions() {
-    const germanyPool = getGermanyPool();
-    const stateQs = state.questions.filter((q) => q.category === state.selectedState);
-    return [...germanyPool, ...stateQs];
-  }
-
-  function getMemorizationQuestionIds() {
-    return getMemorizationQuestions().map((q) => q._id);
-  }
-
-  function getOrderedMemorizationQuestionIds() {
-    const ids = getMemorizationQuestionIds();
-    const parseId = (id) => {
-      const parts = String(id).split("-");
-      const n = Number(parts[1]);
-      return Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
-    };
-    return [...ids].sort((a, b) => parseId(a) - parseId(b) || a.localeCompare(b));
-  }
-
-  function sessionKeyForMode(mode) {
-    return key(`session.${mode}`);
-  }
-
-  function loadSession(mode) {
-    return readJSON(sessionKeyForMode(mode), null);
-  }
-
-  function saveSession(mode, session) {
-    writeJSON(sessionKeyForMode(mode), session);
-  }
-
-  function clearSession(mode) {
-    localStorage.removeItem(sessionKeyForMode(mode));
-  }
-
-  function ensureSessionForMode(mode) {
-    if (mode === "test") {
-      let session = loadSession("test");
-      if (!session || session.version !== APP.version) session = null;
-      if (!session || session.state !== state.selectedState || !Array.isArray(session.questionIds)) {
-        const qs = pickQuestionsForTest();
-        session = {
-          version: APP.version,
-          mode: "test",
-          state: state.selectedState,
-          startTimeMs: Date.now(),
-          endTimeMs: Date.now() + APP.testDurationMs,
-          questionIds: qs.map((q) => q._id),
-          index: 0,
-          answers: {}, // id -> optionIndex
-          finished: false,
-          finishedAtMs: null,
-          score: null,
-        };
-        saveSession("test", session);
-      }
-      state.activeSession = session;
-      return session;
-    }
-
-    let session = loadSession(mode);
-    if (!session || session.version !== APP.version) session = null;
-    if (mode === "train") {
-      const poolIds = getPracticeQuestionIds();
-      if (!poolIds.length) {
-        session = {
-          version: APP.version,
-          mode: "train",
-          state: state.selectedState,
-          poolIds: [],
-          currentQuestionId: null,
-          history: [],
-          creditsById: {},
-          nextEligibleAtById: {},
-          sessionStatsById: {},
-          answeredCount: 0,
-          currentAttempt: null,
-        };
-        saveSession("train", session);
-        state.activeSession = session;
-        return session;
-      }
-
-      if (!session || session.mode !== "train" || session.state !== state.selectedState) {
-        session = {
-          version: APP.version,
-          mode: "train",
-          state: state.selectedState,
-          poolIds,
-          currentQuestionId: null,
-          history: [],
-          creditsById: {}, // id -> credits (default APP.trainDefaultCredits)
-          nextEligibleAtById: {}, // id -> epoch ms (default 0)
-          sessionStatsById: {}, // id -> {correct, wrong}
-          answeredCount: 0,
-          currentAttempt: null, // {chosenIndex,isCorrect, at}
-        };
-      }
-      // refresh poolIds if questions file changed
-      session.poolIds = poolIds;
-      if (!session.currentQuestionId) {
-        session.currentQuestionId = pickNextTrainingQuestionId(session, Date.now());
-        if (session.currentQuestionId) {
-          markTrainingShown(session, session.currentQuestionId, Date.now());
-        }
-        saveSession("train", session);
-      }
-      state.activeSession = session;
-      return session;
-    }
-
-    if (!session || !Array.isArray(session.orderIds)) {
-      const poolIds = getPracticeQuestionIds();
-      const orderIds = shuffle(poolIds);
-      session = {
-        version: APP.version,
-        mode,
-        state: state.selectedState,
-        orderIds,
-        index: 0,
-      };
-      saveSession(mode, session);
-    }
-    // if state changed since session was created, reset the session to the new pool
-    if (session.state && session.state !== state.selectedState) {
-      clearSession(mode);
-      return ensureSessionForMode(mode);
-    }
-    state.activeSession = session;
-    return session;
-  }
-
-  function ensureMemorizationSession(orderMode) {
-    const modeKey = orderMode === "ordered" ? "memorization.ordered" : "memorization.random";
-    let session = loadSession(modeKey);
-    if (!session || session.version !== APP.version) session = null;
-    const orderIds = orderMode === "ordered" ? getOrderedMemorizationQuestionIds() : null;
-    if (!session || !Array.isArray(session.orderIds) || session.state !== state.selectedState || session.orderMode !== orderMode) {
-      session = {
-        version: APP.version,
-        mode: "memorization",
-        state: state.selectedState,
-        orderMode,
-        orderIds: orderMode === "ordered" ? orderIds : shuffle(getMemorizationQuestionIds()),
-        index: 0,
-        createdAtMs: Date.now(),
-      };
-      saveSession(modeKey, session);
-    } else {
-      // refresh pool (ordered) but keep progress within bounds; random keeps its existing orderIds
-      if (orderMode === "ordered") session.orderIds = orderIds;
-      if (session.index >= session.orderIds.length) session.index = Math.max(0, session.orderIds.length - 1);
-      saveSession(modeKey, session);
-    }
-    state.activeSession = session;
-    return session;
-  }
-
-  function getTrainCredits(session, qid) {
-    const raw = session.creditsById?.[qid];
-    return typeof raw === "number" ? raw : APP.trainDefaultCredits;
-  }
-
-  function setTrainCredits(session, qid, credits) {
-    if (!session.creditsById) session.creditsById = {};
-    session.creditsById[qid] = credits;
-  }
-
-  function getTrainNextEligibleAt(session, qid) {
-    const raw = session.nextEligibleAtById?.[qid];
-    return typeof raw === "number" ? raw : 0;
-  }
-
-  function setTrainNextEligibleAt(session, qid, ts) {
-    if (!session.nextEligibleAtById) session.nextEligibleAtById = {};
-    session.nextEligibleAtById[qid] = ts;
-  }
-
-  function bumpTrainSessionStats(session, qid, isCorrect) {
-    if (!session.sessionStatsById) session.sessionStatsById = {};
-    const current = session.sessionStatsById[qid] ?? { correct: 0, wrong: 0 };
-    session.sessionStatsById[qid] = {
-      correct: current.correct + (isCorrect ? 1 : 0),
-      wrong: current.wrong + (isCorrect ? 0 : 1),
-    };
-  }
-
-  function pickNextTrainingQuestionId(session, nowMs) {
-    const ids = Array.isArray(session.poolIds) && session.poolIds.length ? session.poolIds : getPracticeQuestionIds();
-    const eligible = [];
-    let totalWeight = 0;
-    ids.forEach((qid) => {
-      const credits = getTrainCredits(session, qid);
-      if (credits <= 0) return;
-      const nextAt = getTrainNextEligibleAt(session, qid);
-      if (nextAt > nowMs) return;
-      eligible.push({ qid, weight: credits });
-      totalWeight += credits;
-    });
-
-    if (!eligible.length || totalWeight <= 0) {
-      // Fallback: ignore cooldown (should be rare with a large pool)
-      const all = ids
-        .map((qid) => ({ qid, weight: Math.max(0, getTrainCredits(session, qid)) }))
-        .filter((x) => x.weight > 0);
-      const sum = all.reduce((acc, x) => acc + x.weight, 0);
-      if (!all.length || sum <= 0) return ids[0] ?? null;
-      let r = Math.random() * sum;
-      for (const it of all) {
-        r -= it.weight;
-        if (r <= 0) return it.qid;
-      }
-      return all[all.length - 1].qid;
-    }
-
-    let r = Math.random() * totalWeight;
-    for (const it of eligible) {
-      r -= it.weight;
-      if (r <= 0) return it.qid;
-    }
-    return eligible[eligible.length - 1].qid;
-  }
-
-  function markTrainingShown(session, qid, nowMs) {
-    const delay = randInt(APP.trainCooldownMinMs, APP.trainCooldownMaxMs);
-    setTrainNextEligibleAt(session, qid, nowMs + delay);
-  }
+  // Pool/session helpers live in scripts/sessions.js. Thin bindings for
+  // Core export — anything not exported is referenced via Sessions.*
+  // where needed.
+  const Sessions = window.EBT.Sessions;
+  const loadSession = Sessions.loadSession;
+  const saveSession = Sessions.saveSession;
+  const clearSession = Sessions.clearSession;
+  const ensureSessionForMode = Sessions.ensureSessionForMode;
+  const ensureMemorizationSession = Sessions.ensureMemorizationSession;
+  const getTrainCredits = Sessions.getTrainCredits;
+  const setTrainCredits = Sessions.setTrainCredits;
+  const bumpTrainSessionStats = Sessions.bumpTrainSessionStats;
 
   function getQuestionById(id) {
     return state.questionsById.get(id) ?? null;
@@ -574,1667 +236,56 @@
     return null;
   }
 
-  function renderSelectableText(container, text) {
-    const tokens = tokenize(text);
-    tokens.forEach((tok) => {
-      if (/^[A-Za-zÄÖÜäöüß]+$/.test(tok)) {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "word";
-        b.dataset.word = tok;
-        b.textContent = tok;
-        container.appendChild(b);
-      } else {
-        container.appendChild(document.createTextNode(tok));
-      }
-    });
-  }
-
+  // Shared question-card helpers live in modes/_question-card.js; these
+  // thin shims keep the Core export stable.
   function renderQuestionCard(question, opts) {
-    const {
-      mode,
-      showOnlyCorrect,
-      onChoose,
-      chosenIndex,
-      revealCorrectness,
-      disableOptions,
-      showTranslation,
-      showFeedback,
-      feedback, // { chosenIndex, isCorrect }
-    } = opts;
-
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const head = document.createElement("div");
-    head.className = "question__head";
-
-    const idLine = document.createElement("div");
-    idLine.className = "question__id";
-    setText(idLine, getQuestionMetaLine(question).replace(/^/, `${t("question")} • `));
-
-    const textLine = document.createElement("div");
-    textLine.className = "question__text";
-    renderSelectableText(textLine, question.question?.text ?? "");
-
-    head.appendChild(idLine);
-    head.appendChild(textLine);
-
-    const translation = showTranslation ? getQuestionTranslation(question) : null;
-    if (translation) {
-      const tr = document.createElement("div");
-      tr.className = "question__translation";
-      tr.textContent = translation;
-      head.appendChild(tr);
-    }
-
-    if (question.question?.image) {
-      const img = document.createElement("img");
-      img.className = "question__image";
-      img.loading = "lazy";
-      img.alt = question._id;
-      img.src = question.question.image;
-      img.addEventListener("error", () => {
-        img.remove();
-        toast(t("imageMissing"));
-      });
-      head.appendChild(img);
-    }
-
-    card.appendChild(head);
-
-    const optionsWrap = document.createElement("div");
-    optionsWrap.className = "options";
-
-    const labels = ["1", "2", "3", "4"];
-    question.options.forEach((optText, idx) => {
-      const item = document.createElement("div");
-      item.className = "option";
-      item.setAttribute("role", "button");
-      item.tabIndex = disableOptions ? -1 : 0;
-      if (disableOptions) {
-        item.classList.add("is-disabled");
-        item.setAttribute("aria-disabled", "true");
-      }
-
-      if (showOnlyCorrect && idx !== question.answerIndex) {
-        optText = "------";
-      } else if (showOnlyCorrect && idx === question.answerIndex) {
-        item.classList.add("option--correct");
-      }
-
-      if (mode === "test" && typeof chosenIndex === "number" && idx === chosenIndex) {
-        item.classList.add("option--chosen");
-      }
-
-      if (showFeedback && feedback && typeof feedback.chosenIndex === "number") {
-        const isChosen = feedback.chosenIndex === idx;
-        const isCorrect = question.answerIndex === idx;
-        if (revealCorrectness) {
-          if (isCorrect) item.classList.add("option--correct");
-          else if (isChosen && !feedback.isCorrect) item.classList.add("option--wrong");
-        }
-      }
-
-      const top = document.createElement("div");
-      top.className = "option__top";
-
-      const badge = document.createElement("div");
-      badge.className = "option__badge";
-      setText(badge, labels[idx]);
-
-      const text = document.createElement("div");
-      text.className = "option__text";
-      renderSelectableText(text, optText);
-
-      top.appendChild(badge);
-      top.appendChild(text);
-      item.appendChild(top);
-
-      const optTr = showTranslation ? getOptionTranslation(question, idx) : null;
-      const shouldShowOptTranslation = !!optTr && (!showOnlyCorrect || idx === question.answerIndex);
-      if (shouldShowOptTranslation) {
-        const tr = document.createElement("div");
-        tr.className = "option__translation";
-        tr.textContent = optTr;
-        item.appendChild(tr);
-      }
-
-      const activate = () => {
-        if (disableOptions) return;
-        onChoose?.(idx);
-      };
-      item.addEventListener("click", activate);
-      item.addEventListener("keydown", (ev) => {
-        if (disableOptions) return;
-        if (ev.key === "Enter" || ev.key === " ") {
-          ev.preventDefault();
-          activate();
-        }
-      });
-      optionsWrap.appendChild(item);
-    });
-
-    card.appendChild(optionsWrap);
-    return card;
-  }
-
-  function renderHome() {
-    setActiveNav("home");
-    setTopbar(t("home"), "");
-    setTimerVisible(false);
-    setFooterVisible(false);
-    setProgress(0, 0);
-
-    els.main.innerHTML = "";
-
-    const grid = document.createElement("div");
-    grid.className = "grid";
-
-    const intro = document.createElement("div");
-    intro.className = "card";
-    intro.innerHTML = `
-      <div class="card__title">${t("introTitle")}</div>
-      <div class="muted">${t("introText")}</div>
-    `;
-
-    const info = document.createElement("div");
-    info.className = "card";
-    info.innerHTML = `
-      <div class="card__title">${t("homeWhatYouGetTitle")}</div>
-      <div class="muted">${t("homeWhatYouGetText")}</div>
-      <div class="card__title" style="margin-top:14px">${t("homeModesTitle")}</div>
-      <div class="stack">
-        <div><strong>${t("homeModeMemTitle")}</strong><div class="muted">${t("homeModeMemText")}</div></div>
-        <div><strong>${t("homeModeTrainTitle")}</strong><div class="muted">${t("homeModeTrainText")}</div></div>
-        <div><strong>${t("homeModeTestTitle")}</strong><div class="muted">${t("homeModeTestText")}</div></div>
-        <div><strong>${t("homeModeReviewTitle")}</strong><div class="muted">${t("homeModeReviewText")}</div></div>
-      </div>
-      <div class="card__title" style="margin-top:14px">${t("testRulesTitle")}</div>
-      <div class="muted">${t("testRulesText")}</div>
-      <div class="muted" style="margin-top:10px">${t("testComposition")}</div>
-    `;
-
-    grid.appendChild(intro);
-    grid.appendChild(info);
-    els.main.appendChild(grid);
-
-    setFooterButtons({
-      backDisabled: true,
-      nextDisabled: true,
-    });
-  }
-
-  function setFooterButtons(opts) {
-    const { backDisabled, nextDisabled, homeDisabled } = opts;
-    els.backBtn.disabled = !!backDisabled;
-    els.nextBtn.disabled = !!nextDisabled;
-    els.homeBtn.disabled = !!homeDisabled;
-  }
-
-  function setFooterVisible(visible) {
-    if (!els.pageFooter) return;
-    els.pageFooter.hidden = !visible;
-  }
-
-  function tipStorageKey(id) {
-    return key(`ui.dismissTip.${id}`);
-  }
-
-  function isTipDismissed(id) {
-    return !!readJSON(tipStorageKey(id), false);
-  }
-
-  function dismissTip(id) {
-    writeJSON(tipStorageKey(id), true);
+    return window.EBT.QuestionCard?.renderQuestionCard(question, opts);
   }
 
   function renderTip(id, title, text) {
-    if (isTipDismissed(id)) return null;
-    const card = document.createElement("div");
-    card.className = "card";
-    card.style.boxShadow = "none";
-    const header = document.createElement("div");
-    header.className = "row";
-    header.style.justifyContent = "space-between";
-    header.style.alignItems = "flex-start";
-    header.style.gap = "12px";
-
-    const left = document.createElement("div");
-    const tEl = document.createElement("div");
-    tEl.className = "card__title";
-    tEl.textContent = title;
-    const bEl = document.createElement("div");
-    bEl.className = "muted";
-    bEl.textContent = text;
-    left.appendChild(tEl);
-    left.appendChild(bEl);
-
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "btn btn--ghost";
-    close.textContent = t("hideTip");
-    close.addEventListener("click", () => {
-      dismissTip(id);
-      card.remove();
-    });
-
-    header.appendChild(left);
-    header.appendChild(close);
-    card.appendChild(header);
-    return card;
-  }
-
-  function renderMemorization() {
-    const orderMode = state.route === "mode/memorization/ordered" ? "ordered" : "random";
-    setActiveNav(state.route);
-    const session = ensureMemorizationSession(orderMode);
-    if (orderMode === "ordered" && state.memOrderedShouldReset) {
-      session.index = 0;
-      saveSession("memorization.ordered", session);
-      state.memOrderedShouldReset = false;
-    }
-    const qid = session.orderIds[session.index];
-    const q = getQuestionById(qid);
-    if (!q) return;
-
-    const label = orderMode === "ordered" ? t("memorizationOrdered") : t("memorizationRandom");
-    setTopbar(`${t("memorization")} • ${label}`, getQuestionMetaLine(q));
-    setTimerVisible(false);
-    setFooterVisible(true);
-    setProgress(session.index + 1, session.orderIds.length);
-
-    const showTranslation = state.lang !== "de";
-
-    els.main.innerHTML = "";
-    const tip = renderTip("memorization", t("tipMemorizationTitle"), t("tipMemorizationText"));
-    if (tip) els.main.appendChild(tip);
-
-    if (orderMode === "ordered") {
-      const controls = document.createElement("div");
-      controls.className = "card";
-      controls.style.boxShadow = "none";
-      controls.innerHTML = `
-        <div class="row">
-          <label class="field" style="min-width:220px;margin:0" for="memGoToIdInput">
-            <span class="field__label">${t("goToId")}</span>
-            <input class="field__control" id="memGoToIdInput" placeholder="1" />
-          </label>
-          <button class="btn btn--primary" type="button" id="memGoToIdBtn">${t("go")}</button>
-          <button class="btn" type="button" id="memResetBtn">${t("resetToFirst")}</button>
-        </div>
-      `;
-      els.main.appendChild(controls);
-
-      const parseTarget = (raw) => {
-        const s = String(raw ?? "").trim();
-        if (!s) return null;
-        const m = s.match(/frage-(\d+)/i) ?? s.match(/^(\d+)$/);
-        if (!m) return null;
-        return `frage-${Number(m[1])}`;
-      };
-      controls.querySelector("#memGoToIdBtn").addEventListener("click", () => {
-        const target = parseTarget(controls.querySelector("#memGoToIdInput").value);
-        if (!target) return;
-        const idx = session.orderIds.indexOf(target);
-        if (idx < 0) return;
-        session.index = idx;
-        saveSession("memorization.ordered", session);
-        renderMemorization();
-      });
-      controls.querySelector("#memResetBtn").addEventListener("click", () => {
-        session.index = 0;
-        saveSession("memorization.ordered", session);
-        renderMemorization();
-      });
-      controls.querySelector("#memGoToIdInput").addEventListener("keydown", (ev) => {
-        if (ev.key !== "Enter") return;
-        controls.querySelector("#memGoToIdBtn").click();
-      });
-    }
-
-    els.main.appendChild(
-      renderQuestionCard(q, {
-        mode: "memorization",
-        showOnlyCorrect: true,
-        onChoose: null,
-        chosenIndex: null,
-        revealCorrectness: false,
-        disableOptions: true,
-        showTranslation,
-        showFeedback: false,
-        feedback: null,
-      }),
-    );
-
-    setFooterButtons({
-      backDisabled: session.index <= 0,
-      nextDisabled: session.index >= session.orderIds.length - 1,
-      homeDisabled: false,
-    });
-  }
-
-  function renderTraining() {
-    setActiveNav("mode/train");
-    ensureSessionForMode("train");
-    const session = state.activeSession;
-    const qid = session.currentQuestionId;
-    const q = getQuestionById(qid);
-    if (!q) return;
-
-    setTopbar(t("training"), getQuestionMetaLine(q));
-    setTimerVisible(false);
-    setFooterVisible(true);
-    setProgress(session.answeredCount ?? 0, "∞");
-
-    const showTranslation = state.lang !== "de";
-
-    const feedback = session.currentAttempt ?? null;
-    const locked = !!feedback;
-
-    els.main.innerHTML = "";
-    const tip = renderTip("training", t("tipTrainingTitle"), t("tipTrainingText"));
-    if (tip) els.main.appendChild(tip);
-    els.main.appendChild(
-      renderQuestionCard(q, {
-        mode: "train",
-        showOnlyCorrect: false,
-        revealCorrectness: true,
-        disableOptions: locked,
-        showTranslation,
-        showFeedback: !!feedback,
-        feedback,
-        onChoose: (idx) => {
-          const isCorrect = idx === q.answerIndex;
-          statsBump(q._id, isCorrect);
-          // update training credits for this session
-          const currentCredits = getTrainCredits(session, qid);
-          const nextCredits = Math.max(0, currentCredits + (isCorrect ? -1 : 2));
-          setTrainCredits(session, qid, nextCredits);
-          bumpTrainSessionStats(session, qid, isCorrect);
-          session.answeredCount = (session.answeredCount ?? 0) + 1;
-          session.currentAttempt = { chosenIndex: idx, isCorrect, at: new Date().toISOString() };
-          saveSession("train", session);
-          renderTraining();
-        },
-      }),
-    );
-
-    setFooterButtons({
-      backDisabled: !Array.isArray(session.history) || session.history.length === 0,
-      nextDisabled: false,
-      homeDisabled: false,
-    });
-  }
-
-  function renderTest() {
-    setActiveNav("mode/test");
-    const session = ensureSessionForMode("test");
-
-    const qid = session.questionIds[session.index];
-    const q = getQuestionById(qid);
-    if (!q) return;
-
-    setTopbar(t("test"), getQuestionMetaLine(q, state.selectedState));
-    setTimerVisible(true);
-    setFooterVisible(true);
-
-    stopTestTicker();
-    updateTestTimerUI(session);
-    state.testTicker = window.setInterval(() => {
-      const current = loadSession("test");
-      if (!current || current.finished) return;
-      updateTestTimerUI(current);
-    }, 1000);
-
-    const answeredCount = Object.keys(session.answers ?? {}).length;
-    setProgress(answeredCount, APP.testTotal);
-
-    const showTranslation = state.lang !== "de";
-
-    els.main.innerHTML = "";
-    const tip = renderTip("test", t("tipTestTitle"), t("tipTestText"));
-    if (tip) els.main.appendChild(tip);
-    const card = renderQuestionCard(q, {
-      mode: "test",
-      showOnlyCorrect: false,
-      revealCorrectness: false,
-      disableOptions: !!session.finished,
-      showTranslation,
-      showFeedback: false,
-      feedback: null,
-      chosenIndex: typeof session.answers[qid] === "number" ? session.answers[qid] : null,
-      onChoose: (idx) => {
-        const updated = loadSession("test");
-        if (!updated || updated.finished) return;
-        updated.answers[qid] = idx;
-        if (!updated.skipped) updated.skipped = {};
-        updated.skipped[qid] = false;
-        saveSession("test", updated);
-        renderTest();
-      },
-    });
-
-    const actions = document.createElement("div");
-    actions.className = "card";
-    actions.innerHTML = `
-      <div class="row">
-        <div class="muted">${t("answered")}: <span class="mono">${answeredCount}/${APP.testTotal}</span></div>
-        <div style="flex:1"></div>
-        <button class="btn btn--primary" type="button" id="finishTestBtn">${t("finishTest")}</button>
-      </div>
-    `;
-    actions.querySelector("#finishTestBtn").addEventListener("click", () => finishTest(false));
-
-    els.main.appendChild(card);
-    els.main.appendChild(actions);
-
-    setFooterButtons({
-      backDisabled: session.index <= 0,
-      nextDisabled: session.index >= session.questionIds.length - 1,
-      homeDisabled: false,
-    });
-  }
-
-  function saveTestHistory(testSession) {
-    const history = readJSON(key("testHistory"), []);
-    const testRecord = {
-      timestamp: testSession.finishedAtMs || Date.now(),
-      state: testSession.state,
-      score: testSession.score,
-      passed: (testSession.score?.correct ?? 0) >= 17,
-      questionIds: testSession.questionIds,
-      answers: testSession.answers,
-    };
-    history.push(testRecord);
-    // Keep last 50 tests only
-    if (history.length > 50) history.shift();
-    writeJSON(key("testHistory"), history);
+    return window.EBT.QuestionCard?.renderTip(id, title, text);
   }
 
   function finishTest(auto) {
-    stopTestTicker();
-    const session = loadSession("test");
-    if (!session || session.finished) {
-      renderTestResults();
-      return;
-    }
-
-    const finalize = () => {
-      const s = loadSession("test");
-      if (!s || s.finished) return;
-      let correct = 0;
-      s.questionIds.forEach((qid) => {
-        const q = getQuestionById(qid);
-        const chosen = s.answers?.[qid];
-        const isCorrect = typeof chosen === "number" && q && chosen === q.answerIndex;
-        if (isCorrect) correct += 1;
-      });
-      const wrong = APP.testTotal - correct;
-      s.finished = true;
-      s.finishedAtMs = Date.now();
-      s.score = { correct, wrong };
-      saveSession("test", s);
-
-      // bump stats only once, at the end
-      s.questionIds.forEach((qid) => {
-        const q = getQuestionById(qid);
-        const chosen = s.answers?.[qid];
-        if (typeof chosen !== "number") {
-          statsBumpSkip(qid);
-          return;
-        }
-        const isCorrect = q && chosen === q.answerIndex;
-        statsBump(qid, !!isCorrect);
-      });
-
-      // Save test to history
-      saveTestHistory(s);
-
-      renderTestResults();
-    };
-
-    if (auto) {
-      finalize();
-      return;
-    }
-
-    confirmDialog(t("finishTestConfirm"), finalize);
+    window.EBT.TestLifecycle?.finish(auto);
   }
 
-  function renderTestHistoryView() {
-    setActiveNav("stats");
-    const testRecord = readJSON(key("viewingTestHistory"), null);
-    
-    if (!testRecord) {
-      setRoute("stats");
-      return;
-    }
-    
-    setTimerVisible(false);
-    setFooterVisible(true);
-    els.main.innerHTML = "";
-    
-    const date = new Date(testRecord.timestamp);
-    const dateStr = date.toLocaleDateString(state.lang === "de" ? "de-DE" : state.lang === "pt" ? "pt-BR" : "en-US");
-    const timeStr = date.toLocaleTimeString(state.lang === "de" ? "de-DE" : state.lang === "pt" ? "pt-BR" : "en-US", { 
-      hour: "2-digit", 
-      minute: "2-digit" 
-    });
-    
-    const score = testRecord.score?.correct ?? 0;
-    const wrong = testRecord.score?.wrong ?? 0;
-    const pct = Math.round((score / APP.testTotal) * 100);
-    const passed = testRecord.passed;
-    
-    setTopbar(t("testDetails"), `${dateStr} ${timeStr}`);
-    setProgress(0, 0);
-    
-    // Use EXACTLY the same structure as renderTestResults()
-    const title = document.createElement("div");
-    title.className = "card";
-    const passLabel = passed ? t("pass") : t("fail");
-    const resultBadgeStyle = passed 
-      ? "background:#10b981;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;font-size:1.2em;display:inline-block" 
-      : "background:#ef4444;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;font-size:1.2em;display:inline-block";
-    
-    title.innerHTML = `
-      <div style="text-align:center">
-        <div class="card__title">${t("testFinished")}</div>
-        <div style="margin-top:14px">
-          <span style="${resultBadgeStyle}">
-            ${passed ? "✓" : "✗"} ${passLabel}
-          </span>
-        </div>
-        <div class="row" style="margin-top:14px;justify-content:center">
-          <div class="pill"><span class="pill__label">${t("correct")}</span><span class="pill__value mono">${score}</span></div>
-          <div class="pill"><span class="pill__label">${t("wrong")}</span><span class="pill__value mono">${wrong}</span></div>
-          <div class="pill"><span class="pill__label">${t("accuracy")}</span><span class="pill__value mono">${pct}%</span></div>
-        </div>
-        <div class="row" style="margin-top:14px;justify-content:center">
-          <button class="btn" type="button" id="backToStatsBtn">${t("statistics")}</button>
-        </div>
-      </div>
-    `;
-    title.querySelector("#backToStatsBtn").addEventListener("click", () => setRoute("stats"));
-    
-    els.main.appendChild(title);
-    
-    // Add detailed question review table - SAME as renderTestResults()
-    if (testRecord.questionIds && testRecord.questionIds.length > 0) {
-      const reviewCard = document.createElement("div");
-      reviewCard.className = "card";
-      reviewCard.innerHTML = `<div class="card__title">${t("questionReview")}</div>`;
-      
-      const table = document.createElement("table");
-      table.className = "table";
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th scope="col">${t("question")}</th>
-            <th scope="col">${t("yourAnswer")}</th>
-            <th scope="col">${t("correctAnswer")}</th>
-            <th scope="col">${t("result")}</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      `;
-      
-      const tbody = table.querySelector("tbody");
-      
-      // Get answer text: always show German, with translation below if needed
-      const getAnswerTextWithTranslation = (q, optionIndex) => {
-        const germanText = q.options[optionIndex];
-        let html = germanText;
-        
-        if (state.lang !== "de") {
-          let translation = "";
-          if (state.lang === "en" && q.options_en?.[optionIndex]) {
-            translation = q.options_en[optionIndex];
-          } else if (state.lang === "pt" && q.options_pt?.[optionIndex]) {
-            translation = q.options_pt[optionIndex];
-          }
-          
-          if (translation && translation !== germanText) {
-            html += `<div class="muted" style="margin-top:4px;font-size:0.9em">${translation}</div>`;
-          }
-        }
-        
-        return `<div style="max-width:400px">${html}</div>`;
-      };
-      
-      testRecord.questionIds.forEach((qid) => {
-        const q = getQuestionById(qid);
-        if (!q) return;
-        
-        const questionNumber = qid.split("-")[1] || qid;
-        const chosen = testRecord.answers?.[qid];
-        const isCorrect = typeof chosen === "number" && chosen === q.answerIndex;
-        const wasSkipped = typeof chosen !== "number";
-        
-        const yourAnswerText = wasSkipped 
-          ? `<span class="muted">—</span>` 
-          : getAnswerTextWithTranslation(q, chosen);
-        
-        const correctAnswerText = getAnswerTextWithTranslation(q, q.answerIndex);
-        
-        let resultBadge = "";
-        if (wasSkipped) {
-          resultBadge = `<span class="muted">${t("skipped")}</span>`;
-        } else if (isCorrect) {
-          resultBadge = `<span style="color:#10b981">✓ ${t("correct")}</span>`;
-        } else {
-          resultBadge = `<span style="color:#ef4444">✗ ${t("wrong")}</span>`;
-        }
-        
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>
-            <button class="btn btn--ghost" style="padding:4px 8px" type="button" data-view-history-question="${qid}" data-chosen="${chosen ?? ''}">
-              <span class="mono">${questionNumber}</span>
-            </button>
-            <div class="muted" style="margin-top:4px">${q.category}</div>
-          </td>
-          <td>${yourAnswerText}</td>
-          <td>${correctAnswerText}</td>
-          <td>${resultBadge}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-      
-      reviewCard.appendChild(table);
-      
-      // Add click event listeners to question buttons in THIS card
-      reviewCard.querySelectorAll("[data-view-history-question]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const qid = btn.getAttribute("data-view-history-question");
-          const chosenStr = btn.getAttribute("data-chosen");
-          const chosen = chosenStr === "" ? undefined : parseInt(chosenStr, 10);
-          const question = getQuestionById(qid);
-          openQuestionReviewModal(question, chosen);
-        });
-      });
-      
-      els.main.appendChild(reviewCard);
-    }
-    
-    setFooterButtons({
-      backDisabled: false,
-      nextDisabled: true,
-      homeDisabled: false,
-    });
-  }
-
+  // openQuestionReviewModal lives in modes/_question-review-modal.js.
+  // It reaches back into EBT.Core for t/state/question helpers.
   function openQuestionReviewModal(question, chosenIndex) {
-    if (!question) {
-      console.error("openQuestionReviewModal: question is null");
-      return;
+    if (window.EBT.QuestionReviewModal) {
+      return window.EBT.QuestionReviewModal.open(question, chosenIndex);
     }
-    
-    // Remove existing modal if any
-    const existing = document.getElementById("questionReviewModal");
-    if (existing) existing.remove();
-    
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.style.display = "grid";
-    modal.id = "questionReviewModal";
-    modal.setAttribute("role", "dialog");
-    modal.setAttribute("aria-modal", "true");
-    
-    const wasSkipped = typeof chosenIndex !== "number";
-    const isCorrect = !wasSkipped && chosenIndex === question.answerIndex;
-    
-    const showTranslation = state.lang !== "de";
-    
-    // Build question display
-    const questionNumber = question._id.split("-")[1] || question._id;
-    
-    // Create modal structure
-    const backdrop = document.createElement("div");
-    backdrop.className = "modal__backdrop";
-    
-    const panel = document.createElement("div");
-    panel.className = "modal__panel";
-    panel.style.maxWidth = "800px";
-    
-    const header = document.createElement("div");
-    header.className = "modal__header";
-    header.innerHTML = `
-      <div>
-        <div class="modal__title">${t("question")} ${questionNumber}</div>
-        <div class="modal__subtitle">${question.category}</div>
-      </div>
-      <button class="icon-btn" type="button" data-close-modal="questionReviewModal" aria-label="Close">✕</button>
-    `;
-    
-    const content = document.createElement("div");
-    content.className = "modal__content";
-    
-    const card = document.createElement("div");
-    card.className = "card";
-    
-    // Question text
-    const questionTextDiv = document.createElement("div");
-    questionTextDiv.className = "question__text";
-    questionTextDiv.textContent = question.question?.text ?? "";
-    
-    if (showTranslation) {
-      const translation = getQuestionTranslation(question);
-      if (translation) {
-        const trDiv = document.createElement("div");
-        trDiv.className = "muted";
-        trDiv.style.marginTop = "8px";
-        trDiv.textContent = translation;
-        questionTextDiv.appendChild(trDiv);
-      }
-    }
-    
-    card.appendChild(questionTextDiv);
-    
-    // Image if exists
-    if (question.question?.image) {
-      const img = document.createElement("img");
-      img.className = "question__image";
-      img.src = question.question.image;
-      img.alt = question._id;
-      img.loading = "lazy";
-      img.style.marginTop = "12px";
-      img.style.maxWidth = "100%";
-      img.style.borderRadius = "8px";
-      card.appendChild(img);
-    }
-    
-    // Options
-    const optionsDiv = document.createElement("div");
-    optionsDiv.className = "options";
-    optionsDiv.style.marginTop = "16px";
-    
-    const labels = ["1", "2", "3", "4"];
-    question.options.forEach((optText, idx) => {
-      const isChosen = !wasSkipped && chosenIndex === idx;
-      const isCorrectOption = idx === question.answerIndex;
-      
-      const optionDiv = document.createElement("div");
-      optionDiv.className = "option is-disabled";
-      optionDiv.setAttribute("aria-disabled", "true");
-      
-      if (isCorrectOption) {
-        optionDiv.classList.add("option--correct");
-      } else if (isChosen && !isCorrect) {
-        optionDiv.classList.add("option--wrong");
-      }
-      
-      const topDiv = document.createElement("div");
-      topDiv.className = "option__top";
-      
-      const badge = document.createElement("div");
-      badge.className = "option__badge";
-      badge.textContent = labels[idx];
-      
-      const text = document.createElement("div");
-      text.className = "option__text";
-      text.textContent = optText;
-      
-      if (showTranslation) {
-        const optTr = getOptionTranslation(question, idx);
-        if (optTr && optTr !== optText) {
-          const trDiv = document.createElement("div");
-          trDiv.className = "muted";
-          trDiv.style.marginTop = "4px";
-          trDiv.style.fontSize = "0.9em";
-          trDiv.textContent = optTr;
-          text.appendChild(trDiv);
-        }
-      }
-      
-      topDiv.appendChild(badge);
-      topDiv.appendChild(text);
-      optionDiv.appendChild(topDiv);
-      optionsDiv.appendChild(optionDiv);
-    });
-    
-    card.appendChild(optionsDiv);
-    content.appendChild(card);
-    panel.appendChild(header);
-    panel.appendChild(content);
-    modal.appendChild(backdrop);
-    modal.appendChild(panel);
-    
-    document.body.appendChild(modal);
-    
-    // Add close event listeners
-    backdrop.addEventListener("click", () => modal.remove());
-    header.querySelector("[data-close-modal]").addEventListener("click", () => modal.remove());
-    
-    // Close on Escape key
-    const escHandler = (ev) => {
-      if (ev.key === "Escape") {
-        modal.remove();
-        document.removeEventListener("keydown", escHandler);
-      }
-    };
-    document.addEventListener("keydown", escHandler);
   }
 
-  function renderTestResults() {
-    setActiveNav("mode/test");
-    const s = loadSession("test");
-    setTimerVisible(false);
-    setFooterVisible(true);
-    els.main.innerHTML = "";
-
-    const title = document.createElement("div");
-    title.className = "card";
-    const score = s?.score ?? { correct: 0, wrong: 0 };
-    const passed = score.correct >= 17;
-    const pct = Math.round((score.correct / APP.testTotal) * 100);
-    const passLabel = passed ? t("pass") : t("fail");
-    const resultBadgeStyle = passed 
-      ? "background:#10b981;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;font-size:1.2em;display:inline-block" 
-      : "background:#ef4444;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;font-size:1.2em;display:inline-block";
-    
-    title.innerHTML = `
-      <div style="text-align:center">
-        <div class="card__title">${t("testFinished")}</div>
-        <div style="margin-top:14px">
-          <span style="${resultBadgeStyle}">
-            ${passed ? "✓" : "✗"} ${passLabel}
-          </span>
-        </div>
-        <div class="row" style="margin-top:14px;justify-content:center">
-          <div class="pill"><span class="pill__label">${t("correct")}</span><span class="pill__value mono">${score.correct}</span></div>
-          <div class="pill"><span class="pill__label">${t("wrong")}</span><span class="pill__value mono">${score.wrong}</span></div>
-          <div class="pill"><span class="pill__label">${t("accuracy")}</span><span class="pill__value mono">${pct}%</span></div>
-        </div>
-        <div class="row" style="margin-top:14px;justify-content:center">
-          <button class="btn btn--primary" type="button" id="newTestBtn">${t("newTest")}</button>
-          <button class="btn" type="button" id="goStatsBtn">${t("statistics")}</button>
-        </div>
-      </div>
-    `;
-    title.querySelector("#newTestBtn").addEventListener("click", () => {
-      confirmDialog(t("newTest"), () => {
-        clearSession("test");
-        setRoute("mode/test");
-        onRouteChange();
-      });
-    });
-    title.querySelector("#goStatsBtn").addEventListener("click", () => setRoute("stats"));
-
-    els.main.appendChild(title);
-
-    // Add detailed question review table
-    if (s && s.questionIds && s.questionIds.length > 0) {
-      const reviewCard = document.createElement("div");
-      reviewCard.className = "card";
-      reviewCard.innerHTML = `<div class="card__title">${t("questionReview")}</div>`;
-
-      const table = document.createElement("table");
-      table.className = "table";
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th scope="col">${t("question")}</th>
-            <th scope="col">${t("yourAnswer")}</th>
-            <th scope="col">${t("correctAnswer")}</th>
-            <th scope="col">${t("result")}</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      `;
-
-      const tbody = table.querySelector("tbody");
-      s.questionIds.forEach((qid) => {
-        const q = getQuestionById(qid);
-        if (!q) return;
-
-        const chosen = s.answers?.[qid];
-        const isCorrect = typeof chosen === "number" && chosen === q.answerIndex;
-        const wasSkipped = typeof chosen !== "number";
-
-        // Extract question number from ID (frage-200 -> 200)
-        const questionNumber = qid.split("-")[1] || qid;
-
-        // Get answer text: always show German, with translation below if needed
-        const getAnswerTextWithTranslation = (optionIndex) => {
-          const germanText = q.options[optionIndex];
-          let html = germanText;
-          
-          if (state.lang !== "de") {
-            let translation = "";
-            if (state.lang === "en" && q.options_en?.[optionIndex]) {
-              translation = q.options_en[optionIndex];
-            } else if (state.lang === "pt" && q.options_pt?.[optionIndex]) {
-              translation = q.options_pt[optionIndex];
-            }
-            
-            if (translation && translation !== germanText) {
-              html += `<div class="muted" style="margin-top:4px;font-size:0.9em">${translation}</div>`;
-            }
-          }
-          
-          return `<div style="max-width:400px">${html}</div>`;
-        };
-
-        const yourAnswerText = wasSkipped 
-          ? `<span class="muted">—</span>` 
-          : getAnswerTextWithTranslation(chosen);
-        
-        const correctAnswerText = getAnswerTextWithTranslation(q.answerIndex);
-        
-        let resultBadge = "";
-        if (wasSkipped) {
-          resultBadge = `<span class="muted">${t("skipped")}</span>`;
-        } else if (isCorrect) {
-          resultBadge = `<span style="color:#10b981">✓ ${t("correct")}</span>`;
-        } else {
-          resultBadge = `<span style="color:#ef4444">✗ ${t("wrong")}</span>`;
-        }
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>
-            <button class="btn btn--ghost" style="padding:4px 8px" type="button" data-view-question="${qid}">
-              <span class="mono">${questionNumber}</span>
-            </button>
-            <div class="muted" style="margin-top:4px">${q.category}</div>
-          </td>
-          <td>${yourAnswerText}</td>
-          <td>${correctAnswerText}</td>
-          <td>${resultBadge}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      reviewCard.appendChild(table);
-      
-      // Add click event listeners to view question buttons in THIS card
-      reviewCard.querySelectorAll("[data-view-question]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const qid = btn.getAttribute("data-view-question");
-          const question = getQuestionById(qid);
-          const chosen = s.answers?.[qid];
-          openQuestionReviewModal(question, chosen);
-        });
-      });
-      
-      els.main.appendChild(reviewCard);
-    }
-
-    setTopbar(t("test"), s?.state ? `${s.state}` : "");
-    setProgress(0, 0);
-
-    setFooterButtons({
-      backDisabled: true,
-      nextDisabled: true,
-      homeDisabled: false,
-    });
-  }
-
-  function getStatsRows() {
-    const all = statsReadAll();
-    const rows = [];
-    state.questions.forEach((q) => {
-      const stat = all[q._id];
-      if (!stat) return;
-      const total = (stat.correct ?? 0) + (stat.wrong ?? 0);
-      const acc = accuracyOf(stat);
-      rows.push({
-        id: q._id,
-        category: q.category,
-        sub_category: q.sub_category ?? null,
-        correct: stat.correct ?? 0,
-        wrong: stat.wrong ?? 0,
-        skipped: stat.skipped ?? 0,
-        attempts: total,
-        accuracy: acc ?? 0,
-      });
-    });
-    return rows;
-  }
-
-  function getStatsByTopic() {
-    const rows = getStatsRows();
-    const byTopic = new Map();
-    rows.forEach((r) => {
-      const topicKey = r.sub_category || "STATE";
-      const agg = byTopic.get(topicKey) ?? {
-        topicKey,
-        correct: 0,
-        wrong: 0,
-        skipped: 0,
-        attempts: 0,
-      };
-      agg.correct += r.correct;
-      agg.wrong += r.wrong;
-      agg.skipped += r.skipped;
-      agg.attempts += r.attempts;
-      byTopic.set(topicKey, agg);
-    });
-    return Array.from(byTopic.entries())
-      .map(([topicKey, agg]) => {
-        const total = agg.correct + agg.wrong;
-        const accuracy = total > 0 ? agg.correct / total : 0;
-        const label =
-          topicKey === "STATE"
-            ? t("stateTopicLabel")
-            : getSubCategoryLabel(topicKey);
-        return {
-          topicKey,
-          topicLabel: label,
-          correct: agg.correct,
-          wrong: agg.wrong,
-          skipped: agg.skipped,
-          attempts: agg.attempts,
-          accuracy,
-        };
-      })
-      .filter((t) => t.attempts > 0)
-      .sort((a, b) => b.wrong - a.wrong);
-  }
-
-  function getTestHistoryStats() {
-    const history = readJSON(key("testHistory"), []);
-    if (!history.length) return null;
-
-    const totalTests = history.length;
-    const totalCorrect = history.reduce((sum, test) => sum + (test.score?.correct ?? 0), 0);
-    const passedTests = history.filter(test => test.passed).length;
-    
+  // Stats aggregation lives in scripts/stats-aggregations.js. These thin
+  // wrappers bind the pure functions to the current app state/context so
+  // Core's callers don't need to thread the context manually.
+  function statsAggCtx() {
     return {
-      totalTests,
-      averageScore: totalTests > 0 ? (totalCorrect / totalTests).toFixed(1) : 0,
-      passRate: totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0,
-      history: history.slice().reverse(), // Most recent first
+      questions: state.questions,
+      subCategoryLabelFor: getSubCategoryLabel,
+      stateLabel: t("stateTopicLabel"),
     };
   }
-
-  function renderReview() {
-    setActiveNav("mode/review");
-    setTopbar(t("review"), "");
-    setTimerVisible(false);
-    setFooterVisible(true);
-    setProgress(0, 0);
-
-    const rows = getStatsRows();
-    if (!rows.length) {
-      els.main.innerHTML = "";
-      const tip = renderTip("review", t("tipReviewTitle"), t("tipReviewText"));
-      if (tip) els.main.appendChild(tip);
-      els.main.innerHTML += `<div class="card"><div class="card__title">${t("review")}</div><div class="muted">${t(
-        "noStatsYet",
-      )}</div></div>`;
-      setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
-      return;
-    }
-
-    rows.sort((a, b) => b.wrong - a.wrong || a.accuracy - b.accuracy);
-    const top = rows.slice(0, 30);
-
-    els.main.innerHTML = "";
-    const tip = renderTip("review", t("tipReviewTitle"), t("tipReviewText"));
-    if (tip) els.main.appendChild(tip);
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `<div class="card__title">${t("review")}</div><div class="muted">${t(
-      "mostWrong",
-    )}</div>`;
-
-    const table = document.createElement("table");
-    table.className = "table";
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th scope="col">${t("question")}</th>
-          <th scope="col">${t("attempts")}</th>
-          <th scope="col">${t("wrong")}</th>
-          <th scope="col">${t("accuracy")}</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    `;
-    const tbody = table.querySelector("tbody");
-    top.forEach((r) => {
-      // Extract question number from ID (frage-200 -> 200)
-      const questionNumber = r.id.split("-")[1] || r.id;
-      
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><span class="mono">${questionNumber}</span><div class="muted" style="margin-top:4px">${r.category}</div></td>
-        <td class="mono">${r.attempts}</td>
-        <td class="mono">${r.wrong}</td>
-        <td class="mono">${Math.round(r.accuracy * 100)}%</td>
-        <td><button class="btn btn--primary" type="button" data-open="${r.id}">${t("openInTraining")}</button></td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    card.appendChild(table);
-    els.main.appendChild(card);
-
-    els.main.querySelectorAll("[data-open]").forEach((b) => {
-      b.addEventListener("click", () => {
-        const id = b.getAttribute("data-open");
-        const trainSession = ensureSessionForMode("train");
-        const idx = trainSession.orderIds.indexOf(id);
-        if (idx >= 0) {
-          trainSession.index = idx;
-          saveSession("train", trainSession);
-        }
-        setRoute("mode/train");
-      });
-    });
-
-    setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
+  function getStatsRows() {
+    return window.EBT.StatsAgg.getStatsRows(statsAggCtx());
+  }
+  function getStatsByTopic() {
+    return window.EBT.StatsAgg.getStatsByTopic(statsAggCtx());
+  }
+  function getTestHistoryStats() {
+    return window.EBT.StatsAgg.getTestHistoryStats(readJSON, key("testHistory"));
   }
 
-  function renderStats() {
-    setActiveNav("stats");
-    setTopbar(t("statistics"), "");
-    setTimerVisible(false);
-    setFooterVisible(true);
-    setProgress(0, 0);
-
-    els.main.innerHTML = "";
-
-    // Show test history statistics first
-    const testStats = getTestHistoryStats();
-    if (testStats) {
-      const summaryCard = document.createElement("div");
-      summaryCard.className = "card";
-      summaryCard.innerHTML = `
-        <div class="card__title">${t("testHistory")}</div>
-        <div class="row" style="margin-top:8px">
-          <div class="pill"><span class="pill__label">${t("totalTests")}</span><span class="pill__value mono">${testStats.totalTests}</span></div>
-          <div class="pill"><span class="pill__label">${t("averageScore")}</span><span class="pill__value mono">${testStats.averageScore}/${APP.testTotal}</span></div>
-          <div class="pill"><span class="pill__label">${t("passRate")}</span><span class="pill__value mono">${testStats.passRate}%</span></div>
-        </div>
-      `;
-
-      // Add recent tests table
-      if (testStats.history.length > 0) {
-        const historyTable = document.createElement("table");
-        historyTable.className = "table";
-        historyTable.style.marginTop = "14px";
-        historyTable.innerHTML = `
-          <thead>
-            <tr>
-              <th scope="col">${t("date")}</th>
-              <th scope="col">${t("score")}</th>
-              <th scope="col">${t("accuracy")}</th>
-              <th scope="col">${t("result")}</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        `;
-
-        const historyTbody = historyTable.querySelector("tbody");
-        testStats.history.slice(0, 10).forEach((test, idx) => {
-          const date = new Date(test.timestamp);
-          const dateStr = date.toLocaleDateString(state.lang === "de" ? "de-DE" : state.lang === "pt" ? "pt-BR" : "en-US");
-          const timeStr = date.toLocaleTimeString(state.lang === "de" ? "de-DE" : state.lang === "pt" ? "pt-BR" : "en-US", { 
-            hour: "2-digit", 
-            minute: "2-digit" 
-          });
-          const score = test.score?.correct ?? 0;
-          const pct = Math.round((score / APP.testTotal) * 100);
-          const resultBadge = test.passed 
-            ? `<span style="color:#10b981">✓ ${t("pass")}</span>`
-            : `<span style="color:#ef4444">✗ ${t("fail")}</span>`;
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><span class="mono">${dateStr}</span><div class="muted" style="margin-top:4px">${timeStr}</div></td>
-            <td class="mono">${score}/${APP.testTotal}</td>
-            <td class="mono">${pct}%</td>
-            <td>${resultBadge}</td>
-            <td><button class="btn btn--ghost" type="button" data-view-test="${idx}">👁️</button></td>
-          `;
-          historyTbody.appendChild(tr);
-        });
-
-        summaryCard.appendChild(historyTable);
-        
-        // Add click event listeners to view test buttons
-        summaryCard.querySelectorAll("[data-view-test]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const testIndex = parseInt(btn.getAttribute("data-view-test"), 10);
-            const test = testStats.history[testIndex];
-            // Save to temporary storage and navigate to view
-            writeJSON(key("viewingTestHistory"), test);
-            setRoute("test-history-view");
-          });
-        });
-      }
-
-      els.main.appendChild(summaryCard);
-    }
-
-    // Show per-question statistics
-    const rows = getStatsRows();
-    if (!rows.length) {
-      const noStatsCard = document.createElement("div");
-      noStatsCard.className = "card";
-      noStatsCard.innerHTML = `<div class="card__title">${t("statistics")}</div><div class="muted">${t("noStatsYet")}</div>`;
-      els.main.appendChild(noStatsCard);
-      setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
-      return;
-    }
-
-    const byTopic = getStatsByTopic();
-    if (byTopic.length > 0) {
-      const topicCard = document.createElement("div");
-      topicCard.className = "card";
-      topicCard.innerHTML = `<div class="card__title">${t("statsByTopic")}</div>`;
-      const topicTable = document.createElement("table");
-      topicTable.className = "table";
-      topicTable.style.marginTop = "10px";
-      topicTable.innerHTML = `
-        <thead>
-          <tr>
-            <th scope="col">${t("topic")}</th>
-            <th scope="col">${t("correct")}</th>
-            <th scope="col">${t("wrong")}</th>
-            <th scope="col">${t("accuracy")}</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      `;
-      const topicTbody = topicTable.querySelector("tbody");
-      byTopic.forEach((row) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.topicLabel}</td>
-          <td class="mono">${row.correct}</td>
-          <td class="mono">${row.wrong}</td>
-          <td class="mono">${Math.round(row.accuracy * 100)}%</td>
-        `;
-        topicTbody.appendChild(tr);
-      });
-      topicCard.appendChild(topicTable);
-      els.main.appendChild(topicCard);
-    }
-
-    const sort = readJSON(key("stats.sort"), "mostWrong");
-    const sortRows = (which) => {
-      if (which === "mostCorrect") return rows.sort((a, b) => b.correct - a.correct);
-      if (which === "mostSkipped") return rows.sort((a, b) => b.skipped - a.skipped);
-      if (which === "bestAccuracy") return rows.sort((a, b) => b.accuracy - a.accuracy);
-      if (which === "worstAccuracy") return rows.sort((a, b) => a.accuracy - b.accuracy);
-      return rows.sort((a, b) => b.wrong - a.wrong);
-    };
-    sortRows(sort);
-
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const sortSelectId = "statsSort";
-    card.innerHTML = `
-      <div class="row">
-        <div class="card__title">${t("statistics")} • ${t("question")}</div>
-        <div style="flex:1"></div>
-        <label class="field" style="min-width:240px;margin:0" for="${sortSelectId}">
-          <span class="field__label">${t("sortBy")}</span>
-          <select class="field__control" id="${sortSelectId}">
-            <option value="mostWrong">${t("mostWrong")}</option>
-            <option value="mostCorrect">${t("mostCorrect")}</option>
-            <option value="mostSkipped">${t("mostSkipped")}</option>
-            <option value="bestAccuracy">${t("bestAccuracy")}</option>
-            <option value="worstAccuracy">${t("worstAccuracy")}</option>
-          </select>
-        </label>
-      </div>
-    `;
-
-    const table = document.createElement("table");
-    table.className = "table";
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th scope="col">${t("question")}</th>
-          <th scope="col">${t("attempts")}</th>
-          <th scope="col">${t("correct")}</th>
-          <th scope="col">${t("wrong")}</th>
-          <th scope="col">${t("skipped")}</th>
-          <th scope="col">${t("accuracy")}</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    `;
-    const tbody = table.querySelector("tbody");
-    rows.forEach((r) => {
-      // Extract question number from ID (frage-200 -> 200)
-      const questionNumber = r.id.split("-")[1] || r.id;
-      
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><span class="mono">${questionNumber}</span><div class="muted" style="margin-top:4px">${r.category}</div></td>
-        <td class="mono">${r.attempts}</td>
-        <td class="mono">${r.correct}</td>
-        <td class="mono">${r.wrong}</td>
-        <td class="mono">${r.skipped}</td>
-        <td class="mono">${Math.round(r.accuracy * 100)}%</td>
-      `;
-      tbody.appendChild(tr);
-    });
-    card.appendChild(table);
-    els.main.appendChild(card);
-
-    const sel = card.querySelector(`#${sortSelectId}`);
-    sel.value = sort;
-    sel.addEventListener("change", () => {
-      writeJSON(key("stats.sort"), sel.value);
-      renderStats();
-    });
-
-    setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
-  }
-
-  function renderDictionary() {
-    setActiveNav("dictionary");
-    setTopbar(t("myDictionary"), "");
-    setTimerVisible(false);
-    setFooterVisible(true);
-    setProgress(0, 0);
-
-    const all = myDictReadAll();
-    const words = Object.keys(all).sort((a, b) => a.localeCompare(b, "de"));
-
-    els.main.innerHTML = "";
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `<div class="card__title">${t("myDictionary")}</div>`;
-
-    if (!words.length) {
-      const empty = document.createElement("div");
-      empty.className = "muted";
-      empty.textContent = t("emptyDictionary");
-      card.appendChild(empty);
-      els.main.appendChild(card);
-      setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
-      return;
-    }
-
-    const actions = document.createElement("div");
-    actions.className = "grid";
-    actions.innerHTML = `
-      <div class="card" style="box-shadow:none">
-        <div class="row">
-          <button class="btn btn--primary" type="button" id="exportDictBtn">${t("export")}</button>
-          <button class="btn" type="button" id="importDictBtn">${t("import")}</button>
-        </div>
-        <div class="stack" id="importBox" hidden style="margin-top:10px">
-          <textarea class="textarea" id="importTextarea" rows="6" placeholder="${t("importPlaceholder")}"></textarea>
-          <div class="row row--right">
-            <button class="btn btn--ghost" type="button" id="importCancelBtn">${t("cancel")}</button>
-            <button class="btn btn--primary" type="button" id="importOkBtn">${t("import")}</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    card.appendChild(actions);
-
-    const table = document.createElement("table");
-    table.className = "table";
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th scope="col">${t("word")}</th>
-          <th class="mono" scope="col">Added</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    `;
-    const tbody = table.querySelector("tbody");
-    words.forEach((w) => {
-      const display = all[w]?.word ?? w;
-      const addedAt = all[w]?.addedAt ?? "";
-      const tr = document.createElement("tr");
-      // Build DOM with textContent to avoid XSS from imported dictionary payloads.
-      const wordCell = document.createElement("td");
-      const wordBtn = document.createElement("button");
-      wordBtn.className = "btn btn--ghost";
-      wordBtn.type = "button";
-      wordBtn.dataset.word = w;
-      wordBtn.textContent = display;
-      wordCell.appendChild(wordBtn);
-      const addedCell = document.createElement("td");
-      addedCell.className = "mono muted";
-      addedCell.textContent = String(addedAt).slice(0, 19).replace("T", " ");
-      tr.appendChild(wordCell);
-      tr.appendChild(addedCell);
-      tbody.appendChild(tr);
-    });
-    card.appendChild(table);
-    els.main.appendChild(card);
-
-    const importBox = card.querySelector("#importBox");
-    card.querySelector("#exportDictBtn").addEventListener("click", async () => {
-      const payload = JSON.stringify(all, null, 2);
-      await navigator.clipboard?.writeText(payload).catch(() => {});
-      toast(t("copiedToClipboard"));
-    });
-    card.querySelector("#importDictBtn").addEventListener("click", () => {
-      importBox.hidden = false;
-      card.querySelector("#importTextarea").focus();
-    });
-    card.querySelector("#importCancelBtn").addEventListener("click", () => {
-      importBox.hidden = true;
-      card.querySelector("#importTextarea").value = "";
-    });
-    card.querySelector("#importOkBtn").addEventListener("click", () => {
-      try {
-        const raw = card.querySelector("#importTextarea").value;
-        const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== "object") throw new Error("bad");
-        // accept both old schema (with note) and new schema
-        const migrated = {};
-        Object.keys(parsed).forEach((k) => {
-          const canon = canonicalWordKey(k);
-          if (!canon) return;
-          const v = parsed[k] ?? {};
-          migrated[canon] = {
-            word: v.word ?? k,
-            addedAt: v.addedAt ?? v.updatedAt ?? v.createdAt ?? new Date().toISOString(),
-          };
-        });
-        myDictWriteAll(migrated);
-        toast(t("importDone"));
-        renderDictionary();
-      } catch (err) {
-        toast(t("invalidJson"));
-      }
-    });
-
-    card.querySelectorAll("[data-word]").forEach((b) => {
-      b.addEventListener("click", () => openWordModal(b.getAttribute("data-word")));
-    });
-
-    setFooterButtons({ backDisabled: true, nextDisabled: true, homeDisabled: false });
-  }
-
-  function isTouchPrimary() {
-    // Prefer pointer/hover media queries over maxTouchPoints (which can be >0 on some desktops)
-    try {
-      const coarse = window.matchMedia("(pointer: coarse)").matches;
-      const noHover = window.matchMedia("(hover: none)").matches;
-      if (coarse && noHover) return true;
-    } catch (err) {
-      // ignore
-    }
-    return (navigator.maxTouchPoints ?? 0) > 0;
-  }
-
+  // Word UI lives in modes/_word-ui.js; these are thin shims that keep
+  // the historical call sites inside this file working.
   function closeWordContextMenu() {
-    if (!els.wordContextMenu) return;
-    els.wordContextMenu.hidden = true;
-  }
-
-  function positionContextMenu(x, y) {
-    const menu = els.wordContextMenu;
-    if (!menu) return;
-    menu.style.left = "0px";
-    menu.style.top = "0px";
-    menu.hidden = false;
-    const rect = menu.getBoundingClientRect();
-    const maxX = window.innerWidth - rect.width - 8;
-    const maxY = window.innerHeight - rect.height - 8;
-    const px = Math.max(8, Math.min(x, maxX));
-    const py = Math.max(8, Math.min(y, maxY));
-    menu.style.left = `${px}px`;
-    menu.style.top = `${py}px`;
-  }
-
-  function openWordContextMenu(wordRaw, point) {
-    const display = normalizeWord(wordRaw);
-    const canon = canonicalWordKey(wordRaw);
-    if (!display || !canon) return;
-    const resolved = findBaseDictionaryEntry(display);
-    state.currentWord = resolved?.key ?? canon; // store lemma as key when possible
-    state.currentWordDisplay = display;
-
-    setText(els.wordCtxViewBtn, t("viewDefinition"));
-    const saved = myDictHas(state.currentWord);
-    setText(els.wordCtxToggleBtn, saved ? t("removeFromMyDictionary") : t("addToMyDictionary"));
-
-    positionContextMenu(point.x, point.y);
+    window.EBT.WordUI?.closeContextMenu();
   }
 
   function openWordModal(wordRaw) {
-    const word = normalizeWord(wordRaw);
-    const canon = canonicalWordKey(wordRaw);
-    if (!word || !canon) return;
-    const resolved = findBaseDictionaryEntry(word);
-    state.currentWord = resolved?.key ?? canon; // lemma when possible
-    state.currentWordDisplay = word;
-
-    const titleSuffix = resolved && resolved.key !== canon ? ` (${resolved.key})` : "";
-    setText(els.wordModalTitle, `${t("word")}: ${word}${titleSuffix}`);
-    setText(els.wordModalSubtitle, state.lang === "de" ? "DE → EN/PT" : `${state.lang.toUpperCase()} (UI)`);
-    setText(els.wordBaseTitle, t("baseDictionary"));
-
-    const base = resolved ?? findBaseDictionaryEntry(word);
-    els.wordBaseContent.innerHTML = "";
-    if (!base) {
-      const p = document.createElement("div");
-      p.className = "muted";
-      p.textContent = t("notInBaseDictionary");
-      els.wordBaseContent.appendChild(p);
-    } else {
-      const langs = [
-        { key: "de", label: "DE" },
-        { key: "en", label: "EN" },
-        { key: "pt", label: "PT" },
-      ];
-
-      const lemma = String(base.key ?? word).trim().toLowerCase();
-      const hasRealDefinition = (langKey) => {
-        const entry = base.entry?.[langKey];
-        if (!entry) return false;
-        const d = String(entry.description ?? "").trim();
-        if (!d) return false;
-        // Treat "description equals the lemma" as no real definition.
-        return d.toLowerCase() !== lemma;
-      };
-
-      const preferredTab = state.lang === "pt" ? "pt" : state.lang === "en" ? "en" : "de";
-      const defaultTab = hasRealDefinition(preferredTab)
-        ? preferredTab
-        : (langs.find((l) => hasRealDefinition(l.key))?.key ?? preferredTab);
-      const tabIdPrefix = `wordTab-${Date.now()}`;
-
-      const tabs = document.createElement("div");
-      tabs.className = "tabs";
-      tabs.setAttribute("role", "tablist");
-
-      const panelsWrap = document.createElement("div");
-
-      const setActive = (activeKey) => {
-        langs.forEach((l) => {
-          const btn = tabs.querySelector(`[data-tab="${l.key}"]`);
-          const panel = panelsWrap.querySelector(`[data-panel="${l.key}"]`);
-          if (!btn || !panel) return;
-          const isActive = l.key === activeKey;
-          btn.setAttribute("aria-selected", String(isActive));
-          btn.tabIndex = isActive ? 0 : -1;
-          panel.hidden = !isActive;
-        });
-      };
-
-      const renderPanel = (langKey) => {
-        const entry = base.entry?.[langKey];
-        const panel = document.createElement("div");
-        panel.className = "tab-panel";
-        panel.dataset.panel = langKey;
-        panel.setAttribute("role", "tabpanel");
-        panel.id = `${tabIdPrefix}-panel-${langKey}`;
-        panel.hidden = true;
-
-        if (!entry) {
-          const p = document.createElement("div");
-          p.className = "muted";
-          p.textContent = t("notInBaseDictionary");
-          panel.appendChild(p);
-          return panel;
-        }
-
-        const desc = document.createElement("div");
-        desc.className = "muted";
-        const descText = String(entry.description ?? "").trim();
-        const isJustLemma = descText && descText.toLowerCase() === lemma;
-        desc.textContent = descText && !isJustLemma ? descText : t("noDefinition");
-        panel.appendChild(desc);
-
-        if (Array.isArray(entry.phrases) && entry.phrases.length) {
-          const ul = document.createElement("div");
-          ul.className = "stack";
-          const highlightTarget = langKey === "de" ? word : String(entry.description ?? "").trim();
-          entry.phrases.slice(0, 6).forEach((ph) => {
-            const item = document.createElement("div");
-            item.innerHTML = `• ${highlightWord(ph, highlightTarget)}`;
-            ul.appendChild(item);
-          });
-          panel.appendChild(ul);
-        }
-        return panel;
-      };
-
-      langs.forEach((l, idx) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "tab";
-        btn.dataset.tab = l.key;
-        btn.id = `${tabIdPrefix}-tab-${l.key}`;
-        btn.setAttribute("role", "tab");
-        btn.setAttribute("aria-controls", `${tabIdPrefix}-panel-${l.key}`);
-        btn.setAttribute("aria-selected", "false");
-        btn.tabIndex = -1;
-        btn.textContent = l.label;
-        btn.addEventListener("click", () => setActive(l.key));
-        btn.addEventListener("keydown", (ev) => {
-          if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
-          ev.preventDefault();
-          const next = ev.key === "ArrowRight" ? idx + 1 : idx - 1;
-          const wrapped = (next + langs.length) % langs.length;
-          const nextKey = langs[wrapped].key;
-          setActive(nextKey);
-          const nextBtn = tabs.querySelector(`[data-tab="${nextKey}"]`);
-          nextBtn?.focus();
-        });
-        tabs.appendChild(btn);
-        panelsWrap.appendChild(renderPanel(l.key));
-      });
-
-      els.wordBaseContent.appendChild(tabs);
-      els.wordBaseContent.appendChild(panelsWrap);
-      setActive(defaultTab);
-    }
-
-    openModal("wordModal");
+    window.EBT.WordUI?.openModal(wordRaw);
   }
 
   // Routes are registered once and dispatched via EBT.Router. Adding a new
@@ -2249,15 +300,7 @@
     // split can delegate to / replace entries here without touching this file.
     window.EBT.Render = window.EBT.Render || {};
     const R = window.EBT.Render;
-    R.home = R.home || renderHome;
-    R.memorization = R.memorization || renderMemorization;
-    R.training = R.training || renderTraining;
-    R.test = R.test || renderTest;
-    R.testResults = R.testResults || renderTestResults;
-    R.testHistoryView = R.testHistoryView || renderTestHistoryView;
-    R.review = R.review || renderReview;
-    R.stats = R.stats || renderStats;
-    R.dictionary = R.dictionary || renderDictionary;
+    // All renderers are provided by docs/scripts/modes/*.js.
 
     Router.routes.length = 0;
     Router.registerAll([
@@ -2292,57 +335,18 @@
     if (route !== "mode/test") stopTestTicker();
     if (Router) return Router.dispatch(route);
     // Fallback (should not be reached if router.js loaded)
-    return renderHome();
+    const R = window.EBT.Render || {};
+    if (typeof R.home === "function") return R.home();
+    return null;
   }
 
   function syncStaticUITexts() {
-    setText(els.brandSubtitle, "Self-learning");
-    setText(els.navHome, t("home"));
-    setText(els.navSectionModes, t("modes"));
-    setText(els.navMemTitle, t("memorization"));
-    setText(els.navMemRandom, t("memorizationRandom"));
-    setText(els.navMemOrdered, t("memorizationOrdered"));
-    setText(els.navTrain, t("training"));
-    setText(els.navTest, t("test"));
-    setText(els.navReview, t("review"));
-    setText(els.navSectionTools, t("tools"));
-    setText(els.navStats, t("statistics"));
-    setText(els.navDict, t("myDictionary"));
-    setText(els.navSectionSettings, t("settings"));
-    setText(els.languageLabel, t("language"));
-    setText(els.stateLabel, t("stateForTest"));
-    setText(els.focusTopicLabel, t("focusTopic"));
-    setText(els.resetFocusTopicLabel, t("focusTopic"));
-    setText(els.resetBtn, t("resetData"));
-    setText(els.timerLabel, t("timer"));
-    setText(els.progressLabel, t("progress"));
-    setText(els.backBtn, t("back"));
-    setText(els.homeBtn, t("home"));
-    setText(els.nextBtn, t("next"));
-    setText(els.wordBaseTitle, t("baseDictionary"));
-    setText(els.confirmTitle, t("confirm"));
-    setText(els.confirmCancelBtn, t("cancel"));
-    setText(els.confirmOkBtn, t("ok"));
-
-    setText(els.resetDataTitle, t("resetDataTitle"));
-    setText(els.resetDataSubtitle, t("resetDataSubtitle"));
-    setText(els.resetStatsLabel, t("resetStats"));
-    setText(els.resetSessionsLabel, t("resetSessions"));
-    setText(els.resetDictionaryLabel, t("resetMyDictionary"));
-    setText(els.resetOtherLabel, t("resetOther"));
-    setText(els.resetLanguageLabel, t("resetLanguage"));
-    setText(els.resetStateLabel, t("resetState"));
-    setText(els.resetDataCancelBtn, t("cancel"));
-    setText(els.resetDataOkBtn, t("ok"));
-
+    // Every translatable label in index.html carries [data-i18n="<key>"];
+    // the View layer walks them. Adding a new label is an HTML-only change.
+    View.applyI18n(t);
     initFocusTopicSelect();
     document.documentElement.lang = state.lang === "pt" ? "pt-BR" : state.lang;
   }
-
-  const FOCUS_TOPIC_KEYS = [
-    APP.focusTopicAll,
-    ...APP.subCategoryKeys,
-  ];
 
   const FOCUS_TOPIC_SHORT_LABEL_KEYS = {
     [APP.focusTopicAll]: "focusShortAll",
@@ -2354,38 +358,31 @@
     EUROPE: "focusShortEurope",
   };
 
+  // Thin wrappers over EBT.Settings. Kept as function names because
+  // initEvents() still references them, and the data-loader pipeline
+  // re-calls initStatesSelect after questions load.
   function initStatesSelect() {
-    const states = [...new Set(state.questions.map((q) => q.category))]
-      .filter((c) => c && c !== "GERMANY")
-      .sort((a, b) => a.localeCompare(b, "de"));
-    els.stateSelect.innerHTML = "";
-    states.forEach((s) => {
-      const opt = document.createElement("option");
-      opt.value = s;
-      opt.textContent = s;
-      els.stateSelect.appendChild(opt);
-    });
-    if (!states.includes(state.selectedState)) state.selectedState = states[0] ?? APP.defaultState;
-    els.stateSelect.value = state.selectedState;
+    window.EBT.Settings.initStatesSelect();
   }
-
   function initFocusTopicSelect() {
-    els.focusTopicSelect.innerHTML = "";
-    FOCUS_TOPIC_KEYS.forEach((value) => {
-      const opt = document.createElement("option");
-      opt.value = value;
-      opt.textContent = t(FOCUS_TOPIC_SHORT_LABEL_KEYS[value] ?? value);
-      opt.title = t(FOCUS_TOPIC_LABEL_KEYS[value] ?? value);
-      els.focusTopicSelect.appendChild(opt);
-    });
-    if (!FOCUS_TOPIC_KEYS.includes(state.selectedFocusTopic)) state.selectedFocusTopic = APP.focusTopicAll;
-    els.focusTopicSelect.value = state.selectedFocusTopic;
+    window.EBT.Settings.initFocusTopicSelect(
+      FOCUS_TOPIC_SHORT_LABEL_KEYS,
+      FOCUS_TOPIC_LABEL_KEYS,
+    );
   }
 
   function initEvents() {
     els.sidebarOpenBtn.addEventListener("click", toggleSidebar);
     els.sidebarCloseBtn.addEventListener("click", closeSidebar);
     els.overlay.addEventListener("click", closeSidebar);
+
+    // Surface storage failures to the user. Quota exhaustion and private-
+    // mode restrictions are otherwise silent.
+    window.addEventListener("ebt:storage-write-failed", (ev) => {
+      const reason = ev?.detail?.reason;
+      if (reason === "quota") toast(t("quotaExceeded"));
+      else if (reason === "unavailable") toast(t("storageUnavailable"));
+    });
 
     document.querySelectorAll(".nav__item[data-route]").forEach((b) => {
       b.addEventListener("click", () => {
@@ -2407,190 +404,19 @@
       });
     });
 
-    els.languageSelect.addEventListener("change", () => {
-      state.lang = els.languageSelect.value;
-      writeJSON(key("lang"), state.lang);
-      syncStaticUITexts();
-      onRouteChange();
+    window.EBT.Settings.wire({
+      focusTopicShortLabels: FOCUS_TOPIC_SHORT_LABEL_KEYS,
+      focusTopicLongLabels: FOCUS_TOPIC_LABEL_KEYS,
+      onSyncTexts: syncStaticUITexts,
+      onRouteChange,
+      stopTestTicker,
     });
 
-    function clearSessionsAndRefresh() {
-      clearSession("test");
-      clearSession("memorization");
-      clearSession("memorization.random");
-      clearSession("memorization.ordered");
-      clearSession("train");
-      if (state.route === "mode/test") onRouteChange();
-      if (state.route === "mode/memorization" || state.route === "mode/train" || state.route === "mode/review" || state.route === "stats") {
-        onRouteChange();
-      }
-      if (state.route === "mode/memorization/random" || state.route === "mode/memorization/ordered") {
-        onRouteChange();
-      }
-    }
-
-    els.stateSelect.addEventListener("change", () => {
-      state.selectedState = els.stateSelect.value;
-      writeJSON(key("selectedState"), state.selectedState);
-      clearSessionsAndRefresh();
-    });
-
-    els.focusTopicSelect.addEventListener("change", () => {
-      state.selectedFocusTopic = els.focusTopicSelect.value;
-      writeJSON(key("selectedFocusTopic"), state.selectedFocusTopic);
-      clearSessionsAndRefresh();
-    });
-
-    els.resetBtn.addEventListener("click", () => {
-      els.resetChkStats.checked = true;
-      els.resetChkSessions.checked = true;
-      els.resetChkDictionary.checked = true;
-      els.resetChkOther.checked = true;
-      els.resetChkLanguage.checked = false;
-      els.resetChkState.checked = false;
-      els.resetChkFocusTopic.checked = false;
-      openModal("resetDataModal");
-    });
-
-    els.resetDataOkBtn.addEventListener("click", () => {
-      const delStats = !!els.resetChkStats.checked;
-      const delSessions = !!els.resetChkSessions.checked;
-      const delDict = !!els.resetChkDictionary.checked;
-      const delOther = !!els.resetChkOther.checked;
-      const delLang = !!els.resetChkLanguage.checked;
-      const delState = !!els.resetChkState.checked;
-      const delFocusTopic = !!els.resetChkFocusTopic.checked;
-
-      const keys = Object.keys(localStorage).filter((k) => k.startsWith(APP.prefix));
-      keys.forEach((k) => {
-        if (!delLang && k === key("lang")) return;
-        if (!delState && k === key("selectedState")) return;
-        if (!delFocusTopic && k === key("selectedFocusTopic")) return;
-
-        if (delStats && (k === key("statsById") || k === key("stats.sort") || k === key("testHistory"))) {
-          localStorage.removeItem(k);
-          return;
-        }
-        if (delSessions && k.startsWith(key("session."))) {
-          localStorage.removeItem(k);
-          return;
-        }
-        if (delDict && k === key("myDictionary")) {
-          localStorage.removeItem(k);
-          return;
-        }
-
-        // Anything else under our prefix
-        if (delOther) {
-          localStorage.removeItem(k);
-        }
-      });
-
-      stopTestTicker();
-      closeModal("resetDataModal");
-
-      if (delLang) state.lang = readJSON(key("lang"), APP.defaultLang);
-      if (delState) state.selectedState = readJSON(key("selectedState"), APP.defaultState);
-      if (delFocusTopic) state.selectedFocusTopic = readJSON(key("selectedFocusTopic"), APP.focusTopicAll);
-
-      els.languageSelect.value = state.lang;
-      initStatesSelect();
-      initFocusTopicSelect();
-      syncStaticUITexts();
-      toast(t("resetDone"));
-      onRouteChange();
-    });
-
-    els.backBtn.addEventListener("click", () => {
-      const r = state.route;
-      if (r === "test-history-view") {
-        return setRoute("stats");
-      }
-      if (r === "mode/memorization/random" || r === "mode/memorization/ordered") {
-        const orderMode = r === "mode/memorization/ordered" ? "ordered" : "random";
-        const modeKey = orderMode === "ordered" ? "memorization.ordered" : "memorization.random";
-        const s = loadSession(modeKey);
-        if (s.index > 0) {
-          s.index -= 1;
-          saveSession(modeKey, s);
-        }
-        return onRouteChange();
-      }
-      if (r === "mode/train") {
-        const s = ensureSessionForMode("train");
-        if (Array.isArray(s.history) && s.history.length) {
-          const prev = s.history.pop();
-          if (prev) {
-            s.currentQuestionId = prev;
-            s.currentAttempt = null;
-            saveSession("train", s);
-          }
-        }
-        return onRouteChange();
-      }
-      if (r === "mode/test") {
-        const s = loadSession("test");
-        if (s && s.index > 0) {
-          s.index -= 1;
-          saveSession("test", s);
-        }
-        return onRouteChange();
-      }
-      setRoute("home");
-    });
-
+    // Footer back/next dispatch to per-route handlers registered by each
+    // mode file (see modes/_nav-handlers.js). Unknown routes go home.
+    els.backBtn.addEventListener("click", () => window.EBT.Nav.back(state.route));
     els.homeBtn.addEventListener("click", () => setRoute("home"));
-
-    els.nextBtn.addEventListener("click", () => {
-      const r = state.route;
-      if (r === "mode/memorization/random" || r === "mode/memorization/ordered") {
-        const orderMode = r === "mode/memorization/ordered" ? "ordered" : "random";
-        const modeKey = orderMode === "ordered" ? "memorization.ordered" : "memorization.random";
-        const s = loadSession(modeKey) ?? ensureMemorizationSession(orderMode);
-        if (s.index < s.orderIds.length - 1) {
-          s.index += 1;
-          saveSession(modeKey, s);
-        }
-        return onRouteChange();
-      }
-      if (r === "mode/train") {
-        const s = ensureSessionForMode("train");
-        if (s.currentQuestionId && !s.currentAttempt) {
-          statsBumpSkip(s.currentQuestionId);
-        }
-        if (!Array.isArray(s.history)) s.history = [];
-        if (s.currentQuestionId) s.history.push(s.currentQuestionId);
-        const nextId = pickNextTrainingQuestionId(s, Date.now());
-        s.currentQuestionId = nextId;
-        s.currentAttempt = null;
-        if (nextId) markTrainingShown(s, nextId, Date.now());
-        saveSession("train", s);
-        return onRouteChange();
-      }
-      if (r === "mode/test") {
-        const s = loadSession("test");
-        if (s) {
-          const currentQid = s.questionIds?.[s.index];
-          const hasAnswer = typeof s.answers?.[currentQid] === "number";
-          if (!s.skipped) s.skipped = {};
-          if (currentQid && !hasAnswer && !s.skipped[currentQid]) {
-            statsBumpSkip(currentQid);
-            s.skipped[currentQid] = true;
-          }
-          
-          // If on last question, finish test instead of moving forward
-          if (s.index === s.questionIds.length - 1) {
-            return finishTest(false);
-          }
-        }
-        if (s && s.index < s.questionIds.length - 1) {
-          s.index += 1;
-          saveSession("test", s);
-        }
-        return onRouteChange();
-      }
-      setRoute("home");
-    });
+    els.nextBtn.addEventListener("click", () => window.EBT.Nav.next(state.route));
 
     document.addEventListener("click", (ev) => {
       const target = ev.target;
@@ -2599,92 +425,13 @@
       if (modalId) closeModal(modalId);
     });
 
-    els.wordCtxViewBtn.addEventListener("click", () => {
-      closeWordContextMenu();
-      openWordModal(state.currentWordDisplay ?? state.currentWord);
-    });
-    els.wordCtxToggleBtn.addEventListener("click", () => {
-      const key = state.currentWord;
-      const display = state.currentWordDisplay ?? key;
-      if (!key) return;
-      if (myDictHas(key)) {
-        myDictRemove(key);
-        toast(t("removedFromMyDictionary"));
-      } else {
-        myDictAdd(key, display);
-        toast(t("addedToMyDictionary"));
-      }
-      closeWordContextMenu();
-      if (state.route === "dictionary") renderDictionary();
-    });
+    // Word UI — context menu view/toggle buttons, keyboard nav inside the
+    // menu, global word-token click dispatch, outside-click dismiss,
+    // mobile long-press. All in modes/_word-ui.js.
+    window.EBT.WordUI.wireWordInteractions();
 
-    document.addEventListener("click", (ev) => {
-      const target = ev.target;
-      if (!(target instanceof HTMLElement)) return;
-      const w = target.closest?.(".word");
-      if (w && w instanceof HTMLElement) {
-        ev.preventDefault();
-        ev.stopImmediatePropagation();
-        if (state.ignoreNextWordClick) {
-          state.ignoreNextWordClick = false;
-          return;
-        }
-        // Use layout breakpoint instead of touch heuristics:
-        // - mobile layout: tap opens definition
-        // - desktop layout: click opens context menu
-        if (isMobileNav()) {
-          openWordModal(w.dataset.word);
-          return;
-        }
-        const r = w.getBoundingClientRect();
-        openWordContextMenu(w.dataset.word, { x: r.left + r.width / 2, y: r.bottom + 8 });
-      }
-    });
-
-    document.addEventListener("click", (ev) => {
-      const target = ev.target;
-      if (!(target instanceof HTMLElement)) return;
-      // Don't close the menu on the same click that targets a word (desktop opens from that click)
-      if (target.closest?.(".word")) return;
-      if (target.closest?.("#wordContextMenu")) return;
-      closeWordContextMenu();
-    });
-
-    document.addEventListener(
-      "touchstart",
-      (ev) => {
-        const target = ev.target;
-        if (!(target instanceof HTMLElement)) return;
-        const w = target.closest?.(".word");
-        if (!(w instanceof HTMLElement)) return;
-        if (!isTouchPrimary()) return;
-        if (state.wordLongPressTimer) window.clearTimeout(state.wordLongPressTimer);
-        const touch = ev.touches?.[0];
-        if (!touch) return;
-        state.wordLongPressTimer = window.setTimeout(() => {
-          state.ignoreNextWordClick = true;
-          openWordContextMenu(w.dataset.word, { x: touch.clientX, y: touch.clientY });
-        }, 450);
-      },
-      { passive: true },
-    );
-
-    document.addEventListener(
-      "touchend",
-      () => {
-        if (state.wordLongPressTimer) window.clearTimeout(state.wordLongPressTimer);
-        state.wordLongPressTimer = null;
-      },
-      { passive: true },
-    );
-    document.addEventListener(
-      "touchcancel",
-      () => {
-        if (state.wordLongPressTimer) window.clearTimeout(state.wordLongPressTimer);
-        state.wordLongPressTimer = null;
-      },
-      { passive: true },
-    );
+    // Global keyboard shortcuts — Escape + memorization arrow keys.
+    window.EBT.Keyboard.wire();
 
     window.addEventListener("hashchange", onRouteChange);
     // keep sidebar state consistent when switching between mobile/desktop breakpoints
@@ -2693,155 +440,89 @@
     if (typeof mq.addEventListener === "function") mq.addEventListener("change", onMqChange);
     else if (typeof mq.addListener === "function") mq.addListener(onMqChange);
     window.addEventListener("resize", onMqChange);
-    window.addEventListener("keydown", (ev) => {
-      if (ev.key === "Escape") {
-        closeSidebar();
-        closeModal("wordModal");
-        closeModal("confirmModal");
-        closeWordContextMenu();
-      }
-      
-      // Arrow key navigation for memorization mode (desktop only)
-      if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
-        const r = state.route;
-        if (r === "mode/memorization/random" || r === "mode/memorization/ordered") {
-          // Don't interfere if user is typing in an input field
-          if (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA" || ev.target.isContentEditable) {
-            return;
-          }
-          
-          ev.preventDefault();
-          
-          if (ev.key === "ArrowLeft") {
-            // Trigger back button
-            els.backBtn.click();
-          } else if (ev.key === "ArrowRight") {
-            // Trigger next button
-            els.nextBtn.click();
-          }
-        }
-      }
-    });
   }
 
-  async function loadData() {
-    setText(els.main, t("loading"));
-    try {
-      const [qRes, dRes] = await Promise.all([fetch("assets/questions.json"), fetch("assets/dictionary.json")]);
-      if (!qRes.ok) throw new Error("questions");
-      const rawQuestions = await qRes.json();
-      // Validate and drop malformed questions rather than crashing the whole app.
-      const { questions } = window.EBT?.Validation?.filterValidQuestions
-        ? window.EBT.Validation.filterValidQuestions(rawQuestions)
-        : { questions: rawQuestions };
-      state.questions = questions;
-      state.questionsById = new Map(questions.map((q) => [q._id, q]));
-
-      if (dRes.ok) {
-        const rawDict = await dRes.json();
-        // Support format:
-        // - { "aliases": {form: lemma}, "<lemma>": {de/en/pt...}, ... }
-        // - or legacy: { "<lemma>": {de/en/pt...}, ... }
-        const sanitized = window.EBT?.Validation?.filterValidDictionary
-          ? window.EBT.Validation.filterValidDictionary(rawDict).dictionary
-          : rawDict;
-        const aliases =
-          sanitized?.aliases && typeof sanitized.aliases === "object" ? sanitized.aliases : {};
-        const entries = { ...sanitized };
-        delete entries.aliases;
-        state.baseDictionary = entries;
-        state.baseDictionaryAliases = aliases;
-
-        const index = new Map();
-        Object.keys(entries).forEach((lemma) => index.set(String(lemma).toLowerCase(), String(lemma).toLowerCase()));
-        Object.keys(aliases).forEach((form) => {
-          const lemma = String(aliases[form] ?? "").toLowerCase();
-          if (!lemma) return;
-          if (!entries[lemma]) return;
-          index.set(String(form).toLowerCase(), lemma);
-        });
-        state.baseDictionaryIndex = index;
-      } else {
-        state.baseDictionary = {};
-        state.baseDictionaryAliases = {};
-        state.baseDictionaryIndex = new Map();
-      }
-    } catch (err) {
-      console.error(err);
-      els.main.innerHTML = `<div class="card"><div class="card__title">${t("loadFailed")}</div></div>`;
-    }
-  }
+  // Data-loading pipeline lives in scripts/data-loader.js.
+  const loadData = () => window.EBT.DataLoader.load();
 
   async function init() {
-    Object.assign(els, {
-      sidebar: document.getElementById("sidebar"),
-      overlay: document.getElementById("overlay"),
-      main: document.getElementById("main"),
-      sidebarOpenBtn: document.getElementById("sidebarOpenBtn"),
-      sidebarCloseBtn: document.getElementById("sidebarCloseBtn"),
-      brandSubtitle: document.getElementById("brandSubtitle"),
-      routeTitle: document.getElementById("routeTitle"),
-      routeMeta: document.getElementById("routeMeta"),
-      timerPill: document.getElementById("timerPill"),
-      timerLabel: document.getElementById("timerLabel"),
-      timerValue: document.getElementById("timerValue"),
-      progressLabel: document.getElementById("progressLabel"),
-      progressValue: document.getElementById("progressValue"),
-      languageSelect: document.getElementById("languageSelect"),
-      stateSelect: document.getElementById("stateSelect"),
-      focusTopicSelect: document.getElementById("focusTopicSelect"),
-      focusTopicLabel: document.getElementById("focusTopicLabel"),
-      resetBtn: document.getElementById("resetBtn"),
-      backBtn: document.getElementById("backBtn"),
-      homeBtn: document.getElementById("homeBtn"),
-      nextBtn: document.getElementById("nextBtn"),
-      pageFooter: document.getElementById("pageFooter"),
-      toast: document.getElementById("toast"),
-      navHome: document.getElementById("navHome"),
-      navSectionModes: document.getElementById("navSectionModes"),
-      navMemTitle: document.getElementById("navMemTitle"),
-      navMemRandom: document.getElementById("navMemRandom"),
-      navMemOrdered: document.getElementById("navMemOrdered"),
-      navTrain: document.getElementById("navTrain"),
-      navTest: document.getElementById("navTest"),
-      navReview: document.getElementById("navReview"),
-      navSectionTools: document.getElementById("navSectionTools"),
-      navStats: document.getElementById("navStats"),
-      navDict: document.getElementById("navDict"),
-      navSectionSettings: document.getElementById("navSectionSettings"),
-      languageLabel: document.getElementById("languageLabel"),
-      stateLabel: document.getElementById("stateLabel"),
-      resetFocusTopicLabel: document.getElementById("resetFocusTopicLabel"),
-      resetChkFocusTopic: document.getElementById("resetChkFocusTopic"),
-      wordModalTitle: document.getElementById("wordModalTitle"),
-      wordModalSubtitle: document.getElementById("wordModalSubtitle"),
-      wordBaseTitle: document.getElementById("wordBaseTitle"),
-      wordBaseContent: document.getElementById("wordBaseContent"),
-      wordContextMenu: document.getElementById("wordContextMenu"),
-      wordCtxViewBtn: document.getElementById("wordCtxViewBtn"),
-      wordCtxToggleBtn: document.getElementById("wordCtxToggleBtn"),
-      confirmTitle: document.getElementById("confirmTitle"),
-      confirmText: document.getElementById("confirmText"),
-      confirmCancelBtn: document.getElementById("confirmCancelBtn"),
-      confirmOkBtn: document.getElementById("confirmOkBtn"),
+    // Resolve every known element via the registry in selectors.js.
+    // Layouts that rename IDs or omit optional elements only change there
+    // and (for omissions) ensure downstream code tolerates null targets.
+    Object.assign(els, window.EBT.Selectors.query());
 
-      resetDataTitle: document.getElementById("resetDataTitle"),
-      resetDataSubtitle: document.getElementById("resetDataSubtitle"),
-      resetStatsLabel: document.getElementById("resetStatsLabel"),
-      resetSessionsLabel: document.getElementById("resetSessionsLabel"),
-      resetDictionaryLabel: document.getElementById("resetDictionaryLabel"),
-      resetOtherLabel: document.getElementById("resetOtherLabel"),
-      resetLanguageLabel: document.getElementById("resetLanguageLabel"),
-      resetStateLabel: document.getElementById("resetStateLabel"),
-      resetChkStats: document.getElementById("resetChkStats"),
-      resetChkSessions: document.getElementById("resetChkSessions"),
-      resetChkDictionary: document.getElementById("resetChkDictionary"),
-      resetChkOther: document.getElementById("resetChkOther"),
-      resetChkLanguage: document.getElementById("resetChkLanguage"),
-      resetChkState: document.getElementById("resetChkState"),
-      resetDataCancelBtn: document.getElementById("resetDataCancelBtn"),
-      resetDataOkBtn: document.getElementById("resetDataOkBtn"),
-    });
+    // Expose EBT.Core up front — extracted modules (data-loader, settings,
+    // sessions, nav-handlers, …) reach for it during init. Function
+    // declarations are hoisted inside the IIFE, so every reference below is
+    // valid even though some of the functions are textually defined later
+    // in this file.
+    // Public API consumed by mode files. Anything that is only used
+    // internally by general.js stays out of this object. See
+    // docs/scripts/modes/README.md for the contract.
+    window.EBT.Core = {
+      // Config + state
+      APP,
+      state,
+      // Translation
+      t,
+      // Modal plumbing
+      openModal,
+      closeModal,
+      confirmDialog,
+      // Word UI (entry points used by dictionary mode + test review rows)
+      openWordModal,
+      // Shared renderers
+      renderQuestionCard,
+      renderTip,
+      // Question helpers
+      getQuestionById,
+      getQuestionMetaLine,
+      getQuestionTranslation,
+      getOptionTranslation,
+      // Session lifecycle
+      loadSession,
+      saveSession,
+      clearSession,
+      ensureSessionForMode,
+      ensureMemorizationSession,
+      // Dictionary lookup (used by word UI)
+      findBaseDictionaryEntry,
+      // Routing
+      setRoute,
+      onRouteChange,
+      // Storage shims (prefixed keys)
+      readJSON,
+      writeJSON,
+      storageKey: key,
+      // Stats aggregations (bound to app-state)
+      getStatsRows,
+      getStatsByTopic,
+      getTestHistoryStats,
+      // Test lifecycle
+      finishTest,
+      stopTestTicker,
+      updateTestTimerUI,
+      // Question-review modal (invoked from test-results + history-view)
+      openQuestionReviewModal,
+      // Training internals (used by training.js nav handler)
+      getTrainCredits,
+      setTrainCredits,
+      bumpTrainSessionStats,
+      // Stats bumpers (used by training + test)
+      statsBump,
+      statsBumpSkip,
+    };
+
+    // Load shared view-layer templates from the partial. Layouts that ship
+    // the templates inline can skip this (loadFromUrl no-ops on every
+    // template id that already exists).
+    if (window.EBT?.Templates?.loadFromUrl) {
+      try {
+        await window.EBT.Templates.loadFromUrl("partials/templates.html");
+      } catch (err) {
+        console.error("[templates] load failed", err);
+      }
+    }
 
     // Run data migrations before anything else touches localStorage.
     if (window.EBT?.Migrations?.run) {
@@ -2857,7 +538,10 @@
       }
     }
 
-    state.lang = readJSON(key("lang"), APP.defaultLang);
+    // Pick up saved preference first. On first visit, fall back to the
+    // browser's navigator.language if it happens to be one we support.
+    const savedLang = readJSON(key("lang"), null);
+    state.lang = savedLang ?? detectPreferredLanguage();
     state.selectedState = readJSON(key("selectedState"), APP.defaultState);
     state.selectedFocusTopic = readJSON(key("selectedFocusTopic"), APP.focusTopicAll);
     els.languageSelect.value = state.lang;
@@ -2871,9 +555,12 @@
     closeModal("confirmModal");
     closeWordContextMenu();
     syncSidebarForViewport();
-    // migrate personal dictionary keys to canonical lowercase (case-insensitive)
+    // Migrate personal-dictionary keys to canonical lowercase if needed.
+    // Belongs with the store; kept here for load-time ordering (runs before
+    // the first dictionary render touches the data).
     try {
-      const all = myDictReadAll();
+      const MyDict = window.EBT.MyDict;
+      const all = MyDict.readAll();
       const migrated = {};
       let changed = false;
       Object.keys(all).forEach((k) => {
@@ -2886,35 +573,12 @@
         };
         if (canon !== k) changed = true;
       });
-      if (changed) myDictWriteAll(migrated);
-    } catch (err) {
-      // ignore
+      if (changed) MyDict.writeAll(migrated);
+    } catch (_err) {
+      // Migration is best-effort; a corrupt payload shouldn't block boot.
     }
     initEvents();
     registerRoutes();
-
-    // Expose the minimal surface that future per-mode files in
-    // docs/scripts/modes/ need to reach into this closure. See
-    // docs/scripts/modes/README.md for how this is used.
-    window.EBT.Core = {
-      APP,
-      state,
-      els,
-      t,
-      setTopbar,
-      setProgress,
-      setTimerVisible,
-      setFooterButtons,
-      setActiveNav,
-      renderQuestionCard,
-      getSubCategoryLabel,
-      getQuestionMetaLine,
-      loadSession,
-      saveSession,
-      clearSession,
-      pickQuestionsForTest,
-      findBaseDictionaryEntry,
-    };
 
     setRoute(getRouteFromHash());
     onRouteChange();

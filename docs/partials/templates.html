@@ -1,0 +1,410 @@
+<!--
+  View-layer templates. Mode renderers clone these via EBT.Templates and
+  populate [data-slot] elements. Shared across every layout (index.html,
+  modern.html) via EBT.Templates.loadFromUrl().
+
+  This file is a fragment: no <html>/<head>/<body>. It's fetched and its
+  contents are injected into document.body during app init.
+-->
+
+<!-- Memorization mode -->
+<template id="tpl-memorization-mode-switch">
+  <div class="card" style="box-shadow:none">
+    <div class="row" role="tablist" aria-label="Memorization order">
+      <button
+        class="btn m-seg"
+        type="button"
+        role="tab"
+        data-mode="random"
+        data-ref="random"
+        data-slot="randomLabel"
+      ></button>
+      <button
+        class="btn m-seg"
+        type="button"
+        role="tab"
+        data-mode="ordered"
+        data-ref="ordered"
+        data-slot="orderedLabel"
+      ></button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-memorization-ordered-controls">
+  <div class="card" style="box-shadow:none">
+    <div class="row">
+      <label class="field" style="min-width:220px;margin:0">
+        <span class="field__label" data-slot="goToLabel"></span>
+        <input class="field__control" data-ref="input" placeholder="1" />
+      </label>
+      <button class="btn btn--primary" type="button" data-action="go" data-slot="goLabel"></button>
+      <button class="btn" type="button" data-action="reset" data-slot="resetLabel"></button>
+    </div>
+  </div>
+</template>
+
+<!-- Test mode actions card -->
+<template id="tpl-test-actions">
+  <div class="card">
+    <div class="row">
+      <div class="muted">
+        <span data-slot="answeredLabel"></span>:
+        <span class="mono" data-slot="answered"></span>
+      </div>
+      <div style="flex:1"></div>
+      <button class="btn btn--primary" type="button" data-action="finish" data-slot="finishLabel"></button>
+    </div>
+  </div>
+</template>
+
+<!-- Question review modal body (populated dynamically per question) -->
+<template id="tpl-question-review-body">
+  <div class="question__text" data-ref="text" data-slot="text"></div>
+  <div class="muted" data-ref="translation" style="margin-top:8px" hidden></div>
+  <img
+    class="question__image"
+    data-ref="image"
+    loading="lazy"
+    style="margin-top:12px;max-width:100%;border-radius:8px"
+    hidden
+  />
+  <div class="options" data-ref="options" style="margin-top:16px"></div>
+</template>
+
+<template id="tpl-question-review-option">
+  <div class="option is-disabled" aria-disabled="true" data-ref="option">
+    <div class="option__top">
+      <div class="option__badge" data-slot="badge"></div>
+      <div class="option__text" data-ref="text">
+        <span data-slot="label"></span>
+        <div class="muted" data-ref="translation" style="margin-top:4px;font-size:0.9em" hidden></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Test-review shared: answer cells, result badges, action buttons -->
+<template id="tpl-test-review-answer-cell">
+  <div style="max-width:400px">
+    <div data-slot="main"></div>
+    <div class="muted" data-ref="translation" style="margin-top:4px;font-size:0.9em" hidden></div>
+  </div>
+</template>
+
+<template id="tpl-test-review-answer-cell-dash">
+  <span class="muted">—</span>
+</template>
+
+<template id="tpl-test-review-result-badge">
+  <span data-ref="badge" data-slot="label"></span>
+</template>
+
+<template id="tpl-test-review-skipped-badge">
+  <span class="muted" data-slot="label"></span>
+</template>
+
+<template id="tpl-test-review-action-btn">
+  <button type="button" data-ref="btn" data-slot="label"></button>
+</template>
+
+<!-- Test results + history-view (shared layout) -->
+<template id="tpl-test-results-title">
+  <div class="card">
+    <div style="text-align:center">
+      <div class="card__title" data-slot="title"></div>
+      <div style="margin-top:14px">
+        <span data-ref="badge" class="result-pill" data-slot="badge"></span>
+      </div>
+      <div class="row" style="margin-top:14px;justify-content:center">
+        <div class="pill">
+          <span class="pill__label" data-slot="correctLabel"></span>
+          <span class="pill__value mono" data-slot="correctValue"></span>
+        </div>
+        <div class="pill">
+          <span class="pill__label" data-slot="wrongLabel"></span>
+          <span class="pill__value mono" data-slot="wrongValue"></span>
+        </div>
+        <div class="pill">
+          <span class="pill__label" data-slot="accuracyLabel"></span>
+          <span class="pill__value mono" data-slot="accuracyValue"></span>
+        </div>
+      </div>
+      <div class="row" style="margin-top:14px;justify-content:center" data-ref="actions"></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-test-review-card">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" data-slot="questionHeader"></th>
+          <th scope="col" data-slot="yourAnswerHeader"></th>
+          <th scope="col" data-slot="correctAnswerHeader"></th>
+          <th scope="col" data-slot="resultHeader"></th>
+        </tr>
+      </thead>
+      <tbody data-ref="tbody"></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="tpl-test-review-row">
+  <tr>
+    <td>
+      <button class="btn btn--ghost" style="padding:4px 8px" type="button" data-action="viewQuestion">
+        <span class="mono" data-slot="number"></span>
+      </button>
+      <div class="muted" style="margin-top:4px" data-slot="category"></div>
+    </td>
+    <td data-slot="yourAnswer"></td>
+    <td data-slot="correctAnswer"></td>
+    <td data-slot="result"></td>
+  </tr>
+</template>
+
+<!-- Stats mode -->
+<template id="tpl-stats-summary">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <div class="row" style="margin-top:8px">
+      <div class="pill">
+        <span class="pill__label" data-slot="totalTestsLabel"></span>
+        <span class="pill__value mono" data-slot="totalTests"></span>
+      </div>
+      <div class="pill">
+        <span class="pill__label" data-slot="averageScoreLabel"></span>
+        <span class="pill__value mono" data-slot="averageScore"></span>
+      </div>
+      <div class="pill">
+        <span class="pill__label" data-slot="passRateLabel"></span>
+        <span class="pill__value mono" data-slot="passRate"></span>
+      </div>
+    </div>
+    <table class="table" data-ref="historyTable" style="margin-top:14px" hidden>
+      <thead>
+        <tr>
+          <th scope="col" data-slot="dateHeader"></th>
+          <th scope="col" data-slot="scoreHeader"></th>
+          <th scope="col" data-slot="accuracyHeader"></th>
+          <th scope="col" data-slot="resultHeader"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody data-ref="historyBody"></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="tpl-stats-history-row">
+  <tr>
+    <td>
+      <span class="mono" data-slot="date"></span>
+      <div class="muted" style="margin-top:4px" data-slot="time"></div>
+    </td>
+    <td class="mono" data-slot="score"></td>
+    <td class="mono" data-slot="pct"></td>
+    <td data-slot="result"></td>
+    <td>
+      <button class="btn btn--ghost" type="button" data-action="viewTest">👁️</button>
+    </td>
+  </tr>
+</template>
+
+<template id="tpl-stats-empty">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <div class="muted" data-slot="text"></div>
+  </div>
+</template>
+
+<template id="tpl-stats-by-topic">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <table class="table" style="margin-top:10px">
+      <thead>
+        <tr>
+          <th scope="col" data-slot="topicHeader"></th>
+          <th scope="col" data-slot="correctHeader"></th>
+          <th scope="col" data-slot="wrongHeader"></th>
+          <th scope="col" data-slot="accuracyHeader"></th>
+        </tr>
+      </thead>
+      <tbody data-ref="tbody"></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="tpl-stats-by-topic-row">
+  <tr>
+    <td data-slot="topic"></td>
+    <td class="mono" data-slot="correct"></td>
+    <td class="mono" data-slot="wrong"></td>
+    <td class="mono" data-slot="accuracy"></td>
+  </tr>
+</template>
+
+<template id="tpl-stats-per-question">
+  <div class="card">
+    <div class="row">
+      <div class="card__title" data-slot="title"></div>
+      <div style="flex:1"></div>
+      <label class="field" style="min-width:240px;margin:0" data-ref="sortField">
+        <span class="field__label" data-slot="sortByLabel"></span>
+        <select class="field__control" data-ref="sortSelect">
+          <option value="mostWrong" data-slot="mostWrong"></option>
+          <option value="mostCorrect" data-slot="mostCorrect"></option>
+          <option value="mostSkipped" data-slot="mostSkipped"></option>
+          <option value="bestAccuracy" data-slot="bestAccuracy"></option>
+          <option value="worstAccuracy" data-slot="worstAccuracy"></option>
+        </select>
+      </label>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" data-slot="questionHeader"></th>
+          <th scope="col" data-slot="attemptsHeader"></th>
+          <th scope="col" data-slot="correctHeader"></th>
+          <th scope="col" data-slot="wrongHeader"></th>
+          <th scope="col" data-slot="skippedHeader"></th>
+          <th scope="col" data-slot="accuracyHeader"></th>
+        </tr>
+      </thead>
+      <tbody data-ref="tbody"></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="tpl-stats-per-question-row">
+  <tr>
+    <td>
+      <span class="mono" data-slot="number"></span>
+      <div class="muted" style="margin-top:4px" data-slot="category"></div>
+    </td>
+    <td class="mono" data-slot="attempts"></td>
+    <td class="mono" data-slot="correct"></td>
+    <td class="mono" data-slot="wrong"></td>
+    <td class="mono" data-slot="skipped"></td>
+    <td class="mono" data-slot="accuracy"></td>
+  </tr>
+</template>
+
+<!-- Review mode -->
+<template id="tpl-review-empty">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <div class="muted" data-slot="noStats"></div>
+  </div>
+</template>
+
+<template id="tpl-review">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <div class="muted" data-slot="subtitle"></div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" data-slot="questionHeader"></th>
+          <th scope="col" data-slot="attemptsHeader"></th>
+          <th scope="col" data-slot="wrongHeader"></th>
+          <th scope="col" data-slot="accuracyHeader"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody data-ref="tbody"></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="tpl-review-row">
+  <tr>
+    <td>
+      <span class="mono" data-slot="number"></span>
+      <div class="muted" style="margin-top:4px" data-slot="category"></div>
+    </td>
+    <td class="mono" data-slot="attempts"></td>
+    <td class="mono" data-slot="wrong"></td>
+    <td class="mono" data-slot="accuracy"></td>
+    <td>
+      <button class="btn btn--primary" type="button" data-action="open" data-slot="openLabel"></button>
+    </td>
+  </tr>
+</template>
+
+<!-- Dictionary mode -->
+<template id="tpl-dictionary">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <div class="grid">
+      <div class="card" style="box-shadow:none">
+        <div class="row">
+          <button class="btn btn--primary" type="button" data-action="export" data-slot="exportLabel"></button>
+          <button class="btn" type="button" data-action="import" data-slot="importLabel"></button>
+        </div>
+        <div class="stack" data-ref="importBox" hidden style="margin-top:10px">
+          <textarea class="textarea" data-ref="importTextarea" rows="6" data-slot="importPlaceholder" data-slot-attr="placeholder"></textarea>
+          <div class="row row--right">
+            <button class="btn btn--ghost" type="button" data-action="importCancel" data-slot="cancelLabel"></button>
+            <button class="btn btn--primary" type="button" data-action="importOk" data-slot="importLabel2"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" data-slot="wordHeader"></th>
+          <th class="mono" scope="col">Added</th>
+        </tr>
+      </thead>
+      <tbody data-ref="tbody"></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="tpl-dictionary-empty">
+  <div class="card">
+    <div class="card__title" data-slot="title"></div>
+    <div class="muted" data-slot="empty"></div>
+  </div>
+</template>
+
+<!-- Home mode -->
+<template id="tpl-home">
+  <div class="grid">
+    <div class="card">
+      <div class="card__title" data-slot="introTitle"></div>
+      <div class="muted" data-slot="introText"></div>
+    </div>
+    <div class="card">
+      <div class="card__title" data-slot="whatYouGetTitle"></div>
+      <div class="muted" data-slot="whatYouGetText"></div>
+      <div class="card__title" style="margin-top:14px" data-slot="modesTitle"></div>
+      <div class="stack">
+        <div>
+          <strong data-slot="modeMemTitle"></strong>
+          <div class="muted" data-slot="modeMemText"></div>
+        </div>
+        <div>
+          <strong data-slot="modeTrainTitle"></strong>
+          <div class="muted" data-slot="modeTrainText"></div>
+        </div>
+        <div>
+          <strong data-slot="modeTestTitle"></strong>
+          <div class="muted" data-slot="modeTestText"></div>
+        </div>
+        <div>
+          <strong data-slot="modeReviewTitle"></strong>
+          <div class="muted" data-slot="modeReviewText"></div>
+        </div>
+      </div>
+      <div class="card__title" style="margin-top:14px" data-slot="testRulesTitle"></div>
+      <div class="muted" data-slot="testRulesText"></div>
+      <div class="muted" style="margin-top:10px" data-slot="testComposition"></div>
+    </div>
+  </div>
+</template>

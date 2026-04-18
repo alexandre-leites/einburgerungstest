@@ -11,6 +11,11 @@
   --good: #22c55e;
   --bad: #ef4444;
   --warn: #f59e0b;
+  /* Badge semantics for pass/fail result cells.
+     Kept distinct from --good/--bad so renderer pill tints stay faithful
+     to the pre-refactor design (#10b981 / #ef4444). */
+  --pass: #10b981;
+  --fail: #ef4444;
   --focus: rgba(125, 211, 252, 0.55);
   --radius: 14px;
   --radius-sm: 10px;
@@ -348,6 +353,22 @@ select.field__control option { background: var(--panel); color: var(--text); }
 .option--correct { border-color: rgba(34,197,94,0.5); background: rgba(34,197,94,0.12); }
 .option--wrong { border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.12); }
 .option--chosen { outline: 2px solid rgba(96,165,250,0.45); outline-offset: 2px; }
+
+/* Pass/fail badges used in stats rows, test-review rows, and the test-results
+   title card. Text-colour variants for inline row badges; filled variants for
+   the larger result-state pill in the title card. */
+.badge-pass { color: var(--pass); }
+.badge-fail { color: var(--fail); }
+.result-pill {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.2em;
+  color: #fff;
+}
+.badge-pass--filled { background: var(--pass); }
+.badge-fail--filled { background: var(--fail); }
 
 .word {
   border: 0;

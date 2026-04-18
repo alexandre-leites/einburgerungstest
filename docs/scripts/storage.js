@@ -27,11 +27,45 @@
     }
   }
 
+  /**
+   * Persist `value` under `name`. Returns a result object rather than throwing
+   * so call sites can respond to quota failures (prune caches, toast the user)
+   * instead of losing writes silently. Also dispatches an
+   * `ebt:storage-write-failed` CustomEvent so UI layers can toast without
+   * wrapping every call site.
+   * @returns {{ ok: true } | { ok: false, reason: string, error: unknown }}
+   */
   function writeJSON(name, value) {
     try {
       localStorage.setItem(fullKey(name), JSON.stringify(value));
+      return { ok: true };
     } catch (err) {
-      console.warn("[storage] write failed for " + name + ":", err);
+      var reason = "other";
+      // Quota errors have well-known names/codes across browsers.
+      if (
+        err &&
+        (err.name === "QuotaExceededError" ||
+          err.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+          err.code === 22 ||
+          err.code === 1014)
+      ) {
+        reason = "quota";
+      } else if (err && err.name === "SecurityError") {
+        reason = "unavailable";
+      }
+      console.warn("[storage] write failed for " + name + " (" + reason + "):", err);
+      if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+        try {
+          window.dispatchEvent(
+            new CustomEvent("ebt:storage-write-failed", {
+              detail: { name: name, reason: reason, error: err },
+            }),
+          );
+        } catch (_e) {
+          // CustomEvent unsupported — skip notification.
+        }
+      }
+      return { ok: false, reason: reason, error: err };
     }
   }
 

@@ -131,5 +131,11 @@
   "importDone": "Imported.",
   "invalidJson": "Invalid JSON.",
   "copiedToClipboard": "Copied to clipboard.",
-  "imageMissing": "Image could not be loaded."
+  "imageMissing": "Image could not be loaded.",
+  "quotaExceeded": "Local storage full. Please clear old test history or dictionary entries.",
+  "storageUnavailable": "Local storage unavailable (private mode?). Progress will not be saved.",
+  "dictionaryFull": "Personal dictionary is full. Oldest entries were removed.",
+  "loadFailedOffline": "Load error. Using cached version.",
+  "retry": "Retry",
+  "usingCachedData": "Using cached data from {date}."
 }

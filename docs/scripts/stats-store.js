@@ -25,7 +25,7 @@
   }
 
   function writeAll(obj) {
-    ns.Storage.writeJSON(KEY, obj || {});
+    return ns.Storage.writeJSON(KEY, obj || {});
   }
 
   function bump(questionId, isCorrect) {

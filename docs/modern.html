@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1020" />
+    <title>Einbürgerungstest – Modern</title>
+    <script>
+      // Same cache-busting as index.html, but the modern layout loads
+      // styles/modern.css on top of the base styles.
+      (function () {
+        var v = Date.now();
+        ["styles/general.css", "styles/modern.css"].forEach(function (href) {
+          var link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = href + "?v=" + v;
+          document.head.appendChild(link);
+        });
+      })();
+    </script>
+    <!--
+      Material Symbols (Android-style) for dock + header icons. Variable font,
+      ~30KB gzipped. Loaded with font-display: block so glyphs don't flash
+      in as text.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block"
+    />
+  </head>
+  <body class="m-body">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="m-app" id="app">
+      <!-- Glass header: brand + current route + status pills + settings drawer toggle -->
+      <header class="m-header">
+        <div class="m-header__inner">
+          <div class="m-brand">
+            <div class="m-brand__logo" aria-hidden="true">E</div>
+            <div class="m-brand__text">
+              <div class="m-brand__title">Einbürgerungstest</div>
+              <div class="m-brand__subtitle" id="brandSubtitle" data-i18n-literal="Self-learning">Self-learning</div>
+            </div>
+          </div>
+
+          <div class="m-header__route">
+            <div class="m-header__route-title" id="routeTitle">Home</div>
+            <div class="m-header__route-meta" id="routeMeta"></div>
+          </div>
+
+          <div class="m-header__pills">
+            <div class="pill" id="timerPill" hidden>
+              <span class="pill__label" id="timerLabel" data-i18n="timer">Timer</span>
+              <span class="pill__value mono" id="timerValue">60:00</span>
+            </div>
+            <div class="pill">
+              <span class="pill__label" id="progressLabel" data-i18n="progress">Progress</span>
+              <span class="pill__value mono" id="progressValue">0/0</span>
+            </div>
+            <button class="m-iconbtn" id="sidebarOpenBtn" type="button" aria-label="Settings">
+              <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main content -->
+      <main class="m-main" id="main" tabindex="-1"></main>
+
+      <!-- Footer (floats above the dock, narrower on mobile) -->
+      <footer class="m-footer" id="pageFooter">
+        <button class="btn btn--ghost nav__item" type="button" id="backBtn" data-i18n="back">Back</button>
+        <button class="btn nav__item" type="button" id="homeBtn" data-i18n="home">Home</button>
+        <button class="btn btn--primary nav__item" type="button" id="nextBtn" data-i18n="next">Next</button>
+      </footer>
+
+      <!-- Primary navigation: bottom dock -->
+      <nav class="m-dock" aria-label="Primary navigation">
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="home"
+          id="navHome"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">home</span>
+          <span class="m-dock__label" data-i18n="home">Home</span>
+        </button>
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="mode/memorization/random"
+          data-route-prefix="mode/memorization/"
+          id="navMemGroup"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">menu_book</span>
+          <span class="m-dock__label" id="navMemTitle" data-i18n="memorization">Memorize</span>
+        </button>
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="mode/train"
+          id="navTrain"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">fitness_center</span>
+          <span class="m-dock__label" data-i18n="training">Training</span>
+        </button>
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="mode/test"
+          id="navTest"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">quiz</span>
+          <span class="m-dock__label" data-i18n="test">Test</span>
+        </button>
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="mode/review"
+          id="navReview"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">history</span>
+          <span class="m-dock__label" data-i18n="review">Review</span>
+        </button>
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="stats"
+          id="navStats"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">bar_chart</span>
+          <span class="m-dock__label" data-i18n="statistics">Stats</span>
+        </button>
+        <button
+          class="nav__item m-dock__item"
+          type="button"
+          data-route="dictionary"
+          id="navDict"
+        >
+          <span class="material-symbols-outlined m-dock__icon" aria-hidden="true">menu_book_2</span>
+          <span class="m-dock__label" data-i18n="myDictionary">Dict</span>
+        </button>
+      </nav>
+
+      <!-- Settings drawer (role of the classic 'sidebar') -->
+      <aside
+        class="m-drawer"
+        id="sidebar"
+        data-behavior="drawer"
+        aria-label="Settings"
+      >
+        <div class="m-drawer__top">
+          <div class="m-drawer__title" id="navSectionSettings" data-i18n="settings">Settings</div>
+          <button class="m-iconbtn" id="sidebarCloseBtn" type="button" aria-label="Close settings">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+
+        <div class="m-drawer__body">
+          <label class="field" for="languageSelect">
+            <span class="field__label" id="languageLabel" data-i18n="language">Language</span>
+            <select class="field__control" id="languageSelect">
+              <option value="de">DE</option>
+              <option value="en">EN</option>
+              <option value="pt">PT (Brasil)</option>
+            </select>
+          </label>
+
+          <label class="field" for="stateSelect">
+            <span class="field__label" id="stateLabel" data-i18n="stateForTest">State (for test)</span>
+            <select class="field__control" id="stateSelect"></select>
+          </label>
+
+          <label class="field" for="focusTopicSelect">
+            <span class="field__label" id="focusTopicLabel" data-i18n="focusTopic">Focus topic</span>
+            <select class="field__control" id="focusTopicSelect"></select>
+          </label>
+
+          <div class="m-drawer__section" id="navSectionTools" data-i18n="tools">Tools</div>
+
+          <!--
+            The memorization sub-route entries stay in the DOM (selectors.js
+            resolves them, setActiveRoute highlights them) but are hidden in
+            the modern layout. Users switch between random/ordered via the
+            in-page control rendered by modes/memorization.js on the
+            memorization route. Kept off the settings drawer because they're
+            mode state, not settings.
+          -->
+          <div class="m-drawer__hidden-anchors" hidden>
+            <span class="m-drawer__section" id="navSectionModes" data-i18n="modes">Modes</span>
+            <button class="nav__item" type="button" data-route="mode/memorization/random" id="navMemRandom" data-i18n="memorizationRandom">
+              Random order
+            </button>
+            <button class="nav__item" type="button" data-route="mode/memorization/ordered" id="navMemOrdered" data-i18n="memorizationOrdered">
+              Ordered (by ID)
+            </button>
+          </div>
+          <button class="btn btn--ghost" type="button" id="resetBtn" data-i18n="resetData">Reset data</button>
+        </div>
+
+        <div class="m-drawer__footer">
+          Made with ❤️ by <span class="mono">alexslx</span>
+          <div style="margin-top:8px">
+            <a href="index.html" style="color:var(--primary);text-decoration:none">← classic layout</a>
+          </div>
+        </div>
+      </aside>
+
+      <div class="overlay" id="overlay" hidden></div>
+    </div>
+
+    <!-- Modals — identical to index.html. Layout-independent by design. -->
+    <div class="modal" id="wordModal" hidden role="dialog" aria-modal="true" aria-labelledby="wordModalTitle">
+      <div class="modal__backdrop" data-close-modal="wordModal"></div>
+      <div class="modal__panel">
+        <div class="modal__header">
+          <div>
+            <div class="modal__title" id="wordModalTitle">Word</div>
+            <div class="modal__subtitle" id="wordModalSubtitle"></div>
+          </div>
+          <button class="icon-btn" type="button" data-close-modal="wordModal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal__content">
+          <div class="card">
+            <div class="card__title" id="wordBaseTitle" data-i18n="baseDictionary">Base dictionary</div>
+            <div class="stack" id="wordBaseContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="context-menu" id="wordContextMenu" hidden role="menu" aria-label="Word actions">
+      <button class="context-menu__item" type="button" id="wordCtxViewBtn" role="menuitem">View</button>
+      <button class="context-menu__item" type="button" id="wordCtxToggleBtn" role="menuitem">Add</button>
+    </div>
+
+    <div class="modal" id="confirmModal" hidden role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal__backdrop" data-close-modal="confirmModal"></div>
+      <div class="modal__panel modal__panel--sm">
+        <div class="modal__header">
+          <div class="modal__title" id="confirmTitle" data-i18n="confirm">Confirm</div>
+          <button class="icon-btn" type="button" data-close-modal="confirmModal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal__content">
+          <p class="muted" id="confirmText"></p>
+          <div class="row row--right">
+            <button class="btn btn--ghost" type="button" data-close-modal="confirmModal" id="confirmCancelBtn" data-i18n="cancel">Cancel</button>
+            <button class="btn btn--primary" type="button" id="confirmOkBtn" data-i18n="ok">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="resetDataModal" hidden role="dialog" aria-modal="true" aria-labelledby="resetDataTitle">
+      <div class="modal__backdrop" data-close-modal="resetDataModal"></div>
+      <div class="modal__panel modal__panel--sm">
+        <div class="modal__header">
+          <div>
+            <div class="modal__title" id="resetDataTitle" data-i18n="resetDataTitle">Reset data</div>
+            <div class="modal__subtitle" id="resetDataSubtitle" data-i18n="resetDataSubtitle"></div>
+          </div>
+          <button class="icon-btn" type="button" data-close-modal="resetDataModal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal__content">
+          <div class="stack">
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetStatsLabel" data-i18n="resetStats">Statistics</span>
+              <input type="checkbox" id="resetChkStats" />
+            </label>
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetSessionsLabel" data-i18n="resetSessions">Sessions</span>
+              <input type="checkbox" id="resetChkSessions" />
+            </label>
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetDictionaryLabel" data-i18n="resetMyDictionary">My dictionary</span>
+              <input type="checkbox" id="resetChkDictionary" />
+            </label>
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetOtherLabel" data-i18n="resetOther">Other local settings</span>
+              <input type="checkbox" id="resetChkOther" />
+            </label>
+            <hr style="border:0;border-top:1px solid rgba(248,250,252,0.14);margin:6px 0" />
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetLanguageLabel" data-i18n="resetLanguage">Language</span>
+              <input type="checkbox" id="resetChkLanguage" />
+            </label>
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetStateLabel" data-i18n="resetState">State</span>
+              <input type="checkbox" id="resetChkState" />
+            </label>
+            <label class="row" style="justify-content:space-between;gap:12px">
+              <span id="resetFocusTopicLabel" data-i18n="focusTopic">Focus topic</span>
+              <input type="checkbox" id="resetChkFocusTopic" />
+            </label>
+          </div>
+
+          <div class="row row--right" style="margin-top:10px">
+            <button class="btn btn--ghost" type="button" data-close-modal="resetDataModal" id="resetDataCancelBtn" data-i18n="cancel">
+              Cancel
+            </button>
+            <button class="btn btn--primary" type="button" id="resetDataOkBtn" data-i18n="ok">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="questionReviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="questionReviewTitle">
+      <div class="modal__backdrop" data-close-modal="questionReviewModal"></div>
+      <div class="modal__panel" style="max-width:800px">
+        <div class="modal__header">
+          <div>
+            <div class="modal__title" id="questionReviewTitle"></div>
+            <div class="modal__subtitle" id="questionReviewSubtitle"></div>
+          </div>
+          <button class="icon-btn" type="button" data-close-modal="questionReviewModal" aria-label="Close">✕</button>
+        </div>
+        <div class="modal__content">
+          <div class="card" data-ref="card"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!--
+      View-layer templates live in docs/partials/templates.html and are
+      fetched at app init by EBT.Templates.loadFromUrl().
+    -->
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("sw.js").catch(function () {});
+        });
+      }
+    </script>
+
+    <!--
+      Same script load list as index.html. The app doesn't care which
+      layout hosts it; selectors.js resolves elements by id, view.js
+      degrades gracefully for any chrome element that's absent, and the
+      nav handlers + keyboard shortcuts adapt to whatever
+      .nav__item[data-route] elements the layout provides.
+    -->
+    <script>
+      (function () {
+        var v = Date.now();
+        var files = [
+          "scripts/utils.js",
+          "scripts/storage.js",
+          "scripts/migrations.js",
+          "scripts/validation.js",
+          "scripts/i18n.js",
+          "scripts/stats-store.js",
+          "scripts/mydict-store.js",
+          "scripts/session-store.js",
+          "scripts/router.js",
+          "scripts/stats-aggregations.js",
+          "scripts/sessions.js",
+          "scripts/data-loader.js",
+          "scripts/selectors.js",
+          "scripts/view.js",
+          "scripts/templates.js",
+          "scripts/modes/home.js",
+          "scripts/modes/dictionary.js",
+          "scripts/modes/stats.js",
+          "scripts/modes/review.js",
+          "scripts/modes/_nav-handlers.js",
+          "scripts/modes/_reset-data.js",
+          "scripts/modes/_settings.js",
+          "scripts/modes/_question-card.js",
+          "scripts/modes/_word-ui.js",
+          "scripts/modes/_keyboard-shortcuts.js",
+          "scripts/modes/_test-lifecycle.js",
+          "scripts/modes/_test-review-shared.js",
+          "scripts/modes/_question-review-modal.js",
+          "scripts/modes/test-results.js",
+          "scripts/modes/test-history-view.js",
+          "scripts/modes/memorization.js",
+          "scripts/modes/training.js",
+          "scripts/modes/test.js",
+          "scripts/general.js",
+        ];
+        var i = 0;
+        function loadNext() {
+          if (i >= files.length) return;
+          var s = document.createElement("script");
+          s.src = files[i] + "?v=" + v;
+          s.onload = function () {
+            i += 1;
+            loadNext();
+          };
+          s.onerror = function () {
+            console.error("Failed to load", files[i]);
+            i += 1;
+            loadNext();
+          };
+          document.body.appendChild(s);
+        }
+        loadNext();
+      })();
+    </script>
+  </body>
+</html>

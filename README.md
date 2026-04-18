@@ -2,6 +2,12 @@
 
 A web-based application designed to help prepare for the German citizenship test (Einbürgerungstest) through interactive learning modes and multilingual support.
 
+> **Companion documents:**
+> - [**ARCHITECTURE.md**](ARCHITECTURE.md) — module layout, the `EBT.*` namespaces, boot sequence, layout-swap contract, testing strategy.
+> - [**BUSINESS.md**](BUSINESS.md) — product context, user personas, feature map, content pipeline, non-goals.
+> - [**DESIGN.md**](DESIGN.md) — design tokens, component primitives, layout systems, accessibility patterns.
+> - [**CLAUDE.md**](CLAUDE.md) — guardrails for AI-assisted development (read before asking Claude to touch this repo).
+
 ## 🎯 What is this project?
 
 This is a self-learning platform for the German naturalization test (Einbürgerungstest). It provides an interactive way to study the official test questions, track your progress, and build your German vocabulary through various learning modes.
@@ -60,28 +66,50 @@ The application will automatically open in your default browser at `http://local
 
 ```
 einburgerungstest/
+├── ARCHITECTURE.md                    # Module layout + EBT.* namespaces + extension guide
+├── BUSINESS.md                        # Product context, personas, feature map
+├── DESIGN.md                          # Design tokens, components, accessibility
+├── CLAUDE.md                          # Guardrails for AI-assisted development
+├── README.md                          # You're here
 ├── docs/                              # Everything served as static files (GitHub Pages)
-│   ├── index.html                     # Main application
+│   ├── index.html                     # Classic layout (sidebar + topbar + footer)
+│   ├── modern.html                    # Modern layout (glass header + dock + drawer)
+│   ├── sw.js                          # Service worker (network-first HTML, SWR assets)
+│   ├── partials/
+│   │   └── templates.html             # 25 shared <template> blocks (fetched at init)
+│   ├── styles/
+│   │   ├── general.css                # Base design tokens + component primitives
+│   │   └── modern.css                 # Modern layout overlay
 │   ├── assets/
 │   │   ├── questions.json             # (generated) test questions
 │   │   ├── dictionary.json            # (generated) German word dictionary
 │   │   └── i18n/{de,en,pt}.json       # UI translations (source of truth)
 │   ├── images/                        # Question images
-│   ├── scripts/
-│   │   ├── utils.js                   # Pure helpers (testable from Node)
-│   │   ├── storage.js                 # localStorage wrapper
-│   │   ├── migrations.js              # User-data schema migrations
-│   │   ├── validation.js              # Runtime schema guards for question/dictionary data
-│   │   ├── i18n.js                    # Translation loader
-│   │   ├── stats-store.js             # Per-question stats
-│   │   ├── mydict-store.js            # Personal dictionary
-│   │   ├── session-store.js           # Session + test history I/O
-│   │   ├── router.js                  # Hash-route dispatch table
-│   │   ├── modes/                     # (future) per-mode renderers
-│   │   ├── types.js                   # Shared JSDoc typedefs
-│   │   ├── globals.d.ts               # Ambient EBT namespace declaration
-│   │   └── general.js                 # App core (state, events, renderers)
-│   └── styles/general.css
+│   └── scripts/
+│       ├── general.js                 # Init + EBT.Core assembly
+│       ├── selectors.js               # Element-ID registry (48 entries)
+│       ├── view.js                    # View verb API (chrome mutation surface)
+│       ├── templates.js               # <template> clone + slot population
+│       ├── router.js                  # Hash-based routes table
+│       ├── sessions.js                # Per-mode session lifecycle
+│       ├── data-loader.js             # Questions/dictionary fetch + LKG fallback
+│       ├── stats-aggregations.js      # Stats rollups (pure)
+│       ├── storage.js                 # localStorage wrapper (ebt. prefix)
+│       ├── utils.js                   # Pure helpers (testable from Node)
+│       ├── validation.js              # Schema guards for question/dictionary data
+│       ├── migrations.js              # User-data schema migrations
+│       ├── i18n.js                    # Translation loader
+│       ├── stats-store.js             # Per-question stats
+│       ├── mydict-store.js            # Personal dictionary
+│       ├── session-store.js           # Session + test history I/O
+│       ├── modes/                     # Per-route renderers + shared helpers
+│       │   ├── {home,memorization,training,test,test-results,
+│       │   │  test-history-view,review,stats,dictionary}.js
+│       │   └── _{nav-handlers,settings,question-card,word-ui,
+│       │      keyboard-shortcuts,test-lifecycle,test-review-shared,
+│       │      question-review-modal,reset-data}.js
+│       ├── types.js                   # Shared JSDoc typedefs
+│       └── globals.d.ts               # Ambient EBT namespace declaration
 ├── data/
 │   ├── README.md                      # How to rebuild artefacts
 │   └── source/
@@ -92,7 +120,7 @@ einburgerungstest/
 │   ├── update_questions.js            # Corrections applier (Node, CJS)
 │   ├── fill_de_descriptions.py        # Dictionary filler from de.wiktionary
 │   └── check_i18n.mjs                 # Translation coverage check
-├── tests/                             # Vitest suite for pure helpers
+├── tests/                             # Vitest suite (159 tests, 18 files)
 ├── .github/workflows/ci.yml           # Lint + typecheck + i18n check + tests
 ├── package.json                       # Dev tooling (eslint, prettier, vitest, tsc)
 ├── jsconfig.json                      # JSDoc typecheck config
@@ -100,6 +128,8 @@ einburgerungstest/
 ├── start.sh / start.bat               # Local launcher
 └── LICENSE
 ```
+
+The app ships **two layouts** against the same JavaScript: the classic sidebar layout at `/` and a modern glass-header + bottom-dock layout at `/modern.html`. See [ARCHITECTURE.md → Layout swapping](ARCHITECTURE.md#layout-swapping) for the contract.
 
 ## 🛠 Development
 
@@ -142,6 +172,12 @@ This is a personal project, but suggestions and improvements are welcome! Feel f
 - Open issues for bugs or feature requests
 - Submit pull requests for improvements
 - Share feedback on translations or content accuracy
+
+Before contributing code, please read:
+- [ARCHITECTURE.md](ARCHITECTURE.md) — especially the **Layout swapping** contract and the **Extension guide** sections.
+- [CLAUDE.md](CLAUDE.md) — guardrails that apply to any changes (human or AI-assisted).
+
+And run `npm run check` before opening a PR — it runs everything CI runs (lint, typecheck, i18n coverage, 159 tests).
 
 ## 📝 License
 

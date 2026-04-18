@@ -1,0 +1,426 @@
+/*
+ * Modern layout overlay — loaded ON TOP of general.css.
+ *
+ * The base stylesheet provides tokens (--bg, --panel, --text, --primary, …)
+ * and the card / field / pill / modal / option / table primitives that the
+ * render templates rely on. This file reshapes the chrome around them:
+ *  - glass floating header with brand + route + progress pills
+ *  - bottom dock as primary navigation (fixed, safe-area aware)
+ *  - right-side slide-out settings drawer (replaces the classic sidebar)
+ *  - centered max-width content area with generous padding
+ *
+ * Only classes starting with `m-` are layout-specific to the modern shell.
+ * Everything else reuses the base design tokens so the renderers keep
+ * producing the same look for cards / tables / pills / buttons.
+ */
+
+:root {
+  --m-header-h: 72px;
+  --m-dock-h: 72px;
+  --m-drawer-w: 360px;
+  --m-gap: 20px;
+  --m-max: 1100px;
+  --m-glass: rgba(11, 19, 39, 0.72);
+  --m-glass-border: rgba(248, 250, 252, 0.10);
+  --m-accent-grad: linear-gradient(135deg, #7dd3fc 0%, #c4b5fd 100%);
+}
+
+/* -------- Reset the base sidebar / topbar / footer ------------------- */
+
+.m-body {
+  /* override general.css's body font stack with system-ui emphasis. */
+  font-family:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background:
+    radial-gradient(900px 600px at 15% -10%, rgba(125, 211, 252, 0.08), transparent 60%),
+    radial-gradient(800px 500px at 110% 110%, rgba(196, 181, 253, 0.08), transparent 55%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+/* Hide all of general.css's layout scaffolding that might bleed through. */
+.m-body > .sidebar,
+.m-body > .overlay { display: none; }
+
+/* -------- App shell -------------------------------------------------- */
+
+.m-app {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* -------- Header ----------------------------------------------------- */
+
+.m-header {
+  position: sticky;
+  top: env(safe-area-inset-top);
+  z-index: 30;
+  background: var(--m-glass);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid var(--m-glass-border);
+}
+
+.m-header__inner {
+  max-width: var(--m-max);
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  min-height: var(--m-header-h);
+}
+
+.m-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.m-brand__logo {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--m-accent-grad);
+  color: #0b1020;
+  font-weight: 800;
+  font-size: 1.1em;
+  letter-spacing: -0.02em;
+  box-shadow: 0 6px 20px rgba(125, 211, 252, 0.28);
+}
+
+.m-brand__title {
+  font-weight: 700;
+  font-size: 1.05em;
+  line-height: 1.2;
+}
+
+.m-brand__subtitle {
+  font-size: 0.78em;
+  color: var(--muted);
+}
+
+.m-header__route {
+  min-width: 0;
+  text-align: center;
+}
+
+.m-header__route-title {
+  font-weight: 700;
+  font-size: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-header__route-meta {
+  font-size: 0.8em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-header__pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.m-iconbtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--m-glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.1em;
+  display: grid;
+  place-items: center;
+  transition: background 0.18s, transform 0.06s;
+}
+.m-iconbtn:hover { background: rgba(255, 255, 255, 0.10); }
+.m-iconbtn:active { transform: scale(0.96); }
+.m-iconbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* -------- Main ------------------------------------------------------- */
+
+.m-main {
+  max-width: var(--m-max);
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 20px calc(var(--m-dock-h) + var(--m-footer-h, 60px) + 32px);
+  outline: none;
+}
+
+/*
+ * general.css applies `margin-top: 14px` to consecutive children of `.main`.
+ * The modern shell uses `.m-main` instead, so add the same rule here. Also
+ * cover direct tbody children (test-review rows) and any DocumentFragments
+ * that end up mounted directly.
+ */
+.m-main > * + * { margin-top: 14px; }
+
+/* Segmented "random vs ordered" picker inside the memorization page. */
+.m-seg {
+  flex: 1 1 0;
+  justify-content: center;
+  border-radius: 999px;
+}
+.m-seg[aria-selected="true"] {
+  /* The active button also gets .btn--primary from JS; this just tightens
+     the look when both classes are on. */
+  border-color: rgba(125, 211, 252, 0.45);
+}
+
+/* -------- Footer (compact, above the dock) --------------------------- */
+
+.m-footer {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--m-dock-h) + env(safe-area-inset-bottom) + 8px);
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--m-glass);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border: 1px solid var(--m-glass-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.m-footer[hidden] { display: none; }
+
+.m-footer .btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  min-height: 0;
+}
+
+/* -------- Dock: primary navigation ---------------------------------- */
+
+.m-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  background: var(--m-glass);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-top: 1px solid var(--m-glass-border);
+}
+
+.m-dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1 1 0;
+  max-width: 110px;
+  padding: 8px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.72em;
+  transition: color 0.18s, background 0.18s, transform 0.06s;
+}
+.m-dock__item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+.m-dock__item:active { transform: scale(0.96); }
+.m-dock__item:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.m-dock__item[aria-current="page"] {
+  color: var(--text);
+  background: rgba(125, 211, 252, 0.14);
+}
+.m-dock__item[aria-current="page"] .m-dock__icon {
+  transform: translateY(-1px);
+}
+
+.m-dock__icon {
+  font-size: 1.4em;
+  line-height: 1;
+  transition: transform 0.18s;
+}
+
+/*
+ * Material Symbols default to 24px / 400 weight. Scale with the
+ * surrounding context so dock icons match the old emoji size, and the
+ * header/drawer icon buttons look right at their smaller scale.
+ */
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  font-size: 24px;
+  line-height: 1;
+  user-select: none;
+  vertical-align: middle;
+}
+.m-dock__item .material-symbols-outlined { font-size: 26px; }
+.m-iconbtn .material-symbols-outlined { font-size: 22px; }
+.m-dock__item[aria-current="page"] .material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 500,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+.m-dock__label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* -------- Drawer (right-side settings panel) ------------------------- */
+
+.m-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--m-drawer-w);
+  max-width: 92vw;
+  z-index: 50;
+  background: var(--panel);
+  border-left: 1px solid var(--m-glass-border);
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.40);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/*
+ * The app toggles `is-open` on mobile and `is-collapsed` on desktop.
+ * In the modern layout the drawer is the same element either way; just
+ * slide it in on `is-open`, and leave it closed otherwise.
+ */
+.m-drawer.is-open { transform: translateX(0); }
+.m-drawer.is-collapsed { transform: translateX(100%); }
+
+.m-drawer__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--m-glass-border);
+}
+
+.m-drawer__title {
+  font-weight: 700;
+  font-size: 1.05em;
+}
+
+.m-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.m-drawer__section {
+  margin-top: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.m-drawer__link {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+.m-drawer__link:hover { background: rgba(255, 255, 255, 0.08); }
+.m-drawer__link[aria-current="page"] {
+  background: rgba(125, 211, 252, 0.16);
+  color: var(--text);
+}
+
+.m-drawer__footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--m-glass-border);
+  color: var(--muted);
+  font-size: 0.8em;
+}
+
+/* Darken backdrop behind the drawer. The app unhides #overlay on mobile
+ * only, but in the modern layout we want it on every breakpoint when
+ * the drawer is open. Keep the same id; restyle to fill viewport. */
+.m-body > .overlay {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.48);
+  z-index: 40;
+  backdrop-filter: blur(2px);
+}
+.m-body > .overlay[hidden] { display: none; }
+
+/* -------- Light tweaks to cards / tables to feel modern -------------- */
+
+.m-main .card {
+  border-radius: 18px;
+  border: 1px solid var(--m-glass-border);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.m-main .card__title {
+  font-size: 1.15em;
+  letter-spacing: -0.01em;
+}
+
+.m-main .pill {
+  border-radius: 999px;
+}
+
+/* -------- Phone breakpoint ------------------------------------------- */
+
+@media (max-width: 720px) {
+  .m-header__inner {
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .m-header__route { display: none; }
+  .m-brand__subtitle { display: none; }
+  .m-header__pills .pill { display: none; }
+  .m-header__pills #timerPill:not([hidden]) { display: inline-flex; }
+  .m-main { padding: 16px 12px calc(var(--m-dock-h) + 80px); }
+
+  .m-dock__label { font-size: 0.64em; }
+  .m-dock__item { padding: 6px 4px; }
+
+  .m-footer { bottom: calc(var(--m-dock-h) + env(safe-area-inset-bottom) + 4px); }
+}

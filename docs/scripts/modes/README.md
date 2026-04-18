@@ -1,58 +1,74 @@
 # Mode renderers
 
-The router (`scripts/router.js`) looks up renderers by name on
-`window.EBT.Render.<mode>`. `scripts/general.js` installs default
-implementations for every mode via `registerRoutes()`, but any file loaded
-*before* `general.js` can override a mode by assigning a function onto
-`window.EBT.Render`. This is the seam used to move render functions out of
-the monolithic `general.js` one at a time.
+Each mode is a self-contained file that registers `window.EBT.Render.<mode>`
+and is loaded *before* `scripts/general.js`. `registerRoutes()` in
+`general.js` uses `R.<mode> = R.<mode> || <default>` so external files
+always win — but now that every default has been extracted, `general.js`
+registers no fallbacks and only the files in this directory own rendering.
 
-## Adding or replacing a mode
+## Anatomy of a mode file
 
-1. Create a new file here (e.g. `modes/home.js`).
-2. Register your implementation as the first thing it does:
-   ```js
-   (function () {
-     "use strict";
-     window.EBT = window.EBT || {};
-     window.EBT.Render = window.EBT.Render || {};
-     window.EBT.Render.home = function renderHome() {
-       // ... render into EBT.Core.els.main using EBT.Core.state / EBT.Core.t / ...
-     };
-   })();
-   ```
-3. Add it to `docs/index.html`'s script list *before* `scripts/general.js`.
+```js
+(function () {
+  "use strict";
+  window.EBT = window.EBT || {};
+  window.EBT.Render = window.EBT.Render || {};
 
-`registerRoutes()` uses `R.home = R.home || renderHome` — so any override you
-set from a mode file wins over the default in `general.js`.
+  window.EBT.Render.home = function renderHome() {
+    const Core = window.EBT.Core;
+    const View = window.EBT.View;
+    const Templates = window.EBT.Templates;
+    if (!Core || !View || !Templates) return;
 
-## What a mode file needs from the app core
+    const t = Core.t;
 
-Most renderers reach into:
+    View.setActiveRoute("home");
+    View.setTitle(t("home"), "");
+    View.setTimer({ visible: false });
+    View.setFooterVisible(false);
+    View.setProgress(0, 0);
 
-| Symbol                        | What it is                                              |
-| ----------------------------- | ------------------------------------------------------- |
-| `EBT.Core.state`              | App state (questions, lang, activeSession, etc.)        |
-| `EBT.Core.els`                | DOM element cache (`main`, `routeTitle`, ...)           |
-| `EBT.Core.t`                  | Translate helper (`EBT.Core.t("home")`)                 |
-| `EBT.Core.setTopbar`          | Update topbar title + meta                              |
-| `EBT.Core.setFooterButtons`   | Toggle back/home/next state                             |
-| `EBT.Core.renderQuestionCard` | Shared question renderer                                |
-| `EBT.Stats` / `EBT.Session`   | Persistent data layers                                  |
-| `EBT.Utils`                   | Pure helpers (shuffle, weaknessKeyFor, highlightWord…)  |
+    const frag = Templates.render("tpl-home", { /* slots */ });
+    View.mountMain(frag);
+    View.setFooterState({ backDisabled: true, nextDisabled: true });
+  };
+})();
+```
 
-`EBT.Core` is the last surface still coupled to the closure inside
-`general.js`. When you're ready to split a given mode, add the symbols it
-needs to `EBT.Core` from within `general.js` (alongside the existing
-`Router`/`Render` wiring) and the mode file will pick them up.
+Register in `docs/index.html`'s script list before `scripts/general.js`.
 
-## Split priority
+## What a mode file may reach for
 
-The easiest renderers to extract first are the ones with the fewest
-cross-file dependencies:
+| Symbol               | Purpose                                          |
+| -------------------- | ------------------------------------------------ |
+| `EBT.Core.state`     | App state (questions, lang, activeSession, …)    |
+| `EBT.Core.APP`       | Config constants (testTotal, focusTopicAll, …)   |
+| `EBT.Core.t(id)`     | Translate helper                                 |
+| `EBT.Core.*`         | Session, question lookup, stats, word UI helpers |
+| `EBT.View.*`         | Every chrome/layout mutation (no raw DOM)        |
+| `EBT.Templates.*`    | `clone`, `fill`, `render` for `<template>` nodes |
+| `EBT.Utils.*`        | Pure helpers (shuffle, nextTrainingCredits, …)   |
+| `EBT.Stats`, `EBT.MyDict`, `EBT.Session`, `EBT.Router` | Persistent data layers |
 
-1. `renderHome` — just text + tiles.
-2. `renderDictionary` — already mostly self-contained.
-3. `renderStats` / `renderTestHistoryView` — read-only aggregates.
-4. `renderMemorization` / `renderTraining` / `renderTest` — state-heavy;
-   leave for last.
+A mode file **must not** touch `document.getElementById` or read from a
+global `els` cache — those are the View layer's job.
+
+## Separation of concerns
+
+- **`selectors.js`** — logical-name → CSS selector registry.
+- **`view.js`** — stable verb API over the layout (`setTitle`, `mountMain`,
+  `openModal`, …). Degrades gracefully when optional chrome is absent.
+- **`templates.js`** — helper for cloning `<template>` fragments with
+  `[data-slot]` populated.
+- **`modes/*.js`** — per-route renderers. Side-effect-free until the route
+  dispatches.
+- **`general.js`** — init, event wiring, settings, modal plumbing, shared
+  question card / word dictionary UI. Owns the `EBT.Core` object that
+  mode files consume.
+
+## Adding a new mode
+
+1. Add routes to `router.js` (or `registerRoutes()` in `general.js`).
+2. Create `modes/<name>.js` that registers `EBT.Render.<name>`.
+3. Add any templates it needs inside `index.html` as `<template id="tpl-...">`.
+4. Add the file to the loader in `index.html` before `general.js`.

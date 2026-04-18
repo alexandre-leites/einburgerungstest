@@ -131,5 +131,11 @@
   "importDone": "Importiert.",
   "invalidJson": "Ungültiges JSON.",
   "copiedToClipboard": "In die Zwischenablage kopiert.",
-  "imageMissing": "Bild konnte nicht geladen werden."
+  "imageMissing": "Bild konnte nicht geladen werden.",
+  "quotaExceeded": "Lokaler Speicher voll. Bitte alten Testverlauf oder Wörterbuch-Einträge löschen.",
+  "storageUnavailable": "Lokaler Speicher nicht verfügbar (Privater Modus?). Fortschritt wird nicht gespeichert.",
+  "dictionaryFull": "Persönliches Wörterbuch voll. Älteste Einträge wurden entfernt.",
+  "loadFailedOffline": "Lade-Fehler. Zwischengespeicherte Version wird verwendet.",
+  "retry": "Erneut versuchen",
+  "usingCachedData": "Zwischengespeicherte Daten vom {date} werden verwendet."
 }
